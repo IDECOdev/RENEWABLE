@@ -494,7 +494,7 @@
                 android:textStyle="bold"
                 android:elevation="1dp"/>
             <RelativeLayout
-                android:id="@+id/ctMeterdata_lay"
+                android:id="@+id/inspdata_lay"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="-14dp"
@@ -507,7 +507,7 @@
                     android:layout_height="wrap_content"
                     android:weightSum="3"
                     android:orientation="horizontal"
-                    android:id="@+id/c1serial_numLay"
+                    android:id="@+id/inspDateLay"
                     android:layoutDirection="rtl"
                     android:layout_marginTop="20dp">
                     <TextView
@@ -516,12 +516,12 @@
                         android:layout_gravity="center"
                         android:fontFamily="@font/ad_font"
                         android:layout_height="wrap_content"
-                        android:text="فاز 1 C.T"
+                        android:text="تاريخ التفتيش"
                         android:layout_marginRight="20dp"
                         android:textSize="15dp"
                         android:textStyle="bold"/>
                     <EditText
-                        android:id="@+id/c1serial_num"
+                        android:id="@+id/inspDate"
                         android:layout_width="0dp"
                         android:layout_weight="2.15"
                         android:layout_gravity="center"
@@ -549,8 +549,8 @@
                     android:layout_height="wrap_content"
                     android:weightSum="3"
                     android:orientation="horizontal"
-                    android:id="@+id/c2serial_numLay"
-                    android:layout_below="@id/c1serial_numLay"
+                    android:id="@+id/noteDateLay"
+                    android:layout_below="@id/inspDateLay"
                     android:layoutDirection="rtl"
                     android:layout_marginTop="15dp">
                     <TextView
@@ -559,12 +559,12 @@
                         android:layout_gravity="center"
                         android:fontFamily="@font/ad_font"
                         android:layout_height="wrap_content"
-                        android:text="فاز 2 C.T"
+                        android:text="تاريخ تزويد الجهة بالملاحظات"
                         android:layout_marginRight="20dp"
                         android:textSize="15dp"
                         android:textStyle="bold"/>
                     <EditText
-                        android:id="@+id/c2serial_num"
+                        android:id="@+id/noteDate"
                         android:layout_width="0dp"
                         android:layout_weight="2.15"
                         android:maxLength="20"
@@ -592,8 +592,8 @@
                     android:layout_height="wrap_content"
                     android:weightSum="3"
                     android:orientation="horizontal"
-                    android:id="@+id/c3serial_numLay"
-                    android:layout_below="@id/c2serial_numLay"
+                    android:id="@+id/processNoteDateLay"
+                    android:layout_below="@id/noteDateLay"
                     android:layoutDirection="rtl"
                     android:layout_marginTop="15dp">
                     <TextView
@@ -602,12 +602,12 @@
                         android:layout_gravity="center"
                         android:fontFamily="@font/ad_font"
                         android:layout_height="wrap_content"
-                        android:text="فاز 3 C.T"
+                        android:text="تاريخ معالجة الملاحظات"
                         android:layout_marginRight="20dp"
                         android:textSize="15dp"
                         android:textStyle="bold"/>
                     <EditText
-                        android:id="@+id/c3serial_num"
+                        android:id="@+id/processNoteDate"
                         android:layout_width="0dp"
                         android:layout_weight="2.15"
                         android:layout_gravity="center"
