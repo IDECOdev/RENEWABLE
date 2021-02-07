@@ -49,6 +49,8 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Calendar;
@@ -188,7 +190,6 @@ public class InquirActivity extends AppCompatActivity {
                     Toast.makeText(InquirActivity.this, "ادخل تاريخ التفتيش", Toast.LENGTH_SHORT).show();
                     return;
                 }
-
                 if(noteDate.getText().toString().equals("")){
                     Toast.makeText(InquirActivity.this, "ادخل تاريخ تزويد الجهة بالملاحظات", Toast.LENGTH_SHORT).show();
                     return;
@@ -207,7 +208,16 @@ public class InquirActivity extends AppCompatActivity {
         finishbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                if(noteDate.getText().toString().equals("")){
+                    Toast.makeText(InquirActivity.this, "ادخل تاريخ تزويد الجهة بالملاحظات", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if(processNoteDate.getText().toString().equals("")){
+                    Toast.makeText(InquirActivity.this, "ادخل تاريخ معالجة الملاحظات", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                InsertFollowUpAsyncCall insertFollowUpAsyncCall = new InsertFollowUpAsyncCall();
+                insertFollowUpAsyncCall.execute();
             }
         });
 
@@ -559,9 +569,12 @@ public class InquirActivity extends AppCompatActivity {
                 } catch (Exception e) {}
 
                 if(updateRen){
-                    String data2 = "dtpInspDate:"+inspDate.getText().toString()+",dtpPROVIDE_NOTES_DATE:"+noteDate.getText().toString()+",dtpPROCESS_NOTES_DATE:"+processNoteDate.getText().toString()
-                            +",uId:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID","")+",strUserName:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID","")
-                            +",mPID:"+processNum_et.getText().toString()+",engNote:"+EngNoteDate.getText().toString()+",Id:";
+                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                    LocalDateTime now = LocalDateTime.now();
+
+                    String data2 = "uId:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID","")+",strUserName:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID","")
+                            +",mPID:"+processNum_et.getText().toString()+",txtFollowUps:تم الكشف على نظام الطاقة المتجددة"+dtf.format(now) +" ووجدت هناك ملاحظات ولم يتم استكمال اجراءات التشغيل,Id:";
+
                     try {
                         KeyFactory kf = KeyFactory.getInstance("RSA");
                         PKCS8EncodedKeySpec keySpecPKCS8 = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(soap.privateKey));
