@@ -61,7 +61,7 @@ import java.util.Locale;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 
-public class InquirActivity extends AppCompatActivity {
+public class FacilityConnectionActivity extends AppCompatActivity {
     EditText cusmNum_et, processNum_et, cusmName, cusm_No, city, address_name, lacation;
     SharedPreferences shared;
     ProgressDialog pd;
@@ -69,7 +69,7 @@ public class InquirActivity extends AppCompatActivity {
     InquirInfo inquirInfo;
     Button inquir_btn2, inquir_btn1, sendbtn, finishbtn;
     String CustomermNum;
-    EditText inspDate, noteDate, processNoteDate, EngNoteDate;
+    EditText connectionDate, issuedRead, continuedRead, EngNoteDate;
 
     public class ScanDialog extends Dialog {
 
@@ -122,8 +122,8 @@ public class InquirActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
 
-        final AlertDialog.Builder builder = new AlertDialog.Builder(InquirActivity.this);
-        LayoutInflater inflater = InquirActivity.this.getLayoutInflater();
+        final AlertDialog.Builder builder = new AlertDialog.Builder(FacilityConnectionActivity.this);
+        LayoutInflater inflater = FacilityConnectionActivity.this.getLayoutInflater();
         builder.setView(inflater.inflate(R.layout.dialog_info, null));
         final AlertDialog dialog = builder.create();
         ((FrameLayout) dialog.getWindow().getDecorView().findViewById(android.R.id.content)).setForeground(new ColorDrawable(Color.TRANSPARENT));
@@ -154,7 +154,7 @@ public class InquirActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_inquir);
+        setContentView(R.layout.activity_facilityconnection);
 
         cusmNum_et = findViewById(R.id.cusmNum_et);
         processNum_et = findViewById(R.id.processNum_et);
@@ -178,24 +178,24 @@ public class InquirActivity extends AppCompatActivity {
         address_name = findViewById(R.id.address_name);
         lacation = findViewById(R.id.lacation);
 
-        inspDate = findViewById(R.id.inspDate);
-        noteDate = findViewById(R.id.noteDate);
-        processNoteDate = findViewById(R.id.processNoteDate);
+        connectionDate = findViewById(R.id.connectionDate);
+        issuedRead = findViewById(R.id.noteDate);
+        continuedRead = findViewById(R.id.processNoteDate);
         EngNoteDate = findViewById(R.id.EngNoteDate);
 
         sendbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(inspDate.getText().toString().equals("")){
-                    Toast.makeText(InquirActivity.this, "ادخل تاريخ التفتيش", Toast.LENGTH_SHORT).show();
+                if(connectionDate.getText().toString().equals("")){
+                    Toast.makeText(FacilityConnectionActivity.this, "ادخل تاريخ ربط المنشأة", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if(noteDate.getText().toString().equals("")){
-                    Toast.makeText(InquirActivity.this, "ادخل تاريخ تزويد الجهة بالملاحظات", Toast.LENGTH_SHORT).show();
+                if(issuedRead.getText().toString().equals("")){
+                    Toast.makeText(FacilityConnectionActivity.this, "ادخل القراءة المصدرة", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if(processNoteDate.getText().toString().equals("")){
-                    Toast.makeText(InquirActivity.this, "ادخل تاريخ معالجة الملاحظات", Toast.LENGTH_SHORT).show();
+                if(continuedRead.getText().toString().equals("")){
+                    Toast.makeText(FacilityConnectionActivity.this, "ادخل القراءة المستجرة", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -205,38 +205,26 @@ public class InquirActivity extends AppCompatActivity {
             }
         });
 
-        finishbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(noteDate.getText().toString().equals("")){
-                    Toast.makeText(InquirActivity.this, "ادخل تاريخ تزويد الجهة بالملاحظات", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if(processNoteDate.getText().toString().equals("")){
-                    Toast.makeText(InquirActivity.this, "ادخل تاريخ معالجة الملاحظات", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                InsertFollowUpAsyncCall insertFollowUpAsyncCall = new InsertFollowUpAsyncCall();
-                insertFollowUpAsyncCall.execute();
-            }
-        });
+//        finishbtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if(noteDate.getText().toString().equals("")){
+//                    Toast.makeText(FacilityConnectionActivity.this, "ادخل تاريخ تزويد الجهة بالملاحظات", Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
+//                if(processNoteDate.getText().toString().equals("")){
+//                    Toast.makeText(FacilityConnectionActivity.this, "ادخل تاريخ معالجة الملاحظات", Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
+//                InsertFollowUpAsyncCall insertFollowUpAsyncCall = new InsertFollowUpAsyncCall();
+//                insertFollowUpAsyncCall.execute();
+//            }
+//        });
 
-        inspDate.setOnClickListener(new View.OnClickListener() {
+        connectionDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SetDate(inspDate);
-            }
-        });
-        noteDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SetDate(noteDate);
-            }
-        });
-        processNoteDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SetDate(processNoteDate);
+                SetDate(connectionDate);
             }
         });
 
@@ -246,7 +234,7 @@ public class InquirActivity extends AppCompatActivity {
         bar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ScanDialog dialog = new ScanDialog(InquirActivity.this);
+                ScanDialog dialog = new ScanDialog(FacilityConnectionActivity.this);
                 dialog.show();
             }
         });
@@ -285,7 +273,7 @@ public class InquirActivity extends AppCompatActivity {
     private void SetDate(final EditText Date) {
         Calendar calendar = Calendar.getInstance();
         final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
-        DatePickerDialog datePickerDialog = new DatePickerDialog(InquirActivity.this, new DatePickerDialog.OnDateSetListener() {
+        DatePickerDialog datePickerDialog = new DatePickerDialog(FacilityConnectionActivity.this, new DatePickerDialog.OnDateSetListener() {
 
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 Calendar newDate = Calendar.getInstance();
@@ -340,7 +328,7 @@ public class InquirActivity extends AppCompatActivity {
     public void InquirProcessNum(View view) {
         if(processNum_et.getText().toString().equals(""))
         {
-            Toast.makeText(InquirActivity.this, "يرجى إدخال رقم العملية", Toast.LENGTH_LONG).show();
+            Toast.makeText(FacilityConnectionActivity.this, "يرجى إدخال رقم العملية", Toast.LENGTH_LONG).show();
         }else{
             CustomerCashAsyncCall customerCashAsyncCall = new CustomerCashAsyncCall();
             customerCashAsyncCall.execute();
@@ -350,7 +338,7 @@ public class InquirActivity extends AppCompatActivity {
     public void InquirCusmNum(View view) {
         if(cusmNum_et.getText().toString().equals(""))
         {
-            Toast.makeText(InquirActivity.this, "يرجى إدخال رقم الاشتراك", Toast.LENGTH_LONG).show();
+            Toast.makeText(FacilityConnectionActivity.this, "يرجى إدخال رقم الاشتراك", Toast.LENGTH_LONG).show();
         }else{
             CustomerCashAsyncCall customerCashAsyncCall = new CustomerCashAsyncCall();
             customerCashAsyncCall.execute();
@@ -358,7 +346,7 @@ public class InquirActivity extends AppCompatActivity {
     }
 
     public void settings(View view) {
-        startActivity(new Intent(InquirActivity.this, Settings.class));
+        startActivity(new Intent(FacilityConnectionActivity.this, Settings.class));
     }
 
     private class CustomerCashAsyncCall extends AsyncTask<String, Void, Void> {
@@ -367,7 +355,7 @@ public class InquirActivity extends AppCompatActivity {
         String strWhereOracle = "";
 
         public CustomerCashAsyncCall() {
-            pd = new ProgressDialog(InquirActivity.this);
+            pd = new ProgressDialog(FacilityConnectionActivity.this);
             temp = cusmNum_et.getText().toString();
         }
         @RequiresApi(api = Build.VERSION_CODES.O)
@@ -384,7 +372,7 @@ public class InquirActivity extends AppCompatActivity {
                 strWhereOracle += " and a.MAIN_PID =" + processNum_et.getText().toString();
 
 
-            String data = "strWhereOracle:"+strWhereOracle+",strWhereSql: ,taskId:120,datatype:5";
+            String data = "strWhereOracle:"+strWhereOracle+",strWhereSql: ,taskId:84,datatype:5";
                 try {
                     KeyFactory kf = KeyFactory.getInstance("RSA");
                     KSoapClass soap = new KSoapClass();
@@ -432,7 +420,7 @@ public class InquirActivity extends AppCompatActivity {
         boolean flag;
         boolean updateRen;
         public WorkFlowByAdminAsyncCall() {
-            pd = new ProgressDialog(InquirActivity.this);
+            pd = new ProgressDialog(FacilityConnectionActivity.this);
 
         }
         @RequiresApi(api = Build.VERSION_CODES.O)
@@ -440,7 +428,7 @@ public class InquirActivity extends AppCompatActivity {
         protected Void doInBackground(String... params) {
             try {
                 KSoapClass soap = new KSoapClass();
-                String data = "dtpInspDate:"+inspDate.getText().toString()+",dtpPROVIDE_NOTES_DATE:"+noteDate.getText().toString()+",dtpPROCESS_NOTES_DATE:"+processNoteDate.getText().toString()
+                String data = "dtpSYSTEM_CONN_DATE :"+connectionDate.getText().toString()+",txtREN_M_PREAD_OP:"+issuedRead.getText().toString()+",txtREN_M_LREAD_OP:"+continuedRead.getText().toString()
                         +",uId:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID","")+",strUserName:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID","")
                         +",mPID:"+processNum_et.getText().toString()+",engNote:"+EngNoteDate.getText().toString()+",Id:";
                 try {
@@ -458,7 +446,7 @@ public class InquirActivity extends AppCompatActivity {
                 } catch (Exception e) {}
 
                 if(updateRen){
-                    flag = soap.WorkFlowAdvanceByAdmin(120, 1005249, Integer.parseInt(processNum_et.getText().toString()), "Root/ RenewableInsp",
+                    flag = soap.WorkFlowAdvanceByAdmin(84, 1005249, Integer.parseInt(processNum_et.getText().toString()), "Root/ RenewableData",
                             "1", "","","","","","","","","",
                             "","","","","");
                 }
@@ -474,11 +462,11 @@ public class InquirActivity extends AppCompatActivity {
             try{
                 if(flag){
                     pd.dismiss();
-                    final AlertDialog.Builder builder = new AlertDialog.Builder(InquirActivity.this);
-                    LayoutInflater inflater = InquirActivity.this.getLayoutInflater();
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(FacilityConnectionActivity.this);
+                    LayoutInflater inflater = FacilityConnectionActivity.this.getLayoutInflater();
                     builder.setView(inflater.inflate(R.layout.dialog_vacstate, null));
                     final AlertDialog dialog1 = builder.create();
-                    ((FrameLayout) dialog1.getWindow().getDecorView().findViewById(android.R.id.content)).setForeground(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                    ((FrameLayout) dialog1.getWindow().getDecorView().findViewById(android.R.id.content)).setForeground(new ColorDrawable(Color.TRANSPARENT));
                     WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
                     lp.copyFrom(dialog1.getWindow().getAttributes());
                     lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
@@ -498,11 +486,11 @@ public class InquirActivity extends AppCompatActivity {
                     });
                 }else {
                     pd.dismiss();
-                    final AlertDialog.Builder builder = new AlertDialog.Builder(InquirActivity.this);
-                    LayoutInflater inflater = InquirActivity.this.getLayoutInflater();
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(FacilityConnectionActivity.this);
+                    LayoutInflater inflater = FacilityConnectionActivity.this.getLayoutInflater();
                     builder.setView(inflater.inflate(R.layout.dialog_vacstate, null));
                     final AlertDialog dialog1 = builder.create();
-                    ((FrameLayout) dialog1.getWindow().getDecorView().findViewById(android.R.id.content)).setForeground(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                    ((FrameLayout) dialog1.getWindow().getDecorView().findViewById(android.R.id.content)).setForeground(new ColorDrawable(Color.TRANSPARENT));
                     WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
                     lp.copyFrom(dialog1.getWindow().getAttributes());
                     lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
@@ -539,131 +527,131 @@ public class InquirActivity extends AppCompatActivity {
     }
 
 
-    private class InsertFollowUpAsyncCall extends AsyncTask<String, Void, Void> {
-        SoapPrimitive flag;
-        boolean updateRen;
-        public InsertFollowUpAsyncCall() {
-            pd = new ProgressDialog(InquirActivity.this);
-
-        }
-        @RequiresApi(api = Build.VERSION_CODES.O)
-        @Override
-        protected Void doInBackground(String... params) {
-            try {
-                KSoapClass soap = new KSoapClass();
-                String data1 = "dtpInspDate:"+inspDate.getText().toString()+",dtpPROVIDE_NOTES_DATE:"+noteDate.getText().toString()+",dtpPROCESS_NOTES_DATE:"+processNoteDate.getText().toString()
-                        +",uId:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID","")+",strUserName:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID","")
-                        +",mPID:"+processNum_et.getText().toString()+",engNote:"+EngNoteDate.getText().toString()+",Id:";
-                try {
-                    KeyFactory kf = KeyFactory.getInstance("RSA");
-                    PKCS8EncodedKeySpec keySpecPKCS8 = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(soap.privateKey));
-                    PrivateKey privKey = kf.generatePrivate(keySpecPKCS8);
-                    X509EncodedKeySpec keySpecX509 = new X509EncodedKeySpec(Base64.getDecoder().decode(soap.publicKey));
-                    RSAPublicKey pubKey = (RSAPublicKey) kf.generatePublic(keySpecX509);
-
-                    RSA.setKey(pubKey, privKey);
-
-                    byte[] encodeData = RSA.encrypt(RSA.getPublicKey2(RSA.GetMap()), data1);
-                    String base64Encoded = Base64.getEncoder().encodeToString(encodeData);
-                    updateRen = soap.UpdateRenewable(base64Encoded);
-                } catch (Exception e) {}
-
-                if(updateRen){
-                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                    LocalDateTime now = LocalDateTime.now();
-
-                    String data2 = "uId:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID","")+",strUserName:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID","")
-                            +",mPID:"+processNum_et.getText().toString()+",txtFollowUps:تم الكشف على نظام الطاقة المتجددة"+dtf.format(now) +" ووجدت هناك ملاحظات ولم يتم استكمال اجراءات التشغيل";
-
-                    try {
-                        KeyFactory kf = KeyFactory.getInstance("RSA");
-                        PKCS8EncodedKeySpec keySpecPKCS8 = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(soap.privateKey));
-                        PrivateKey privKey = kf.generatePrivate(keySpecPKCS8);
-                        X509EncodedKeySpec keySpecX509 = new X509EncodedKeySpec(Base64.getDecoder().decode(soap.publicKey));
-                        RSAPublicKey pubKey = (RSAPublicKey) kf.generatePublic(keySpecX509);
-
-                        RSA.setKey(pubKey, privKey);
-
-                        byte[] encodeData = RSA.encrypt(RSA.getPublicKey2(RSA.GetMap()), data2);
-                        String base64Encoded = Base64.getEncoder().encodeToString(encodeData);
-                        flag = soap.InsertFollowUp(base64Encoded);
-                    } catch (Exception e) {}
-
-                }
-
-            } catch (Exception e) {}
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            pd.dismiss();
-            try{
-                if(flag.toString().equals("true")){
-                    pd.dismiss();
-                    final AlertDialog.Builder builder = new AlertDialog.Builder(InquirActivity.this);
-                    LayoutInflater inflater = InquirActivity.this.getLayoutInflater();
-                    builder.setView(inflater.inflate(R.layout.dialog_vacstate, null));
-                    final AlertDialog dialog1 = builder.create();
-                    ((FrameLayout) dialog1.getWindow().getDecorView().findViewById(android.R.id.content)).setForeground(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-                    WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-                    lp.copyFrom(dialog1.getWindow().getAttributes());
-                    lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
-                    lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-                    dialog1.show();
-                    dialog1.getWindow().setAttributes(lp);
-                    final Button exit=dialog1.findViewById(R.id.btn2);
-                    final CircleImageView im=dialog1.findViewById(R.id.im);
-                    final TextView textView3=dialog1.findViewById(R.id.textView3);
-                    textView3.setText("تمت اضافة المتابعة بنجاح");
-
-                    exit.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            dialog1.dismiss();
-                        }
-                    });
-                }else {
-                    pd.dismiss();
-                    final AlertDialog.Builder builder = new AlertDialog.Builder(InquirActivity.this);
-                    LayoutInflater inflater = InquirActivity.this.getLayoutInflater();
-                    builder.setView(inflater.inflate(R.layout.dialog_vacstate, null));
-                    final AlertDialog dialog1 = builder.create();
-                    ((FrameLayout) dialog1.getWindow().getDecorView().findViewById(android.R.id.content)).setForeground(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-                    WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-                    lp.copyFrom(dialog1.getWindow().getAttributes());
-                    lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
-                    lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-                    dialog1.show();
-                    dialog1.getWindow().setAttributes(lp);
-                    final Button exit=dialog1.findViewById(R.id.btn2);
-                    final CircleImageView im=dialog1.findViewById(R.id.im);
-                    final TextView textView3=dialog1.findViewById(R.id.textView3);
-                    textView3.setText("لم تتم عملية الاضافة");
-
-                    exit.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            dialog1.dismiss();
-                        }
-                    });
-                }
-            }catch(Exception e){}
-        }
-
-        @Override
-        protected void onPreExecute() {
-
-            pd.setMessage("يرجى الأنتظار...");
-            pd.setCancelable(false);
-            pd.show();
-        }
-
-        @Override
-        protected void onProgressUpdate(Void... values) {}
-
-    }
+//    private class InsertFollowUpAsyncCall extends AsyncTask<String, Void, Void> {
+//        SoapPrimitive flag;
+//        boolean updateRen;
+//        public InsertFollowUpAsyncCall() {
+//            pd = new ProgressDialog(FacilityConnectionActivity.this);
+//
+//        }
+//        @RequiresApi(api = Build.VERSION_CODES.O)
+//        @Override
+//        protected Void doInBackground(String... params) {
+//            try {
+//                KSoapClass soap = new KSoapClass();
+//                String data1 = "dtpInspDate:"+inspDate.getText().toString()+",dtpPROVIDE_NOTES_DATE:"+noteDate.getText().toString()+",dtpPROCESS_NOTES_DATE:"+processNoteDate.getText().toString()
+//                        +",uId:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID","")+",strUserName:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID","")
+//                        +",mPID:"+processNum_et.getText().toString()+",engNote:"+EngNoteDate.getText().toString()+",Id:";
+//                try {
+//                    KeyFactory kf = KeyFactory.getInstance("RSA");
+//                    PKCS8EncodedKeySpec keySpecPKCS8 = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(soap.privateKey));
+//                    PrivateKey privKey = kf.generatePrivate(keySpecPKCS8);
+//                    X509EncodedKeySpec keySpecX509 = new X509EncodedKeySpec(Base64.getDecoder().decode(soap.publicKey));
+//                    RSAPublicKey pubKey = (RSAPublicKey) kf.generatePublic(keySpecX509);
+//
+//                    RSA.setKey(pubKey, privKey);
+//
+//                    byte[] encodeData = RSA.encrypt(RSA.getPublicKey2(RSA.GetMap()), data1);
+//                    String base64Encoded = Base64.getEncoder().encodeToString(encodeData);
+//                    updateRen = soap.UpdateRenewable(base64Encoded);
+//                } catch (Exception e) {}
+//
+//                if(updateRen){
+//                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+//                    LocalDateTime now = LocalDateTime.now();
+//
+//                    String data2 = "uId:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID","")+",strUserName:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID","")
+//                            +",mPID:"+processNum_et.getText().toString()+",txtFollowUps:تم الكشف على نظام الطاقة المتجددة"+dtf.format(now) +" ووجدت هناك ملاحظات ولم يتم استكمال اجراءات التشغيل";
+//
+//                    try {
+//                        KeyFactory kf = KeyFactory.getInstance("RSA");
+//                        PKCS8EncodedKeySpec keySpecPKCS8 = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(soap.privateKey));
+//                        PrivateKey privKey = kf.generatePrivate(keySpecPKCS8);
+//                        X509EncodedKeySpec keySpecX509 = new X509EncodedKeySpec(Base64.getDecoder().decode(soap.publicKey));
+//                        RSAPublicKey pubKey = (RSAPublicKey) kf.generatePublic(keySpecX509);
+//
+//                        RSA.setKey(pubKey, privKey);
+//
+//                        byte[] encodeData = RSA.encrypt(RSA.getPublicKey2(RSA.GetMap()), data2);
+//                        String base64Encoded = Base64.getEncoder().encodeToString(encodeData);
+//                        flag = soap.InsertFollowUp(base64Encoded);
+//                    } catch (Exception e) {}
+//
+//                }
+//
+//            } catch (Exception e) {}
+//
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void result) {
+//            pd.dismiss();
+//            try{
+//                if(flag.toString().equals("true")){
+//                    pd.dismiss();
+//                    final AlertDialog.Builder builder = new AlertDialog.Builder(FacilityConnectionActivity.this);
+//                    LayoutInflater inflater = FacilityConnectionActivity.this.getLayoutInflater();
+//                    builder.setView(inflater.inflate(R.layout.dialog_vacstate, null));
+//                    final AlertDialog dialog1 = builder.create();
+//                    ((FrameLayout) dialog1.getWindow().getDecorView().findViewById(android.R.id.content)).setForeground(new ColorDrawable(Color.TRANSPARENT));
+//                    WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+//                    lp.copyFrom(dialog1.getWindow().getAttributes());
+//                    lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+//                    lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+//                    dialog1.show();
+//                    dialog1.getWindow().setAttributes(lp);
+//                    final Button exit=dialog1.findViewById(R.id.btn2);
+//                    final CircleImageView im=dialog1.findViewById(R.id.im);
+//                    final TextView textView3=dialog1.findViewById(R.id.textView3);
+//                    textView3.setText("تمت اضافة المتابعة بنجاح");
+//
+//                    exit.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View v) {
+//                            dialog1.dismiss();
+//                        }
+//                    });
+//                }else {
+//                    pd.dismiss();
+//                    final AlertDialog.Builder builder = new AlertDialog.Builder(FacilityConnectionActivity.this);
+//                    LayoutInflater inflater = FacilityConnectionActivity.this.getLayoutInflater();
+//                    builder.setView(inflater.inflate(R.layout.dialog_vacstate, null));
+//                    final AlertDialog dialog1 = builder.create();
+//                    ((FrameLayout) dialog1.getWindow().getDecorView().findViewById(android.R.id.content)).setForeground(new ColorDrawable(Color.TRANSPARENT));
+//                    WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+//                    lp.copyFrom(dialog1.getWindow().getAttributes());
+//                    lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+//                    lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+//                    dialog1.show();
+//                    dialog1.getWindow().setAttributes(lp);
+//                    final Button exit=dialog1.findViewById(R.id.btn2);
+//                    final CircleImageView im=dialog1.findViewById(R.id.im);
+//                    final TextView textView3=dialog1.findViewById(R.id.textView3);
+//                    textView3.setText("لم تتم عملية الاضافة");
+//
+//                    exit.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View v) {
+//                            dialog1.dismiss();
+//                        }
+//                    });
+//                }
+//            }catch(Exception e){}
+//        }
+//
+//        @Override
+//        protected void onPreExecute() {
+//
+//            pd.setMessage("يرجى الأنتظار...");
+//            pd.setCancelable(false);
+//            pd.show();
+//        }
+//
+//        @Override
+//        protected void onProgressUpdate(Void... values) {}
+//
+//    }
 
 
     private void GetReadableData1(SoapObject res){
