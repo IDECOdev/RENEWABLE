@@ -59,10 +59,10 @@ public class KSoapClass {
         catch (Exception e) { return null; }
     }
 
-    public SoapObject GET_INSPECTION_PROCESS(String data){
+    public SoapObject GetRenewable_Canceled(String data){
 
         String NameSpace = "http://tempuri.org/";
-        String MethodName = "GET_INSPECTION_PROCESS";
+        String MethodName = "GetRenewable_Canceled";
         String InterFace = "IBillingWcfsrv/";
         String SoapAction = NameSpace+InterFace+MethodName;
         SoapObject request = new SoapObject(NameSpace, MethodName);
@@ -82,7 +82,7 @@ public class KSoapClass {
         catch (Exception e) { return null; }
     }
 
-    public SoapPrimitive SaveAndSendRenewableProcessData(String data){
+    public boolean UpdateRenewable(String data){
 
         String NameSpace = "http://tempuri.org/";
         String MethodName = "SaveAndSendRenewableProcessData";
@@ -101,8 +101,64 @@ public class KSoapClass {
         try {
             androidHttpTransport.call(SoapAction, envelope);
             SoapPrimitive response = (SoapPrimitive) envelope.getResponse();
-            return response; }
-        catch (Exception e) { return null; }
+           if(response.equals("true")){
+               return true;
+           }else {
+               return false;
+           }
+        }
+        catch (Exception e) { return false; }
+    }
+
+    public boolean WorkFlowAdvanceByAdmin(int TID, int ModelID, int PID, String XML1,
+                                          String XMLData1, String XML2, String XMLData2,
+                                          String XML3, String XMLData3, String XML4, String XMLData4,
+                                          String XML5, String XMLData5, String XML6, String XMLData6,
+                                          String XML7, String XMLData7, String XML8, String XMLData8)
+    {
+        String NameSpace = "http://tempuri.org/";
+        String MethodName = "WorkFlowAdvanceByAdmin";
+        String SoapAction = "http://tempuri.org/IBillingWcfsrv/WorkFlowAdvanceByAdmin";
+
+        SoapObject request = new SoapObject(NameSpace, MethodName);
+
+        request.addProperty("TID", TID);
+        request.addProperty("ModelID", ModelID);
+        request.addProperty("PID", PID);
+        request.addProperty("XML1", XML1);
+        request.addProperty("XMLData1", XMLData1);
+        request.addProperty("XML2", XML2);
+        request.addProperty("XMLData2", XMLData2);
+        request.addProperty("XML3", XML3);
+        request.addProperty("XMLData3", XMLData3);
+        request.addProperty("XML4", XML4);
+        request.addProperty("XMLData4", XMLData4);
+        request.addProperty("XML5", XML5);
+        request.addProperty("XMLData5", XMLData5);
+        request.addProperty("XML6", XML6);
+        request.addProperty("XMLData6", XMLData6);
+        request.addProperty("XML7", XML7);
+        request.addProperty("XMLData7", XMLData7);
+        request.addProperty("XML8", XML8);
+        request.addProperty("XMLData8", XMLData8);
+
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.dotNet = true;
+        envelope.setOutputSoapObject(request);
+        HttpTransportSE androidHttpTransport = new HttpTransportSE(Url);
+
+        androidHttpTransport.debug = true;
+
+        try
+        {
+            androidHttpTransport.call(SoapAction, envelope);
+            return true;
+        }
+        catch (Exception exception)
+        {
+            return false;
+        }
+
     }
 
     public SoapPrimitive InsertFollowUp(String data){
