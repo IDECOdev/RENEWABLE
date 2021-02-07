@@ -637,7 +637,6 @@ public class InquirActivity extends AppCompatActivity {
                     });
                 }
             }catch(Exception e){}
-
         }
 
         @Override
