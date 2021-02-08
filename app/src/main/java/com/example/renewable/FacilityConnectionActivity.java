@@ -594,7 +594,6 @@ public class FacilityConnectionActivity extends AppCompatActivity {
 
     }
 
-
     }
 
 
