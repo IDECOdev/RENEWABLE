@@ -417,8 +417,8 @@ public class FacilityConnectionActivity extends AppCompatActivity {
     }
 
     private class WorkFlowByAdminAsyncCall extends AsyncTask<String, Void, Void> {
-        boolean flag;
-        boolean updateRen;
+        boolean flag = false;
+        boolean updateRen1 = false,updateRen2 = false;
         public WorkFlowByAdminAsyncCall() {
             pd = new ProgressDialog(FacilityConnectionActivity.this);
 
@@ -428,9 +428,12 @@ public class FacilityConnectionActivity extends AppCompatActivity {
         protected Void doInBackground(String... params) {
             try {
                 KSoapClass soap = new KSoapClass();
-                String data = "dtpSYSTEM_CONN_DATE :"+connectionDate.getText().toString()+",txtREN_M_PREAD_OP:"+issuedRead.getText().toString()+",txtREN_M_LREAD_OP:"+continuedRead.getText().toString()
-                        +",uId:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID","")+",strUserName:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID","")
-                        +",mPID:"+processNum_et.getText().toString()+",engNote:"+EngNoteDate.getText().toString()+",Id:";
+
+
+                String data1 = "Id: ,: ,engNote:" + EngNoteDate.getText().toString() +",:0,txtREN_M_PREAD_OP:"+issuedRead.getText().toString()+",txtREN_M_LREAD_OP:"+continuedRead.getText().toString()+",:0,:0,:0,:0,: ,: ,:0,uId:" + getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID", "")
+                        + ",strUserName:" + getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID", "")
+                        + ",:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,: ,: ,: ,: ,: ,dtpSYSTEM_CONN_DATE:"+connectionDate.getText().toString()+",:0,:2";
+
                 try {
                     KeyFactory kf = KeyFactory.getInstance("RSA");
                     PKCS8EncodedKeySpec keySpecPKCS8 = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(soap.privateKey));
@@ -440,12 +443,33 @@ public class FacilityConnectionActivity extends AppCompatActivity {
 
                     RSA.setKey(pubKey, privKey);
 
-                    byte[] encodeData = RSA.encrypt(RSA.getPublicKey2(RSA.GetMap()), data);
+                    byte[] encodeData = RSA.encrypt(RSA.getPublicKey2(RSA.GetMap()), data1);
                     String base64Encoded = Base64.getEncoder().encodeToString(encodeData);
-                    updateRen = soap.UpdateRenewable(base64Encoded);
+                    updateRen1 = soap.UpdateTransRenewableNew(base64Encoded);
                 } catch (Exception e) {}
 
-                if(updateRen){
+                 if (updateRen1) {
+
+                     String data2 = "mPID:" + processNum_et.getText().toString() + ",:0,: ,:0,:0,:0,:0,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,:0,:0,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,dtpSYSTEM_CONN_DATE:"+connectionDate.getText().toString()
+                             + ",: ,: ,: ,: ,: ,:7,: ";
+
+                     try {
+                         KeyFactory kf = KeyFactory.getInstance("RSA");
+                         PKCS8EncodedKeySpec keySpecPKCS8 = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(soap.privateKey));
+                         PrivateKey privKey = kf.generatePrivate(keySpecPKCS8);
+                         X509EncodedKeySpec keySpecX509 = new X509EncodedKeySpec(Base64.getDecoder().decode(soap.publicKey));
+                         RSAPublicKey pubKey = (RSAPublicKey) kf.generatePublic(keySpecX509);
+
+                         RSA.setKey(pubKey, privKey);
+
+                         byte[] encodeData = RSA.encrypt(RSA.getPublicKey2(RSA.GetMap()), data2);
+                         String base64Encoded = Base64.getEncoder().encodeToString(encodeData);
+                         updateRen2 = soap.UPDATE_RenewableData(base64Encoded);
+                     } catch (Exception e) {
+                     }
+                 }
+
+                if(updateRen2){
                     flag = soap.WorkFlowAdvanceByAdmin(84, 1005249, Integer.parseInt(processNum_et.getText().toString()), "Root/ RenewableData",
                             "1", "","","","","","","","","",
                             "","","","","");

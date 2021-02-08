@@ -82,10 +82,10 @@ public class KSoapClass {
         catch (Exception e) { return null; }
     }
 
-    public boolean UpdateRenewable(String data){
+    public boolean UpdateTransRenewableNew(String data){
 
         String NameSpace = "http://tempuri.org/";
-        String MethodName = "SaveAndSendRenewableProcessData";
+        String MethodName = "UpdateTransRenewableNew";
         String InterFace = "IBillingWcfsrv/";
         String SoapAction = NameSpace+InterFace+MethodName;
         SoapObject request = new SoapObject(NameSpace, MethodName);
@@ -106,6 +106,34 @@ public class KSoapClass {
            }else {
                return false;
            }
+        }
+        catch (Exception e) { return false; }
+    }
+
+    public boolean UPDATE_RenewableData(String data){
+
+        String NameSpace = "http://tempuri.org/";
+        String MethodName = "UPDATE_RenewableData";
+        String InterFace = "IBillingWcfsrv/";
+        String SoapAction = NameSpace+InterFace+MethodName;
+        SoapObject request = new SoapObject(NameSpace, MethodName);
+
+        request.addProperty("data", data);
+
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.dotNet = true;
+        envelope.setOutputSoapObject(request);
+        HttpTransportSE androidHttpTransport = new HttpTransportSE(Url);
+        androidHttpTransport.debug = true;
+
+        try {
+            androidHttpTransport.call(SoapAction, envelope);
+            SoapPrimitive response = (SoapPrimitive) envelope.getResponse();
+            if(response.equals("true")){
+                return true;
+            }else {
+                return false;
+            }
         }
         catch (Exception e) { return false; }
     }

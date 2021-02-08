@@ -429,8 +429,8 @@ public class InquirActivity extends AppCompatActivity {
     }
 
     private class WorkFlowByAdminAsyncCall extends AsyncTask<String, Void, Void> {
-        boolean flag;
-        boolean updateRen;
+        boolean flag = false;
+        boolean updateRen1 = false,updateRen2 = false;
         public WorkFlowByAdminAsyncCall() {
             pd = new ProgressDialog(InquirActivity.this);
 
@@ -440,9 +440,11 @@ public class InquirActivity extends AppCompatActivity {
         protected Void doInBackground(String... params) {
             try {
                 KSoapClass soap = new KSoapClass();
-                String data = "dtpInspDate:"+inspDate.getText().toString()+",dtpPROVIDE_NOTES_DATE:"+noteDate.getText().toString()+",dtpPROCESS_NOTES_DATE:"+processNoteDate.getText().toString()
-                        +",uId:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID","")+",strUserName:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID","")
-                        +",mPID:"+processNum_et.getText().toString()+",engNote:"+EngNoteDate.getText().toString()+",Id:";
+                String data1 = "Id: ,: ,engNote:" + EngNoteDate.getText().toString() + ",:0,:0,:0,:0,:0,:0,:0,: ,: ,:0,uId:" + getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID", "")
+                        + ",strUserName:" + getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID", "")
+                        + ",:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,dtpPROVIDE_NOTES_DATE:" + noteDate.getText().toString() + ",dtpInspDate:" + inspDate.getText().toString() + ",: ,: ,: ,dtpPROCESS_NOTES_DATE:" + processNoteDate.getText().toString() +
+                        ",:0,:12";
+
                 try {
                     KeyFactory kf = KeyFactory.getInstance("RSA");
                     PKCS8EncodedKeySpec keySpecPKCS8 = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(soap.privateKey));
@@ -452,22 +454,42 @@ public class InquirActivity extends AppCompatActivity {
 
                     RSA.setKey(pubKey, privKey);
 
-                    byte[] encodeData = RSA.encrypt(RSA.getPublicKey2(RSA.GetMap()), data);
+                    byte[] encodeData = RSA.encrypt(RSA.getPublicKey2(RSA.GetMap()), data1);
                     String base64Encoded = Base64.getEncoder().encodeToString(encodeData);
-                    updateRen = soap.UpdateRenewable(base64Encoded);
-                } catch (Exception e) {}
+                    updateRen1 = soap.UpdateTransRenewableNew(base64Encoded);
 
-                if(updateRen){
-                    flag = soap.WorkFlowAdvanceByAdmin(120, 1005249, Integer.parseInt(processNum_et.getText().toString()), "Root/ RenewableInsp",
-                            "1", "","","","","","","","","",
-                            "","","","","");
+                } catch (Exception e) {
+                }
+
+                if (updateRen1) {
+
+                    String data2 = "mPID:" + processNum_et.getText().toString() + ",:0,: ,:0,:0,:0,:0,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,:0,:0,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,dtpInspDate:" + inspDate.getText().toString()
+                            + ",: ,: ,: ,: ,: ,: ,:9,: ";
+                    try {
+                        KeyFactory kf = KeyFactory.getInstance("RSA");
+                        PKCS8EncodedKeySpec keySpecPKCS8 = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(soap.privateKey));
+                        PrivateKey privKey = kf.generatePrivate(keySpecPKCS8);
+                        X509EncodedKeySpec keySpecX509 = new X509EncodedKeySpec(Base64.getDecoder().decode(soap.publicKey));
+                        RSAPublicKey pubKey = (RSAPublicKey) kf.generatePublic(keySpecX509);
+
+                        RSA.setKey(pubKey, privKey);
+
+                        byte[] encodeData = RSA.encrypt(RSA.getPublicKey2(RSA.GetMap()), data2);
+                        String base64Encoded = Base64.getEncoder().encodeToString(encodeData);
+                        updateRen2 = soap.UPDATE_RenewableData(base64Encoded);
+                    } catch (Exception e) {}
+
+                    if (updateRen2) {
+                        flag = soap.WorkFlowAdvanceByAdmin(120, 1005249, Integer.parseInt(processNum_et.getText().toString()), "Root/ RenewableInsp",
+                                "1", "", "", "", "", "", "", "", "", "",
+                                "", "", "", "", "");
+                    }
                 }
 
             } catch (Exception e) {}
 
             return null;
         }
-
         @Override
         protected void onPostExecute(Void result) {
             pd.dismiss();
@@ -541,7 +563,7 @@ public class InquirActivity extends AppCompatActivity {
 
     private class InsertFollowUpAsyncCall extends AsyncTask<String, Void, Void> {
         SoapPrimitive flag;
-        boolean updateRen;
+        boolean updateRen1 = false,updateRen2 = false;
         public InsertFollowUpAsyncCall() {
             pd = new ProgressDialog(InquirActivity.this);
 
@@ -551,9 +573,11 @@ public class InquirActivity extends AppCompatActivity {
         protected Void doInBackground(String... params) {
             try {
                 KSoapClass soap = new KSoapClass();
-                String data1 = "dtpInspDate:"+inspDate.getText().toString()+",dtpPROVIDE_NOTES_DATE:"+noteDate.getText().toString()+",dtpPROCESS_NOTES_DATE:"+processNoteDate.getText().toString()
-                        +",uId:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID","")+",strUserName:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID","")
-                        +",mPID:"+processNum_et.getText().toString()+",engNote:"+EngNoteDate.getText().toString()+",Id:";
+                String data1 = "Id: ,: ,engNote:" + EngNoteDate.getText().toString() + ",:0,:0,:0,:0,:0,:0,:0,: ,: ,:0,uId:" + getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID", "")
+                        + ",strUserName:" + getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID", "")
+                        + ",:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,dtpPROVIDE_NOTES_DATE:" + noteDate.getText().toString() + ",dtpInspDate:" + inspDate.getText().toString() + ",: ,: ,: ,dtpPROCESS_NOTES_DATE:" + processNoteDate.getText().toString() +
+                        ",:0,:12";
+
                 try {
                     KeyFactory kf = KeyFactory.getInstance("RSA");
                     PKCS8EncodedKeySpec keySpecPKCS8 = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(soap.privateKey));
@@ -565,16 +589,14 @@ public class InquirActivity extends AppCompatActivity {
 
                     byte[] encodeData = RSA.encrypt(RSA.getPublicKey2(RSA.GetMap()), data1);
                     String base64Encoded = Base64.getEncoder().encodeToString(encodeData);
-                    updateRen = soap.UpdateRenewable(base64Encoded);
+                    updateRen1 = soap.UpdateTransRenewableNew(base64Encoded);
+
                 } catch (Exception e) {}
 
-                if(updateRen){
-                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                    LocalDateTime now = LocalDateTime.now();
+                if (updateRen1) {
 
-                    String data2 = "uId:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID","")+",strUserName:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID","")
-                            +",mPID:"+processNum_et.getText().toString()+",txtFollowUps:تم الكشف على نظام الطاقة المتجددة"+dtf.format(now) +" ووجدت هناك ملاحظات ولم يتم استكمال اجراءات التشغيل";
-
+                    String data2 = "mPID:" + processNum_et.getText().toString() + ",:0,: ,:0,:0,:0,:0,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,:0,:0,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,dtpInspDate:" + inspDate.getText().toString()
+                            + ",: ,: ,: ,: ,: ,: ,:9,: ";
                     try {
                         KeyFactory kf = KeyFactory.getInstance("RSA");
                         PKCS8EncodedKeySpec keySpecPKCS8 = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(soap.privateKey));
@@ -586,10 +608,32 @@ public class InquirActivity extends AppCompatActivity {
 
                         byte[] encodeData = RSA.encrypt(RSA.getPublicKey2(RSA.GetMap()), data2);
                         String base64Encoded = Base64.getEncoder().encodeToString(encodeData);
-                        flag = soap.InsertFollowUp(base64Encoded);
+                        updateRen2 = soap.UPDATE_RenewableData(base64Encoded);
                     } catch (Exception e) {}
-
                 }
+
+                    if(updateRen2) {
+                        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                        LocalDateTime now = LocalDateTime.now();
+
+                        String data3 = "uId:" + getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID", "") + ",strUserName:" + getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID", "")
+                                + ",mPID:" + processNum_et.getText().toString() + ",txtFollowUps:تم الكشف على نظام الطاقة المتجددة" + dtf.format(now) + " ووجدت هناك ملاحظات ولم يتم استكمال اجراءات التشغيل";
+
+                        try {
+                            KeyFactory kf = KeyFactory.getInstance("RSA");
+                            PKCS8EncodedKeySpec keySpecPKCS8 = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(soap.privateKey));
+                            PrivateKey privKey = kf.generatePrivate(keySpecPKCS8);
+                            X509EncodedKeySpec keySpecX509 = new X509EncodedKeySpec(Base64.getDecoder().decode(soap.publicKey));
+                            RSAPublicKey pubKey = (RSAPublicKey) kf.generatePublic(keySpecX509);
+
+                            RSA.setKey(pubKey, privKey);
+
+                            byte[] encodeData = RSA.encrypt(RSA.getPublicKey2(RSA.GetMap()), data3);
+                            String base64Encoded = Base64.getEncoder().encodeToString(encodeData);
+                            flag = soap.InsertFollowUp(base64Encoded);
+                        } catch (Exception e) {
+                        }
+                    }
 
             } catch (Exception e) {}
 
