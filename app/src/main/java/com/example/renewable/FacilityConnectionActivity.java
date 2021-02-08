@@ -187,16 +187,13 @@ public class FacilityConnectionActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(connectionDate.getText().toString().equals("")){
-                    Toast.makeText(FacilityConnectionActivity.this, "ادخل تاريخ ربط المنشأة", Toast.LENGTH_SHORT).show();
-                    return;
+                    connectionDate.setText("0");
                 }
                 if(issuedRead.getText().toString().equals("")){
-                    Toast.makeText(FacilityConnectionActivity.this, "ادخل القراءة المصدرة", Toast.LENGTH_SHORT).show();
-                    return;
+                    issuedRead.setText("0");
                 }
                 if(continuedRead.getText().toString().equals("")){
-                    Toast.makeText(FacilityConnectionActivity.this, "ادخل القراءة المستجرة", Toast.LENGTH_SHORT).show();
-                    return;
+                    continuedRead.setText("0");
                 }
 
                 WorkFlowByAdminAsyncCall workFlowByAdminAsyncCall = new WorkFlowByAdminAsyncCall();
@@ -205,21 +202,6 @@ public class FacilityConnectionActivity extends AppCompatActivity {
             }
         });
 
-//        finishbtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if(noteDate.getText().toString().equals("")){
-//                    Toast.makeText(FacilityConnectionActivity.this, "ادخل تاريخ تزويد الجهة بالملاحظات", Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
-//                if(processNoteDate.getText().toString().equals("")){
-//                    Toast.makeText(FacilityConnectionActivity.this, "ادخل تاريخ معالجة الملاحظات", Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
-//                InsertFollowUpAsyncCall insertFollowUpAsyncCall = new InsertFollowUpAsyncCall();
-//                insertFollowUpAsyncCall.execute();
-//            }
-//        });
 
         connectionDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -364,13 +346,10 @@ public class FacilityConnectionActivity extends AppCompatActivity {
 
             if (!cusmNum_et.getText().toString().substring(6).equals("") )
                 strWhereOracle += " and \"ca_cusm_num\"=" + cusmNum_et.getText().toString().substring(6);
-//            if (txtSupSecriberName.Text.Trim() != "")
-//            strWhereSql += " and CA_CUSM_NAME like ''%" + "" + "%''";
             if (!cusmNum_et.getText().toString().substring(0,3).equals("") && !cusmNum_et.getText().toString().substring(0,3).equals("-1"))
                 strWhereOracle += " and city_id =" + cusmNum_et.getText().toString().substring(0,3);
             if (!processNum_et.getText().toString().equals(""))
                 strWhereOracle += " and a.MAIN_PID =" + processNum_et.getText().toString();
-
 
             String data = "strWhereOracle:"+strWhereOracle+",strWhereSql: ,taskId:84,datatype:5";
                 try {
@@ -428,7 +407,6 @@ public class FacilityConnectionActivity extends AppCompatActivity {
         protected Void doInBackground(String... params) {
             try {
                 KSoapClass soap = new KSoapClass();
-
 
                 String data1 = "Id: ,: ,engNote:" + EngNoteDate.getText().toString() +",:0,txtREN_M_PREAD_OP:"+issuedRead.getText().toString()+",txtREN_M_LREAD_OP:"+continuedRead.getText().toString()+",:0,:0,:0,:0,: ,: ,:0,uId:" + getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID", "")
                         + ",strUserName:" + getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID", "")
@@ -549,133 +527,6 @@ public class FacilityConnectionActivity extends AppCompatActivity {
         protected void onProgressUpdate(Void... values) {}
 
     }
-
-
-//    private class InsertFollowUpAsyncCall extends AsyncTask<String, Void, Void> {
-//        SoapPrimitive flag;
-//        boolean updateRen;
-//        public InsertFollowUpAsyncCall() {
-//            pd = new ProgressDialog(FacilityConnectionActivity.this);
-//
-//        }
-//        @RequiresApi(api = Build.VERSION_CODES.O)
-//        @Override
-//        protected Void doInBackground(String... params) {
-//            try {
-//                KSoapClass soap = new KSoapClass();
-//                String data1 = "dtpInspDate:"+inspDate.getText().toString()+",dtpPROVIDE_NOTES_DATE:"+noteDate.getText().toString()+",dtpPROCESS_NOTES_DATE:"+processNoteDate.getText().toString()
-//                        +",uId:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID","")+",strUserName:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID","")
-//                        +",mPID:"+processNum_et.getText().toString()+",engNote:"+EngNoteDate.getText().toString()+",Id:";
-//                try {
-//                    KeyFactory kf = KeyFactory.getInstance("RSA");
-//                    PKCS8EncodedKeySpec keySpecPKCS8 = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(soap.privateKey));
-//                    PrivateKey privKey = kf.generatePrivate(keySpecPKCS8);
-//                    X509EncodedKeySpec keySpecX509 = new X509EncodedKeySpec(Base64.getDecoder().decode(soap.publicKey));
-//                    RSAPublicKey pubKey = (RSAPublicKey) kf.generatePublic(keySpecX509);
-//
-//                    RSA.setKey(pubKey, privKey);
-//
-//                    byte[] encodeData = RSA.encrypt(RSA.getPublicKey2(RSA.GetMap()), data1);
-//                    String base64Encoded = Base64.getEncoder().encodeToString(encodeData);
-//                    updateRen = soap.UpdateRenewable(base64Encoded);
-//                } catch (Exception e) {}
-//
-//                if(updateRen){
-//                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-//                    LocalDateTime now = LocalDateTime.now();
-//
-//                    String data2 = "uId:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID","")+",strUserName:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID","")
-//                            +",mPID:"+processNum_et.getText().toString()+",txtFollowUps:تم الكشف على نظام الطاقة المتجددة"+dtf.format(now) +" ووجدت هناك ملاحظات ولم يتم استكمال اجراءات التشغيل";
-//
-//                    try {
-//                        KeyFactory kf = KeyFactory.getInstance("RSA");
-//                        PKCS8EncodedKeySpec keySpecPKCS8 = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(soap.privateKey));
-//                        PrivateKey privKey = kf.generatePrivate(keySpecPKCS8);
-//                        X509EncodedKeySpec keySpecX509 = new X509EncodedKeySpec(Base64.getDecoder().decode(soap.publicKey));
-//                        RSAPublicKey pubKey = (RSAPublicKey) kf.generatePublic(keySpecX509);
-//
-//                        RSA.setKey(pubKey, privKey);
-//
-//                        byte[] encodeData = RSA.encrypt(RSA.getPublicKey2(RSA.GetMap()), data2);
-//                        String base64Encoded = Base64.getEncoder().encodeToString(encodeData);
-//                        flag = soap.InsertFollowUp(base64Encoded);
-//                    } catch (Exception e) {}
-//
-//                }
-//
-//            } catch (Exception e) {}
-//
-//            return null;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(Void result) {
-//            pd.dismiss();
-//            try{
-//                if(flag.toString().equals("true")){
-//                    pd.dismiss();
-//                    final AlertDialog.Builder builder = new AlertDialog.Builder(FacilityConnectionActivity.this);
-//                    LayoutInflater inflater = FacilityConnectionActivity.this.getLayoutInflater();
-//                    builder.setView(inflater.inflate(R.layout.dialog_vacstate, null));
-//                    final AlertDialog dialog1 = builder.create();
-//                    ((FrameLayout) dialog1.getWindow().getDecorView().findViewById(android.R.id.content)).setForeground(new ColorDrawable(Color.TRANSPARENT));
-//                    WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-//                    lp.copyFrom(dialog1.getWindow().getAttributes());
-//                    lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
-//                    lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-//                    dialog1.show();
-//                    dialog1.getWindow().setAttributes(lp);
-//                    final Button exit=dialog1.findViewById(R.id.btn2);
-//                    final CircleImageView im=dialog1.findViewById(R.id.im);
-//                    final TextView textView3=dialog1.findViewById(R.id.textView3);
-//                    textView3.setText("تمت اضافة المتابعة بنجاح");
-//
-//                    exit.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View v) {
-//                            dialog1.dismiss();
-//                        }
-//                    });
-//                }else {
-//                    pd.dismiss();
-//                    final AlertDialog.Builder builder = new AlertDialog.Builder(FacilityConnectionActivity.this);
-//                    LayoutInflater inflater = FacilityConnectionActivity.this.getLayoutInflater();
-//                    builder.setView(inflater.inflate(R.layout.dialog_vacstate, null));
-//                    final AlertDialog dialog1 = builder.create();
-//                    ((FrameLayout) dialog1.getWindow().getDecorView().findViewById(android.R.id.content)).setForeground(new ColorDrawable(Color.TRANSPARENT));
-//                    WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-//                    lp.copyFrom(dialog1.getWindow().getAttributes());
-//                    lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
-//                    lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-//                    dialog1.show();
-//                    dialog1.getWindow().setAttributes(lp);
-//                    final Button exit=dialog1.findViewById(R.id.btn2);
-//                    final CircleImageView im=dialog1.findViewById(R.id.im);
-//                    final TextView textView3=dialog1.findViewById(R.id.textView3);
-//                    textView3.setText("لم تتم عملية الاضافة");
-//
-//                    exit.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View v) {
-//                            dialog1.dismiss();
-//                        }
-//                    });
-//                }
-//            }catch(Exception e){}
-//        }
-//
-//        @Override
-//        protected void onPreExecute() {
-//
-//            pd.setMessage("يرجى الأنتظار...");
-//            pd.setCancelable(false);
-//            pd.show();
-//        }
-//
-//        @Override
-//        protected void onProgressUpdate(Void... values) {}
-//
-//    }
 
 
     private void GetReadableData1(SoapObject res){
