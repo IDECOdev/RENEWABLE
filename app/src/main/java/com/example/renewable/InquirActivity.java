@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -39,8 +40,11 @@ import com.budiyev.android.codescanner.CodeScannerView;
 import com.budiyev.android.codescanner.DecodeCallback;
 import com.google.zxing.Result;
 
+import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapPrimitive;
+import org.ksoap2.serialization.SoapSerializationEnvelope;
+import org.ksoap2.transport.HttpTransportSE;
 
 import java.security.KeyFactory;
 import java.security.PrivateKey;
@@ -70,6 +74,127 @@ public class InquirActivity extends AppCompatActivity {
     Button inquir_btn2, inquir_btn1, sendbtn, finishbtn;
     String CustomermNum;
     EditText inspDate, noteDate, processNoteDate, EngNoteDate;
+    SoapObject response2;
+
+    private class GetVersion extends AsyncTask<String, Void, Boolean> {
+
+        public GetVersion() {}
+
+        @Override
+        protected Boolean doInBackground(String... params) {
+
+            boolean flag = GetData2();
+            return flag; }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+
+            if(result) {
+                try {
+                    GetReadableData2(response2);
+                } catch (Exception ex) {
+
+                }
+            }
+        }
+
+        @Override
+        protected void onPreExecute() {}
+
+        @Override
+        protected void onProgressUpdate(Void... values) {}
+
+    }
+    private boolean GetData2(){
+        try {
+
+            String NameSpace = "http://tempuri.org/";
+            String MethodName = "GetAppVersion";
+            String InterFace = "IBillingWcfsrv/";
+            String SoapAction = NameSpace+InterFace+MethodName;
+            String Url = new KSoapClass().Url;
+
+            SoapObject request = new SoapObject(NameSpace, MethodName);
+
+            request.addProperty("DataType", "2");
+            request.addProperty("sWhere", " and ID = '7'");
+
+            SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+            envelope.dotNet = true;
+            envelope.setOutputSoapObject(request);
+            HttpTransportSE androidHttpTransport = new HttpTransportSE(Url);
+            androidHttpTransport.debug = true;
+
+            androidHttpTransport.call(SoapAction, envelope);
+            response2=(SoapObject) envelope.getResponse();
+
+            return true; }
+
+        catch (Exception e) {
+            return false; }
+
+    }
+
+    private void GetReadableData2(SoapObject Sobj){
+
+        SoapObject so1, so2, so3;
+
+        if (Sobj != null && Sobj.getPropertyCount() > 0) {
+            so1 = (SoapObject) Sobj.getProperty(1);
+            if (so1 != null && so1.getPropertyCount() > 0) {
+                so2 = (SoapObject) so1.getProperty(0);
+                if (so2 != null && so2.getPropertyCount() > 0) {
+                    for (int i = 0; i < so2.getPropertyCount(); i++) {
+                        so3 = (SoapObject) so2.getProperty(i);
+
+                        try{
+                            if(!so3.getPropertyAsString("APP_ANDROID_VER").equals(InquirActivity.this.getPackageManager().getPackageInfo(getPackageName(), 0).versionName)){
+                                final AlertDialog.Builder builder = new AlertDialog.Builder(InquirActivity.this);
+                                LayoutInflater inflater = InquirActivity.this.getLayoutInflater();
+                                builder.setView(inflater.inflate(R.layout.dialog_info15, null));
+                                final AlertDialog dialog = builder.create();
+                                ((FrameLayout) dialog.getWindow().getDecorView().findViewById(android.R.id.content)).setForeground(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                                WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                                lp.copyFrom(dialog.getWindow().getAttributes());
+                                lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+                                lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+                                dialog.show();
+                                dialog.getWindow().setAttributes(lp);
+                                dialog.setCanceledOnTouchOutside(false);
+
+                                CircleImageView im = dialog.findViewById(R.id.im);
+                                im.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        dialog.dismiss();
+                                        finishAffinity();
+                                        System.exit(0);
+                                    }
+                                });
+                                Button btn = dialog.findViewById(R.id.btn2);
+                                btn.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+
+                                        final String appPackageName = getPackageName();
+                                        try {
+                                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://ideco.com.jo/IDECO_APPS/IDECO_TASKS.apk")));
+                                        } catch (android.content.ActivityNotFoundException anfe) {
+                                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://ideco.com.jo/IDECO_APPS/IDECO_TASKS.apk")));
+                                        }
+
+                                    }
+                                });
+                            }
+                        }
+                        catch (Exception ex){}
+
+                    }
+                }
+            }
+        }
+    }
 
     public class ScanDialog extends Dialog {
 
