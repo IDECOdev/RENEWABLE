@@ -117,7 +117,7 @@ public class InquirActivity extends AppCompatActivity {
             SoapObject request = new SoapObject(NameSpace, MethodName);
 
             request.addProperty("DataType", "2");
-            request.addProperty("sWhere", " and ID = '7'");
+            request.addProperty("sWhere", " and ID = '9'");
 
             SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
             envelope.dotNet = true;
