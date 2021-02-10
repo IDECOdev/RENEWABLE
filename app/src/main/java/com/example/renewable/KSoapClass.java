@@ -212,5 +212,29 @@ public class KSoapClass {
         catch (Exception e) { return null; }
     }
 
+    public SoapPrimitive Update_User_Pass(String data){
+
+        String NameSpace = "http://tempuri.org/";
+        String MethodName = "UpdateUserPassword";
+        String SoapAction = "http://tempuri.org/IBillingWcfsrv/UpdateUserPassword";
+        SoapObject request = new SoapObject(NameSpace, MethodName);
+
+        request.addProperty("data", data);
+
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.dotNet = true;
+        envelope.setOutputSoapObject(request);
+        HttpTransportSE androidHttpTransport = new HttpTransportSE(Url);
+        androidHttpTransport.debug = true;
+
+        try {
+            androidHttpTransport.call(SoapAction, envelope);
+            SoapPrimitive response = (SoapPrimitive) envelope.getResponse();
+            return response;
+        } catch (Exception e) {
+            return null;
+        }
+
+    }
 
 }

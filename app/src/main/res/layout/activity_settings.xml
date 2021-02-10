@@ -63,5 +63,18 @@
             android:textSize="15dp"
             android:text="تفعيل الدخول بستخدام البصمة" />
 
+    <TextView
+        android:id="@+id/changePassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:layout_below="@id/checkBox"
+        android:padding="10dp"
+        android:textStyle="bold"
+        android:fontFamily="@font/ad_font"
+        android:textSize="18dp"
+        android:textColor="#0288D1"
+        android:text="* تغيير كلمة السر" />
+
     </RelativeLayout>
 

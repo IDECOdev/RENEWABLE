@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@drawable/shape"
+    android:layout_height="wrap_content">
+
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:id="@+id/tool"
+        android:background="@color/colorPrimaryDark"
+        android:layout_height="50dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:textSize="15dp"
+                android:textStyle="bold"
+                android:text="تغيير كلمة سر المستخدم"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_centerVertical="true"
+                android:gravity="center"
+                android:textColor="#ffffff"
+                android:id="@+id/title"
+                android:fontFamily="@font/ad_font"
+                android:layout_height="wrap_content" />
+
+        </RelativeLayout>
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <EditText
+        android:id="@+id/old"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:textDirection="ltr"
+        android:layoutDirection="ltr"
+        android:layout_below="@+id/tool"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="5dp"
+        android:background="@drawable/shapecw"
+        android:digits="0123456789."
+        android:fontFamily="@font/ad_font"
+        android:gravity="center"
+        android:hint="كلمة السر القديمة"
+        android:inputType="textPassword"
+        android:padding="1dp"
+        android:textColor="#000000"
+        android:textSize="18dp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/new1"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:textDirection="ltr"
+        android:layoutDirection="ltr"
+        android:layout_below="@+id/old"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="5dp"
+        android:background="@drawable/shapecw"
+        android:digits="0123456789."
+        android:fontFamily="@font/ad_font"
+        android:gravity="center"
+        android:hint="كلمة السر الجديدة"
+        android:inputType="textPassword"
+        android:padding="1dp"
+        android:textColor="#000000"
+        android:textSize="18dp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/new2"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:textDirection="ltr"
+        android:layoutDirection="ltr"
+        android:layout_below="@+id/new1"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="5dp"
+        android:background="@drawable/shapecw"
+        android:digits="0123456789."
+        android:fontFamily="@font/ad_font"
+        android:gravity="center"
+        android:hint="تأكيد لكلمة السر الجديدة"
+        android:inputType="textPassword"
+        android:padding="1dp"
+        android:textColor="#000000"
+        android:textSize="18dp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/changePass2"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="تغيير كلمة سر المستخدم"
+        android:layout_gravity="center"
+        android:textStyle="bold"
+        android:layout_below="@+id/new2"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/shape2"
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:fontFamily="@font/ad_font"
+        android:textColor="#ffffff"
+        android:textSize="15dp"/>
+
+</RelativeLayout>
