@@ -24,6 +24,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -67,9 +68,12 @@ public class FacilityConnectionActivity extends AppCompatActivity {
     ProgressDialog pd;
     String CusmNo = "";
     InquirInfo inquirInfo;
-    Button inquir_btn2, inquir_btn1, sendbtn, finishbtn;
+    Button inquir_btn2, inquir_btn1, sendbtn;
     String CustomermNum;
-    EditText connectionDate, issuedRead, continuedRead, EngNoteDate;
+    EditText EngNoteDate;
+    TextView  connectionDate, issuedRead, continuedRead;
+    TextView instext;
+    RelativeLayout insLay;
 
     public class ScanDialog extends Dialog {
 
@@ -159,6 +163,9 @@ public class FacilityConnectionActivity extends AppCompatActivity {
         cusmNum_et = findViewById(R.id.cusmNum_et);
         processNum_et = findViewById(R.id.processNum_et);
 
+        insLay = findViewById(R.id.inspdata_lay);
+        instext = findViewById(R.id.instext);
+
         inquir_btn1 = findViewById(R.id.inquir_btn1);
         inquir_btn2 = findViewById(R.id.inquir_btn2);
 
@@ -166,11 +173,6 @@ public class FacilityConnectionActivity extends AppCompatActivity {
         sendbtn.setEnabled(false);
         sendbtn. setBackground(getDrawable(R.drawable.shape3));
         sendbtn.setTextColor(getResources().getColor(R.color.grey));
-
-        finishbtn = findViewById(R.id.finishbtn);
-        finishbtn.setEnabled(false);
-        finishbtn. setBackground(getDrawable(R.drawable.shape3));
-        finishbtn.setTextColor(getResources().getColor(R.color.grey));
 
         cusmName = findViewById(R.id.cusmName);
         cusm_No = findViewById(R.id.cusm_No);
@@ -252,7 +254,7 @@ public class FacilityConnectionActivity extends AppCompatActivity {
 
     }
 
-    private void SetDate(final EditText Date) {
+    private void SetDate(final TextView Date) {
         Calendar calendar = Calendar.getInstance();
         final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
         DatePickerDialog datePickerDialog = new DatePickerDialog(FacilityConnectionActivity.this, new DatePickerDialog.OnDateSetListener() {
@@ -343,11 +345,17 @@ public class FacilityConnectionActivity extends AppCompatActivity {
         @RequiresApi(api = Build.VERSION_CODES.O)
         @Override
         protected Void doInBackground(String... params) {
+            if(!cusmNum_et.getText().toString().equals("")){
+                int cn = Integer.parseInt(cusmNum_et.getText().toString().substring(4));
+                int cc =  Integer.parseInt(cusmNum_et.getText().toString().substring(0,4));
 
-            if (!cusmNum_et.getText().toString().substring(6).equals("") )
-                strWhereOracle += " and \"ca_cusm_num\"=" + cusmNum_et.getText().toString().substring(6);
-            if (!cusmNum_et.getText().toString().substring(0,3).equals("") && !cusmNum_et.getText().toString().substring(0,3).equals("-1"))
-                strWhereOracle += " and city_id =" + cusmNum_et.getText().toString().substring(0,3);
+                if (!String.valueOf(cn).equals("") )
+                    strWhereOracle += " and a.\"ca_cusm_num\"=" + cn;
+//            if (txtSupSecriberName.Text.Trim() != "")
+//            strWhereSql += " and CA_CUSM_NAME like ''%" + "" + "%''";
+                if (!String.valueOf(cc).equals("") && !String.valueOf(cc).equals("-1"))
+                    strWhereOracle += " and a.city_id =" + cc;
+            }
             if (!processNum_et.getText().toString().equals(""))
                 strWhereOracle += " and a.MAIN_PID =" + processNum_et.getText().toString();
 
@@ -376,7 +384,7 @@ public class FacilityConnectionActivity extends AppCompatActivity {
             pd.dismiss();
             try{
                 if(soapObject!=null && soapObject.getPropertyCount() > 0 && !soapObject.equals("anyType")){
-//                    GetReadableData1(soapObject);
+                    GetReadableData1(soapObject);
                 }
             }catch(Exception e){}
 
@@ -530,69 +538,74 @@ public class FacilityConnectionActivity extends AppCompatActivity {
 
 
     private void GetReadableData1(SoapObject res){
-    try{
-        inquirInfo=null;
-        if(res == null){
-            Toast.makeText(this, "لا يوجد معلومات لهذا العداد", Toast.LENGTH_LONG).show();
-            cusmNum_et.setEnabled(true);
-            processNum_et.setEnabled(true);
-        }
-        else if(res.equals("anyType{}")){
-            Toast.makeText(this, "لا يوجد معلومات لهذا العداد", Toast.LENGTH_LONG).show();
-            cusmNum_et.setEnabled(true);
-            processNum_et.setEnabled(true);
-        } else{
-            SoapObject so1, so2, so3;
+        try{
+            inquirInfo=null;
+            if(res == null){
+                Toast.makeText(this, "لا يوجد معلومات لهذا العداد", Toast.LENGTH_LONG).show();
+                cusmNum_et.setEnabled(true);
+                processNum_et.setEnabled(true);
+            }
+            else if(res.equals("anyType{}")){
+                Toast.makeText(this, "لا يوجد معلومات لهذا العداد", Toast.LENGTH_LONG).show();
+                cusmNum_et.setEnabled(true);
+                processNum_et.setEnabled(true);
+            } else{
+                SoapObject so1, so2, so3;
 
-            if (res != null && res.getPropertyCount() > 0){
-                so1 = (SoapObject) res.getProperty(1);
-                if (so1 != null && so1.getPropertyCount() > 0){
-                    so2 = (SoapObject) so1.getProperty(0);
-                    if (so2 != null && so2.getPropertyCount() > 0){
-                        for(int i=0; i<so2.getPropertyCount(); i++){
-                            so3 = (SoapObject) so2.getProperty(i);
-                            try{
-                                inquirInfo = new InquirInfo(
-                                        so3.getPropertyAsString("CTYM_NAME"),
-                                        so3.getPropertyAsString("CUSM_NAME"),
-                                        so3.getPropertyAsString("MTR_NUM"),
-                                        so3.getPropertyAsString("MTR_CITY"),
-                                        so3.getPropertyAsString("SMART"),
-                                        so3.getPropertyAsString("KIND"),
-                                        so3.getPropertyAsString("MODEL"),
-                                        so3.getPropertyAsString("ADDRESS"),
-                                        so3.getPropertyAsString("MTR_M_NUM"));
-                            }catch (Exception e){
+                if (res != null && res.getPropertyCount() > 0){
+                    so1 = (SoapObject) res.getProperty(1);
+                    if (so1 != null && so1.getPropertyCount() > 0){
+                        so2 = (SoapObject) so1.getProperty(0);
+                        if (so2 != null && so2.getPropertyCount() > 0){
+                            for(int i=0; i<so2.getPropertyCount(); i++){
+                                so3 = (SoapObject) so2.getProperty(i);
+                                try{
+                                    inquirInfo = new InquirInfo(
+                                            so3.getPropertyAsString("ID"),
+                                            so3.getPropertyAsString("MAIN_PID"),
+                                            so3.getPropertyAsString("CA_CUSM_NAME"),
+                                            so3.getPropertyAsString("CITY_ID"),
+                                            so3.getPropertyAsString("CTYM_NAME"),
+                                            so3.getPropertyAsString("ca_cusm_num"));
+                                }catch (Exception e){
 
+                                }
                             }
                         }
                     }
                 }
-            }
-            if(inquirInfo!=null){
-                CusmNo = cusmNum_et.getText().toString();
-                CustomermNum="";
-                CustomermNum+= String.format(Locale.ENGLISH, "%03d", Integer.parseInt(inquirInfo.getMTR_CITY()));
-                CustomermNum+= "0"+String.format(Locale.ENGLISH, "%06d", Integer.parseInt(inquirInfo.getMTR_NUM()));
-                cusmName.setText(inquirInfo.getCUSM_NAME());
-                cusm_No.setText(CustomermNum);
-                city.setText(inquirInfo.getCTYM_NAME());
-                address_name.setText(inquirInfo.getCUSM_ADDRES());
-                lacation.setText(inquirInfo.getMTR_M_KIND() +"-"+ inquirInfo.getMTR_M_MODEL());
-            }
-            else{
-                Toast.makeText(this, "يوجد خطأ في رقم الاشتراك او رقم المعاملة", Toast.LENGTH_LONG).show();
-                cusmNum_et.setEnabled(true);
-                cusmNum_et.setText("");
-                processNum_et.setEnabled(true);
-                processNum_et.setText("");
+                if(inquirInfo!=null){
+                    CusmNo = cusmNum_et.getText().toString();
+                    CustomermNum="";
+                    CustomermNum+= String.format(Locale.ENGLISH, "%03d", Integer.parseInt(inquirInfo.getCITY_ID()));
+                    CustomermNum+= "0"+String.format(Locale.ENGLISH, "%06d", Integer.parseInt(inquirInfo.getCa_cusm_num()));
+                    cusmName.setText(inquirInfo.getCA_CUSM_NAME());
+                    cusm_No.setText(CustomermNum);
+                    city.setText(inquirInfo.getCITY_ID());
+                    address_name.setText(inquirInfo.getCTYM_NAME());
+                    lacation.setText("لم يتم جلبه مع البيانات");
+                    sendbtn.setEnabled(true);
+                    sendbtn. setBackground(getDrawable(R.drawable.shape4));
+                    sendbtn.setTextColor(getResources().getColor(R.color.white));
 
+
+                    insLay.setVisibility(View.VISIBLE);
+                    instext.setVisibility(View.VISIBLE);
+                }
+                else{
+                    Toast.makeText(this, "يوجد خطأ في رقم الاشتراك او رقم المعاملة", Toast.LENGTH_LONG).show();
+                    cusmNum_et.setEnabled(true);
+                    cusmNum_et.setText("");
+                    processNum_et.setEnabled(true);
+                    processNum_et.setText("");
+
+                }
             }
+        }catch (Exception e){
+            Toast.makeText(this, "لقد حدث خطأ", Toast.LENGTH_SHORT).show();
+
         }
-    }catch (Exception e){
-        Toast.makeText(this, "لقد حدث خطأ", Toast.LENGTH_SHORT).show();
 
-    }
 
     }
 

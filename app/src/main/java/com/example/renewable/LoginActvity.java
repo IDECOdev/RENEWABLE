@@ -338,6 +338,7 @@ public class LoginActvity extends AppCompatActivity {
                             getSharedPreferences("Info", Context.MODE_PRIVATE).edit();
                     editor.putString("ID", ID);
                     editor.putString("GM_FLAG", GM_FLAG);
+                    editor.putString("UserName", username);
                     editor.apply();
 
                     startActivity(new Intent(LoginActvity.this, InquirActivity.class).putExtra("CusmNum",""));

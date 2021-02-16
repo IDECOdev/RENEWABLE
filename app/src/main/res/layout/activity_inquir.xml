@@ -191,6 +191,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/inquir_lay"
+        android:layout_above="@id/btnLay"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true">
 
@@ -419,7 +420,9 @@
                 android:textColor="@color/colorAccent"
                 android:textSize="14dp"
                 android:textStyle="bold"
-                android:elevation="1dp"/>
+                android:elevation="1dp"
+                android:id="@+id/instext"
+                android:visibility="gone"/>
             <RelativeLayout
                 android:id="@+id/inspdata_lay"
                 android:layout_width="match_parent"
@@ -427,7 +430,8 @@
                 android:layout_marginTop="-14dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginLeft="10dp"
-                android:background="@drawable/selector_fieldset_background">
+                android:background="@drawable/selector_fieldset_background"
+                android:visibility="gone">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -447,7 +451,7 @@
                         android:layout_marginRight="20dp"
                         android:textSize="15dp"
                         android:textStyle="bold"/>
-                    <EditText
+                    <TextView
                         android:id="@+id/inspDate"
                         android:layout_width="0dp"
                         android:layout_weight="2.15"
@@ -490,7 +494,7 @@
                         android:layout_marginRight="20dp"
                         android:textSize="15dp"
                         android:textStyle="bold"/>
-                    <EditText
+                    <TextView
                         android:id="@+id/noteDate"
                         android:layout_width="0dp"
                         android:layout_weight="2.15"
@@ -533,7 +537,7 @@
                         android:layout_marginRight="20dp"
                         android:textSize="15dp"
                         android:textStyle="bold"/>
-                    <EditText
+                    <TextView
                         android:id="@+id/processNoteDate"
                         android:layout_width="0dp"
                         android:layout_weight="2.15"
@@ -565,7 +569,8 @@
                     android:id="@+id/EngNoteDateLay"
                     android:layout_below="@id/processNoteDateLay"
                     android:layoutDirection="rtl"
-                    android:layout_marginTop="15dp">
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="15dp">
                     <TextView
                         android:layout_width="0dp"
                         android:layout_weight=".85"
@@ -582,11 +587,10 @@
                         android:layout_weight="2.15"
                         android:layout_gravity="center"
                         android:layout_height="30dp"
-                        android:maxLength="20"
                         android:layout_marginRight="5dp"
                         android:elevation="1dp"
                         android:fontFamily="@font/ad_font"
-                        android:layout_marginLeft="60dp"
+                        android:layout_marginLeft="30dp"
                         android:layout_toLeftOf="@id/tx1"
                         android:background="@drawable/textboxstyle"
                         android:ellipsize="start"

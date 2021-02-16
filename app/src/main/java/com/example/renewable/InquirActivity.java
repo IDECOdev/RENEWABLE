@@ -25,6 +25,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -73,8 +74,11 @@ public class InquirActivity extends AppCompatActivity {
     InquirInfo inquirInfo;
     Button inquir_btn2, inquir_btn1, sendbtn, finishbtn;
     String CustomermNum;
-    EditText inspDate, noteDate, processNoteDate, EngNoteDate;
+    EditText EngNoteDate;
+    TextView inspDate, noteDate, processNoteDate;
     SoapObject response2;
+    TextView instext;
+    RelativeLayout insLay;
 
     private class GetVersion extends AsyncTask<String, Void, Boolean> {
 
@@ -284,6 +288,9 @@ public class InquirActivity extends AppCompatActivity {
         cusmNum_et = findViewById(R.id.cusmNum_et);
         processNum_et = findViewById(R.id.processNum_et);
 
+        insLay = findViewById(R.id.inspdata_lay);
+        instext = findViewById(R.id.instext);
+
         inquir_btn1 = findViewById(R.id.inquir_btn1);
         inquir_btn2 = findViewById(R.id.inquir_btn2);
 
@@ -307,6 +314,25 @@ public class InquirActivity extends AppCompatActivity {
         noteDate = findViewById(R.id.noteDate);
         processNoteDate = findViewById(R.id.processNoteDate);
         EngNoteDate = findViewById(R.id.EngNoteDate);
+
+        inspDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SetDate(inspDate);
+            }
+        });
+        noteDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SetDate(noteDate);
+            }
+        });
+        processNoteDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SetDate(processNoteDate);
+            }
+        });
 
         sendbtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -345,26 +371,6 @@ public class InquirActivity extends AppCompatActivity {
                 insertFollowUpAsyncCall.execute();
             }
         });
-
-        inspDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SetDate(inspDate);
-            }
-        });
-        noteDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SetDate(noteDate);
-            }
-        });
-        processNoteDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SetDate(processNoteDate);
-            }
-        });
-
 
         CircleImageView bar = findViewById(R.id.copy1);
 
@@ -407,7 +413,7 @@ public class InquirActivity extends AppCompatActivity {
 
     }
 
-    private void SetDate(final EditText Date) {
+    private void SetDate(final TextView Date) {
         Calendar calendar = Calendar.getInstance();
         final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
         DatePickerDialog datePickerDialog = new DatePickerDialog(InquirActivity.this, new DatePickerDialog.OnDateSetListener() {
@@ -498,16 +504,19 @@ public class InquirActivity extends AppCompatActivity {
         @RequiresApi(api = Build.VERSION_CODES.O)
         @Override
         protected Void doInBackground(String... params) {
-
-            if (!cusmNum_et.getText().toString().substring(6).equals("") )
-                strWhereOracle += " and \"ca_cusm_num\"=" + cusmNum_et.getText().toString().substring(6);
+            if(!cusmNum_et.getText().toString().equals("")){
+                int cn = Integer.parseInt(cusmNum_et.getText().toString().substring(4));
+                int cc =  Integer.parseInt(cusmNum_et.getText().toString().substring(0,4));
+//            and a."ca_cusm_num"=2536 and a.city_id =188
+                if (!String.valueOf(cn).equals("") )
+                    strWhereOracle += " and a.\"ca_cusm_num\"=" + cn;
 //            if (txtSupSecriberName.Text.Trim() != "")
 //            strWhereSql += " and CA_CUSM_NAME like ''%" + "" + "%''";
-            if (!cusmNum_et.getText().toString().substring(0,3).equals("") && !cusmNum_et.getText().toString().substring(0,3).equals("-1"))
-                strWhereOracle += " and city_id =" + cusmNum_et.getText().toString().substring(0,3);
+                if (!String.valueOf(cc).equals("") && !String.valueOf(cc).equals("-1"))
+                    strWhereOracle += " and a.city_id =" + cc;
+            }
             if (!processNum_et.getText().toString().equals(""))
                 strWhereOracle += " and a.MAIN_PID =" + processNum_et.getText().toString();
-
 
             String data = "strWhereOracle:"+strWhereOracle+",strWhereSql: ,taskId:120,datatype:5";
                 try {
@@ -534,7 +543,7 @@ public class InquirActivity extends AppCompatActivity {
             pd.dismiss();
             try{
                 if(soapObject!=null && soapObject.getPropertyCount() > 0 && !soapObject.equals("anyType")){
-//                    GetReadableData1(soapObject);
+                    GetReadableData1(soapObject);
                 }
             }catch(Exception e){}
 
@@ -565,8 +574,8 @@ public class InquirActivity extends AppCompatActivity {
         protected Void doInBackground(String... params) {
             try {
                 KSoapClass soap = new KSoapClass();
-                String data1 = "Id: ,: ,engNote:" + EngNoteDate.getText().toString() + ",:0,:0,:0,:0,:0,:0,:0,: ,: ,:0,uId:" + getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID", "")
-                        + ",strUserName:" + getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID", "")
+                String data1 = "Id:" + inquirInfo.getID()+",: ,engNote:" + EngNoteDate.getText().toString() + ",:0,:0,:0,:0,:0,:0,:0,: ,: ,:0,uId:" + getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID", "")
+                        + ",strUserName:" + getSharedPreferences("Info", Context.MODE_PRIVATE).getString("UserName", "")
                         + ",:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,dtpPROVIDE_NOTES_DATE:" + noteDate.getText().toString() + ",dtpInspDate:" + inspDate.getText().toString() + ",: ,: ,: ,dtpPROCESS_NOTES_DATE:" + processNoteDate.getText().toString() +
                         ",:0,:12";
 
@@ -588,7 +597,7 @@ public class InquirActivity extends AppCompatActivity {
 
                 if (updateRen1) {
 
-                    String data2 = "mPID:" + processNum_et.getText().toString() + ",:0,: ,:0,:0,:0,:0,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,:0,:0,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,dtpInspDate:" + inspDate.getText().toString()
+                    String data2 = "mPID:" + inquirInfo.getMAIN_PID() + ",:0,: ,:0,:0,:0,:0,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,:0,:0,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,dtpInspDate:" + inspDate.getText().toString()
                             + ",: ,: ,: ,: ,: ,: ,:9,: ";
                     try {
                         KeyFactory kf = KeyFactory.getInstance("RSA");
@@ -698,8 +707,8 @@ public class InquirActivity extends AppCompatActivity {
         protected Void doInBackground(String... params) {
             try {
                 KSoapClass soap = new KSoapClass();
-                String data1 = "Id: ,: ,engNote:" + EngNoteDate.getText().toString() + ",:0,:0,:0,:0,:0,:0,:0,: ,: ,:0,uId:" + getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID", "")
-                        + ",strUserName:" + getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID", "")
+                String data1 = "Id:"+inquirInfo.getID()+ ",: ,engNote:" + EngNoteDate.getText().toString() + ",:0,:0,:0,:0,:0,:0,:0,: ,: ,:0,uId:" + getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID", "")
+                        + ",strUserName:" + getSharedPreferences("Info", Context.MODE_PRIVATE).getString("UserName", "")
                         + ",:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,dtpPROVIDE_NOTES_DATE:" + noteDate.getText().toString() + ",dtpInspDate:" + inspDate.getText().toString() + ",: ,: ,: ,dtpPROCESS_NOTES_DATE:" + processNoteDate.getText().toString() +
                         ",:0,:12";
 
@@ -720,7 +729,7 @@ public class InquirActivity extends AppCompatActivity {
 
                 if (updateRen1) {
 
-                    String data2 = "mPID:" + processNum_et.getText().toString() + ",:0,: ,:0,:0,:0,:0,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,:0,:0,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,dtpInspDate:" + inspDate.getText().toString()
+                    String data2 = "mPID:" + inquirInfo.getMAIN_PID() + ",:0,: ,:0,:0,:0,:0,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,:0,:0,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,dtpInspDate:" + inspDate.getText().toString()
                             + ",: ,: ,: ,: ,: ,: ,:9,: ";
                     try {
                         KeyFactory kf = KeyFactory.getInstance("RSA");
@@ -741,8 +750,8 @@ public class InquirActivity extends AppCompatActivity {
                         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                         LocalDateTime now = LocalDateTime.now();
 
-                        String data3 = "uId:" + getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID", "") + ",strUserName:" + getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID", "")
-                                + ",mPID:" + processNum_et.getText().toString() + ",txtFollowUps:تم الكشف على نظام الطاقة المتجددة" + dtf.format(now) + " ووجدت هناك ملاحظات ولم يتم استكمال اجراءات التشغيل";
+                        String data3 = "uId:" + getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID", "") + ",strUserName:" + getSharedPreferences("Info", Context.MODE_PRIVATE).getString("UserName", "")
+                                + ",mPID:" + inquirInfo.getMAIN_PID() + ",txtFollowUps:تم الكشف على نظام الطاقة المتجددة" + dtf.format(now) + " ووجدت هناك ملاحظات ولم يتم استكمال اجراءات التشغيل";
 
                         try {
                             KeyFactory kf = KeyFactory.getInstance("RSA");
@@ -859,15 +868,12 @@ public class InquirActivity extends AppCompatActivity {
                             so3 = (SoapObject) so2.getProperty(i);
                             try{
                                 inquirInfo = new InquirInfo(
+                                        so3.getPropertyAsString("ID"),
+                                        so3.getPropertyAsString("MAIN_PID"),
+                                        so3.getPropertyAsString("CA_CUSM_NAME"),
+                                        so3.getPropertyAsString("CITY_ID"),
                                         so3.getPropertyAsString("CTYM_NAME"),
-                                        so3.getPropertyAsString("CUSM_NAME"),
-                                        so3.getPropertyAsString("MTR_NUM"),
-                                        so3.getPropertyAsString("MTR_CITY"),
-                                        so3.getPropertyAsString("SMART"),
-                                        so3.getPropertyAsString("KIND"),
-                                        so3.getPropertyAsString("MODEL"),
-                                        so3.getPropertyAsString("ADDRESS"),
-                                        so3.getPropertyAsString("MTR_M_NUM"));
+                                        so3.getPropertyAsString("ca_cusm_num"));
                             }catch (Exception e){
 
                             }
@@ -878,13 +884,25 @@ public class InquirActivity extends AppCompatActivity {
             if(inquirInfo!=null){
                 CusmNo = cusmNum_et.getText().toString();
                 CustomermNum="";
-                CustomermNum+= String.format(Locale.ENGLISH, "%03d", Integer.parseInt(inquirInfo.getMTR_CITY()));
-                CustomermNum+= "0"+String.format(Locale.ENGLISH, "%06d", Integer.parseInt(inquirInfo.getMTR_NUM()));
-                cusmName.setText(inquirInfo.getCUSM_NAME());
+                CustomermNum+= String.format(Locale.ENGLISH, "%03d", Integer.parseInt(inquirInfo.getCITY_ID()));
+                CustomermNum+= "0"+String.format(Locale.ENGLISH, "%06d", Integer.parseInt(inquirInfo.getCa_cusm_num()));
+                cusmName.setText(inquirInfo.getCA_CUSM_NAME());
                 cusm_No.setText(CustomermNum);
-                city.setText(inquirInfo.getCTYM_NAME());
-                address_name.setText(inquirInfo.getCUSM_ADDRES());
-                lacation.setText(inquirInfo.getMTR_M_KIND() +"-"+ inquirInfo.getMTR_M_MODEL());
+                city.setText(inquirInfo.getCITY_ID());
+                address_name.setText(inquirInfo.getCTYM_NAME());
+                lacation.setText("لم يتم جلبه مع البيانات");
+
+                sendbtn.setEnabled(true);
+                sendbtn. setBackground(getDrawable(R.drawable.shape4));
+                sendbtn.setTextColor(getResources().getColor(R.color.white));
+
+                finishbtn = findViewById(R.id.finishbtn);
+                finishbtn.setEnabled(false);
+                finishbtn. setBackground(getDrawable(R.drawable.shape4));
+                finishbtn.setTextColor(getResources().getColor(R.color.white));
+
+                insLay.setVisibility(View.VISIBLE);
+                instext.setVisibility(View.VISIBLE);
             }
             else{
                 Toast.makeText(this, "يوجد خطأ في رقم الاشتراك او رقم المعاملة", Toast.LENGTH_LONG).show();
@@ -892,7 +910,6 @@ public class InquirActivity extends AppCompatActivity {
                 cusmNum_et.setText("");
                 processNum_et.setEnabled(true);
                 processNum_et.setText("");
-
             }
         }
     }catch (Exception e){

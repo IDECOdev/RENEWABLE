@@ -4,55 +4,40 @@ import java.io.Serializable;
 
 public class InquirInfo implements Serializable {
 
-   private String  CTYM_NAME="",  CUSM_NAME="", MTR_NUM="", SMART="", MTR_CITY, MTR_M_KIND, MTR_M_MODEL, CUSM_ADDRES, MTR_M_NUM;
+   private String  ID="",  MAIN_PID="", CA_CUSM_NAME="", CITY_ID="",CTYM_NAME, ca_cusm_num;
 
-    public String getMTR_M_NUM() {
-        return MTR_M_NUM;
+    public String getID() {
+        return ID;
     }
 
-    public String getMTR_M_KIND() {
-        return MTR_M_KIND;
+    public String getMAIN_PID() {
+        return MAIN_PID;
     }
 
-    public String getMTR_M_MODEL() {
-        return MTR_M_MODEL;
+    public String getCA_CUSM_NAME() {
+        return CA_CUSM_NAME;
     }
 
-    public String getCUSM_ADDRES() {
-        return CUSM_ADDRES;
+    public String getCITY_ID() {
+        return CITY_ID;
     }
-
-    public String getMTR_CITY() {
-        return MTR_CITY;
-    }
-
-    public String getMTR_NUM() {
-        return MTR_NUM;
-    }
-
-    public String getSMART() {
-        return SMART;
-    }
-
 
     public String getCTYM_NAME() {
         return CTYM_NAME;
     }
 
-    public String getCUSM_NAME() {
-        return CUSM_NAME;
+    public String getCa_cusm_num() {
+        return ca_cusm_num;
     }
 
-    public InquirInfo(String CTYM_NAME, String CUSM_NAME, String MTR_NUM, String MTR_CITY, String SMART , String MTR_M_KIND, String MTR_M_MODEL, String CUSM_ADDRES, String MTR_M_NUM) {
+    public InquirInfo(String ID, String MAIN_PID, String CA_CUSM_NAME, String CITY_ID, String CTYM_NAME, String ca_cusm_num) {
+        this.ID = ID;
+        this.MAIN_PID = MAIN_PID;
+        this.CA_CUSM_NAME = CA_CUSM_NAME;
+        this.CITY_ID = CITY_ID;
         this.CTYM_NAME = CTYM_NAME;
-        this.CUSM_NAME = CUSM_NAME;
-        this.MTR_NUM = MTR_NUM;
-        this.SMART = SMART;
-        this.MTR_CITY = MTR_CITY;
-        this.MTR_M_KIND = MTR_M_KIND;
-        this.MTR_M_MODEL = MTR_M_MODEL;
-        this.CUSM_ADDRES = CUSM_ADDRES;
-        this.MTR_M_NUM = MTR_M_NUM;
+        this.ca_cusm_num = ca_cusm_num;
     }
-
 }
+
+
