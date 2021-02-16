@@ -430,7 +430,7 @@
                 android:layout_marginRight="10dp"
                 android:layout_marginLeft="10dp"
                 android:background="@drawable/selector_fieldset_background"
-                android:visibility="gone">
+                android:visibility="visible">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -517,13 +517,26 @@
                         android:textColor="#000000"
                         android:textSize="15dp"/>
                 </LinearLayout>
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="15dp"
+                    android:layout_below="@+id/issuedReadLay"
+                    android:layout_marginRight="15dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp"
+                    android:id="@+id/issuedReadimage"
+                    android:src="@drawable/ic_baseline_image_24" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:weightSum="3"
                     android:orientation="horizontal"
                     android:id="@+id/continuedReadLay"
-                    android:layout_below="@id/issuedReadLay"
+                    android:layout_below="@id/issuedReadimage"
                     android:layoutDirection="rtl"
                     android:layout_marginTop="15dp">
                     <TextView
@@ -560,13 +573,25 @@
                         android:textColor="#000000"
                         android:textSize="15dp"/>
                 </LinearLayout>
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="15dp"
+                    android:layout_below="@+id/continuedReadLay"
+                    android:layout_marginRight="15dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp"
+                    android:id="@+id/continuedReadimage"
+                    android:src="@drawable/ic_baseline_image_24" />
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:weightSum="3"
                     android:orientation="horizontal"
                     android:id="@+id/EngNoteDateLay"
-                    android:layout_below="@id/continuedReadLay"
+                    android:layout_below="@id/continuedReadimage"
                     android:layoutDirection="rtl"
                     android:layout_marginTop="15dp">
                     <TextView

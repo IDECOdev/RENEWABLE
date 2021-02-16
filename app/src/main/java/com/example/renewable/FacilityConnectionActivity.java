@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -24,11 +25,13 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -39,6 +42,7 @@ import com.budiyev.android.codescanner.CodeScanner;
 import com.budiyev.android.codescanner.CodeScannerView;
 import com.budiyev.android.codescanner.DecodeCallback;
 import com.google.zxing.Result;
+import com.squareup.picasso.Picasso;
 
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapPrimitive;
@@ -74,6 +78,10 @@ public class FacilityConnectionActivity extends AppCompatActivity {
     TextView  connectionDate, issuedRead, continuedRead;
     TextView instext;
     RelativeLayout insLay;
+    ImageView issuedReadimage, continuedReadimage;
+    private static final int ImageBack = 1;
+    String ImageUri="";
+    Uri ImageData;
 
     public class ScanDialog extends Dialog {
 
@@ -163,6 +171,9 @@ public class FacilityConnectionActivity extends AppCompatActivity {
         cusmNum_et = findViewById(R.id.cusmNum_et);
         processNum_et = findViewById(R.id.processNum_et);
 
+        continuedReadimage = findViewById(R.id.continuedReadimage);
+        issuedReadimage = findViewById(R.id.issuedReadimage);
+
         insLay = findViewById(R.id.inspdata_lay);
         instext = findViewById(R.id.instext);
 
@@ -185,6 +196,28 @@ public class FacilityConnectionActivity extends AppCompatActivity {
         continuedRead = findViewById(R.id.processNoteDate);
         EngNoteDate = findViewById(R.id.EngNoteDate);
 
+        continuedReadimage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("image/*");
+                startActivityForResult(intent,ImageBack);
+
+                Picasso.get().load(ImageData).into(continuedReadimage);
+
+            }
+        });
+
+        issuedReadimage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("image/*");
+                startActivityForResult(intent,ImageBack);
+
+                Picasso.get().load(ImageData).into(issuedReadimage);
+            }
+        });
         sendbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -253,7 +286,20 @@ public class FacilityConnectionActivity extends AppCompatActivity {
         });
 
     }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
+        if(requestCode == ImageBack){
+            if(resultCode == RESULT_OK){
+                ImageData = data.getData();
+                ImageUri = String.valueOf(ImageData);
+
+//                Picasso.get().load(ImageData).into(profileimage);
+
+            }
+        }
+    }
     private void SetDate(final TextView Date) {
         Calendar calendar = Calendar.getInstance();
         final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
