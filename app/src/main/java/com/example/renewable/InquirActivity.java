@@ -614,7 +614,7 @@ public class InquirActivity extends AppCompatActivity {
                     } catch (Exception e) {}
 
                     if (updateRen2) {
-                        flag = soap.WorkFlowAdvanceByAdmin(120, 1005249, Integer.parseInt(processNum_et.getText().toString()), "Root/ RenewableInsp",
+                        flag = soap.WorkFlowAdvanceByAdmin(120, 1005249, Integer.parseInt(inquirInfo.getMAIN_PID()), "Root/ RenewableInsp",
                                 "1", "", "", "", "", "", "", "", "", "",
                                 "", "", "", "", "");
                     }
@@ -897,7 +897,7 @@ public class InquirActivity extends AppCompatActivity {
                 sendbtn.setTextColor(getResources().getColor(R.color.white));
 
                 finishbtn = findViewById(R.id.finishbtn);
-                finishbtn.setEnabled(false);
+                finishbtn.setEnabled(true);
                 finishbtn. setBackground(getDrawable(R.drawable.shape4));
                 finishbtn.setTextColor(getResources().getColor(R.color.white));
 

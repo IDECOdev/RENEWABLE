@@ -416,8 +416,8 @@ public class FacilityConnectionActivity extends AppCompatActivity {
             try {
                 KSoapClass soap = new KSoapClass();
 
-                String data1 = "Id: ,: ,engNote:" + EngNoteDate.getText().toString() +",:0,txtREN_M_PREAD_OP:"+issuedRead.getText().toString()+",txtREN_M_LREAD_OP:"+continuedRead.getText().toString()+",:0,:0,:0,:0,: ,: ,:0,uId:" + getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID", "")
-                        + ",strUserName:" + getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID", "")
+                String data1 = "Id:" +inquirInfo.getID()+",: ,engNote:" + EngNoteDate.getText().toString() +",:0,txtREN_M_PREAD_OP:"+issuedRead.getText().toString()+",txtREN_M_LREAD_OP:"+continuedRead.getText().toString()+",:0,:0,:0,:0,: ,: ,:0,uId:" + getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID", "")
+                        + ",strUserName:" + getSharedPreferences("Info", Context.MODE_PRIVATE).getString("UserName", "")
                         + ",:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,: ,: ,: ,: ,: ,dtpSYSTEM_CONN_DATE:"+connectionDate.getText().toString()+",:0,:2";
 
                 try {
@@ -436,7 +436,7 @@ public class FacilityConnectionActivity extends AppCompatActivity {
 
                  if (updateRen1) {
 
-                     String data2 = "mPID:" + processNum_et.getText().toString() + ",:0,: ,:0,:0,:0,:0,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,:0,:0,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,dtpSYSTEM_CONN_DATE:"+connectionDate.getText().toString()
+                     String data2 = "mPID:" + inquirInfo.getMAIN_PID() + ",:0,: ,:0,:0,:0,:0,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,:0,:0,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,dtpSYSTEM_CONN_DATE:"+connectionDate.getText().toString()
                              + ",: ,: ,: ,: ,: ,:7,: ";
 
                      try {
@@ -456,7 +456,7 @@ public class FacilityConnectionActivity extends AppCompatActivity {
                  }
 
                 if(updateRen2){
-                    flag = soap.WorkFlowAdvanceByAdmin(84, 1005249, Integer.parseInt(processNum_et.getText().toString()), "Root/ RenewableData",
+                    flag = soap.WorkFlowAdvanceByAdmin(84, 1005249, Integer.parseInt(inquirInfo.getMAIN_PID()), "Root/ RenewableData",
                             "1", "","","","","","","","","",
                             "","","","","");
                 }
