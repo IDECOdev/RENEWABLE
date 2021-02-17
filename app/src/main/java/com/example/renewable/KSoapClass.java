@@ -101,7 +101,7 @@ public class KSoapClass {
         try {
             androidHttpTransport.call(SoapAction, envelope);
             SoapPrimitive response = (SoapPrimitive) envelope.getResponse();
-           if(response.equals("true")){
+           if(response.toString().equals("true")){
                return true;
            }else {
                return false;
@@ -129,7 +129,7 @@ public class KSoapClass {
         try {
             androidHttpTransport.call(SoapAction, envelope);
             SoapPrimitive response = (SoapPrimitive) envelope.getResponse();
-            if(response.equals("true")){
+            if(response.toString().equals("true")){
                 return true;
             }else {
                 return false;
@@ -138,11 +138,7 @@ public class KSoapClass {
         catch (Exception e) { return false; }
     }
 
-    public boolean WorkFlowAdvanceByAdmin(int TID, int ModelID, int PID, String XML1,
-                                          String XMLData1, String XML2, String XMLData2,
-                                          String XML3, String XMLData3, String XML4, String XMLData4,
-                                          String XML5, String XMLData5, String XML6, String XMLData6,
-                                          String XML7, String XMLData7, String XML8, String XMLData8)
+    public boolean WorkFlowAdvanceByAdmin(String data) //done......x100000 zz
     {
         String NameSpace = "http://tempuri.org/";
         String MethodName = "WorkFlowAdvanceByAdmin";
@@ -150,25 +146,7 @@ public class KSoapClass {
 
         SoapObject request = new SoapObject(NameSpace, MethodName);
 
-        request.addProperty("TID", TID);
-        request.addProperty("ModelID", ModelID);
-        request.addProperty("PID", PID);
-        request.addProperty("XML1", XML1);
-        request.addProperty("XMLData1", XMLData1);
-        request.addProperty("XML2", XML2);
-        request.addProperty("XMLData2", XMLData2);
-        request.addProperty("XML3", XML3);
-        request.addProperty("XMLData3", XMLData3);
-        request.addProperty("XML4", XML4);
-        request.addProperty("XMLData4", XMLData4);
-        request.addProperty("XML5", XML5);
-        request.addProperty("XMLData5", XMLData5);
-        request.addProperty("XML6", XML6);
-        request.addProperty("XMLData6", XMLData6);
-        request.addProperty("XML7", XML7);
-        request.addProperty("XMLData7", XMLData7);
-        request.addProperty("XML8", XML8);
-        request.addProperty("XMLData8", XMLData8);
+        request.addProperty("data", data);
 
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         envelope.dotNet = true;

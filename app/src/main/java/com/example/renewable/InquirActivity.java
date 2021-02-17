@@ -599,6 +599,7 @@ public class InquirActivity extends AppCompatActivity {
 
                     String data2 = "mPID:" + inquirInfo.getMAIN_PID() + ",:0,: ,:0,:0,:0,:0,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,:0,:0,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,dtpInspDate:" + inspDate.getText().toString()
                             + ",: ,: ,: ,: ,: ,: ,:9,: ";
+
                     try {
                         KeyFactory kf = KeyFactory.getInstance("RSA");
                         PKCS8EncodedKeySpec keySpecPKCS8 = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(soap.privateKey));
@@ -614,9 +615,9 @@ public class InquirActivity extends AppCompatActivity {
                     } catch (Exception e) {}
 
                     if (updateRen2) {
-                        flag = soap.WorkFlowAdvanceByAdmin(120, 1005249, Integer.parseInt(inquirInfo.getMAIN_PID()), "Root/ RenewableInsp",
-                                "1", "", "", "", "", "", "", "", "", "",
-                                "", "", "", "", "");
+                        flag = soap.WorkFlowAdvanceByAdmin(getEncodedString3(soap,120, 1005249, Integer.parseInt(inquirInfo.getMAIN_PID()), "Root/RenewableInsp",
+                                "1", " ", " ", " ", " ", " ", " ", " ", " ", " ",
+                                " ",  " ", " ", " ", ""));
                     }
                 }
 
@@ -693,7 +694,48 @@ public class InquirActivity extends AppCompatActivity {
         protected void onProgressUpdate(Void... values) {}
 
     }
+    private String getEncodedString3(KSoapClass service, int TID, int ModelID, int PID,
+                                     String XML1, String XMLData1, String XML2, String XMLData2,
+                                     String XML3, String XMLData3, String XML4, String XMLData4,
+                                     String XML5, String XMLData5, String XML6, String XMLData6,
+                                     String XML7, String XMLData7, String XML8, String XMLData8){
+        try {
 
+            String data =
+                    "TID:"+TID+
+                            ",ModelID:"+ModelID+
+                            ",PID:"+PID+
+                            ",XML1:"+XML1+
+                            ",XMLData1:"+XMLData1+
+                            ",XML2:"+XML2+
+                            ",XMLData2:"+XMLData2+
+                            ",XML3:"+XML3+
+                            ",XMLData3:"+XMLData3+
+                            ",XML4:"+XML4+
+                            ",XMLData4:"+XMLData4+
+                            ",XML5:"+XML5+
+                            ",XMLData5:"+XMLData5+
+                            ",XML6:"+XML6+
+                            ",XMLData6:"+XMLData6+
+                            ",XML7:"+XML7+
+                            ",XMLData7:"+XMLData7+
+                            ",XML8:"+XML8+
+                            ",XMLData8:"+XMLData8;
+
+            KeyFactory kf = KeyFactory.getInstance("RSA");
+            PKCS8EncodedKeySpec keySpecPKCS8 = new PKCS8EncodedKeySpec(android.util.Base64.decode(service.privateKey, android.util.Base64.DEFAULT));
+            PrivateKey privKey = kf.generatePrivate(keySpecPKCS8);
+            X509EncodedKeySpec keySpecX509 = new X509EncodedKeySpec(android.util.Base64.decode(service.publicKey, android.util.Base64.DEFAULT));
+            RSAPublicKey pubKey = (RSAPublicKey) kf.generatePublic(keySpecX509);
+            RSA.setKey(pubKey, privKey);
+            byte[] encodeData = RSA.encrypt(RSA.getPublicKey2(RSA.GetMap()), data);
+            String base64Encoded = android.util.Base64.encodeToString(encodeData, android.util.Base64.DEFAULT);
+            return base64Encoded;
+        }
+        catch (Exception ex){
+            return null;
+        }
+    }
 
     private class InsertFollowUpAsyncCall extends AsyncTask<String, Void, Void> {
         SoapPrimitive flag;
