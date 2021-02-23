@@ -9,12 +9,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.StrictMode;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -47,6 +52,9 @@ import com.squareup.picasso.Picasso;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapPrimitive;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.interfaces.RSAPublicKey;
@@ -82,6 +90,8 @@ public class FacilityConnectionActivity extends AppCompatActivity {
     private static final int ImageBack = 1;
     String ImageUri="";
     Uri ImageData;
+    private String pictureImagePath;
+    private Bitmap imageBitmap;
 
     public class ScanDialog extends Dialog {
 
@@ -199,12 +209,7 @@ public class FacilityConnectionActivity extends AppCompatActivity {
         continuedReadimage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType("image/*");
-                startActivityForResult(intent,ImageBack);
-
-                Picasso.get().load(ImageData).into(continuedReadimage);
-
+                TakeImage();
             }
         });
 
@@ -215,7 +220,6 @@ public class FacilityConnectionActivity extends AppCompatActivity {
                 intent.setType("image/*");
                 startActivityForResult(intent,ImageBack);
 
-                Picasso.get().load(ImageData).into(issuedReadimage);
             }
         });
         sendbtn.setOnClickListener(new View.OnClickListener() {
@@ -286,20 +290,85 @@ public class FacilityConnectionActivity extends AppCompatActivity {
         });
 
     }
+
+    private void TakeImage() {
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
+
+        pictureImagePath = "";
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = timeStamp + ".jpg";
+        File storageDir = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES);
+        pictureImagePath = storageDir.getAbsolutePath() + "/" + imageFileName;
+        File file = new File(pictureImagePath);
+        Uri outputFileUri = Uri.fromFile(file);
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+        startActivityForResult(cameraIntent, 1991);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == ImageBack){
+//        if(requestCode == ImageBack){
+//            if(resultCode == RESULT_OK){
+//                ImageData = data.getData();
+//                ImageUri = String.valueOf(ImageData);
+////                Picasso.get().load(ImageData).into(profileimage);
+//            }
+//        }
+
+
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == 1991) {
+                try {
+                    File imgFile = new File(pictureImagePath);
+                    imageBitmap = decodeFile(imgFile);
+                    if (imageBitmap != null) {
+                        Bitmap temp = Bitmap.createScaledBitmap(imageBitmap, 600, 800, false);
+//                        ImageView state = findViewById(R.id.img);
+                        continuedReadimage.setImageBitmap(temp);
+                    }
+                }catch (Exception ex){}
+
+            }
+            if(requestCode == ImageBack){
             if(resultCode == RESULT_OK){
                 ImageData = data.getData();
                 ImageUri = String.valueOf(ImageData);
-
-//                Picasso.get().load(ImageData).into(profileimage);
-
+                Picasso.get().load(ImageData).into(issuedReadimage);
             }
         }
+        }
     }
+
+    private Bitmap decodeFile(File f){
+        try {
+//            //decode image size
+//            BitmapFactory.Options o = new BitmapFactory.Options();
+//            o.inJustDecodeBounds = true;
+//            BitmapFactory.decodeStream(new FileInputStream(f),null,o);
+//            //Find the correct scale value. It should be the power of 2.
+//            final int REQUIRED_SIZE=70;
+//            int width_tmp=o.outWidth, height_tmp=o.outHeight;
+            int scale=1;
+//            while(true){
+//                if(width_tmp/2<REQUIRED_SIZE || height_tmp/2<REQUIRED_SIZE)
+//                    break;
+//                width_tmp/=2;
+//                height_tmp/=2;
+//                scale++;
+//            }
+            //decode with inSampleSize
+            BitmapFactory.Options o2 = new BitmapFactory.Options();
+            o2.inSampleSize=scale;
+            return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
+        } catch (FileNotFoundException e) {}
+        return null;
+    }
+
     private void SetDate(final TextView Date) {
         Calendar calendar = Calendar.getInstance();
         final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
