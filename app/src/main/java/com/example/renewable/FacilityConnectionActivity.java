@@ -149,7 +149,6 @@ public class FacilityConnectionActivity extends AppCompatActivity {
         builder.setView(inflater.inflate(R.layout.dialog_info, null));
         final AlertDialog dialog = builder.create();
         ((FrameLayout) dialog.getWindow().getDecorView().findViewById(android.R.id.content)).setForeground(new ColorDrawable(Color.TRANSPARENT));
-
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
         lp.copyFrom(dialog.getWindow().getAttributes());
         lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
@@ -177,6 +176,8 @@ public class FacilityConnectionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_facilityconnection);
+
+        checkAndRequestPermissions();
 
         cusmNum_et = findViewById(R.id.cusmNum_et);
         processNum_et = findViewById(R.id.processNum_et);
@@ -216,10 +217,10 @@ public class FacilityConnectionActivity extends AppCompatActivity {
         issuedReadimage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType("image/*");
-                startActivityForResult(intent,ImageBack);
-
+//                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+//                intent.setType("image/*");
+//                startActivityForResult(intent,ImageBack);
+                TakeImage1();
             }
         });
         sendbtn.setOnClickListener(new View.OnClickListener() {
@@ -241,14 +242,12 @@ public class FacilityConnectionActivity extends AppCompatActivity {
             }
         });
 
-
         connectionDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 SetDate(connectionDate);
             }
         });
-
 
         CircleImageView bar = findViewById(R.id.copy1);
 
@@ -307,21 +306,28 @@ public class FacilityConnectionActivity extends AppCompatActivity {
         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
         startActivityForResult(cameraIntent, 1991);
     }
+    private void TakeImage1() {
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
+
+        pictureImagePath = "";
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = timeStamp + ".jpg";
+        File storageDir = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES);
+        pictureImagePath = storageDir.getAbsolutePath() + "/" + imageFileName;
+        File file = new File(pictureImagePath);
+        Uri outputFileUri = Uri.fromFile(file);
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+        startActivityForResult(cameraIntent, 1989);
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-//        if(requestCode == ImageBack){
-//            if(resultCode == RESULT_OK){
-//                ImageData = data.getData();
-//                ImageUri = String.valueOf(ImageData);
-////                Picasso.get().load(ImageData).into(profileimage);
-//            }
-//        }
-
-
-        if (resultCode == Activity.RESULT_OK) {
+        if (resultCode == RESULT_OK) {
             if (requestCode == 1991) {
                 try {
                     File imgFile = new File(pictureImagePath);
@@ -331,9 +337,22 @@ public class FacilityConnectionActivity extends AppCompatActivity {
 //                        ImageView state = findViewById(R.id.img);
                         continuedReadimage.setImageBitmap(temp);
                     }
-                }catch (Exception ex){}
-
+                } catch (Exception ex) {
+                }
             }
+            if (requestCode == 1989) {
+                try {
+                    File imgFile = new File(pictureImagePath);
+                    imageBitmap = decodeFile(imgFile);
+                    if (imageBitmap != null) {
+                        Bitmap temp = Bitmap.createScaledBitmap(imageBitmap, 600, 800, false);
+//                        ImageView state = findViewById(R.id.img);
+                        issuedReadimage.setImageBitmap(temp);
+                    }
+                } catch (Exception ex) {
+                }
+            }
+        }
             if(requestCode == ImageBack){
             if(resultCode == RESULT_OK){
                 ImageData = data.getData();
@@ -341,31 +360,32 @@ public class FacilityConnectionActivity extends AppCompatActivity {
                 Picasso.get().load(ImageData).into(issuedReadimage);
             }
         }
-        }
+
     }
 
     private Bitmap decodeFile(File f){
         try {
 //            //decode image size
-//            BitmapFactory.Options o = new BitmapFactory.Options();
-//            o.inJustDecodeBounds = true;
-//            BitmapFactory.decodeStream(new FileInputStream(f),null,o);
-//            //Find the correct scale value. It should be the power of 2.
-//            final int REQUIRED_SIZE=70;
-//            int width_tmp=o.outWidth, height_tmp=o.outHeight;
+            BitmapFactory.Options o = new BitmapFactory.Options();
+            o.inJustDecodeBounds = true;
+            BitmapFactory.decodeStream(new FileInputStream(f),null,o);
+            //Find the correct scale value. It should be the power of 2.
+            final int REQUIRED_SIZE=70;
+            int width_tmp=o.outWidth, height_tmp=o.outHeight;
             int scale=1;
-//            while(true){
-//                if(width_tmp/2<REQUIRED_SIZE || height_tmp/2<REQUIRED_SIZE)
-//                    break;
-//                width_tmp/=2;
-//                height_tmp/=2;
-//                scale++;
-//            }
+            while(true){
+                if(width_tmp/2<REQUIRED_SIZE || height_tmp/2<REQUIRED_SIZE)
+                    break;
+                width_tmp/=2;
+                height_tmp/=2;
+                scale++;
+            }
             //decode with inSampleSize
             BitmapFactory.Options o2 = new BitmapFactory.Options();
             o2.inSampleSize=scale;
             return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
-        } catch (FileNotFoundException e) {}
+        } catch (FileNotFoundException e) {
+        }
         return null;
     }
 

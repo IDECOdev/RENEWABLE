@@ -285,6 +285,8 @@ public class InquirActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inquir);
 
+        checkAndRequestPermissions();
+
         cusmNum_et = findViewById(R.id.cusmNum_et);
         processNum_et = findViewById(R.id.processNum_et);
 

@@ -192,13 +192,13 @@
         android:layout_height="match_parent"
         android:layout_below="@id/inquir_lay"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true">
+        android:layout_centerHorizontal="true"
+        android:layout_above="@id/btnLay">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-
 
             <FrameLayout
                 android:id="@+id/frame_container"
@@ -421,7 +421,8 @@
                 android:textStyle="bold"
                 android:elevation="1dp"
                 android:id="@+id/instext"
-                android:visibility="gone"/>
+                android:visibility="visible"/>
+
             <RelativeLayout
                 android:id="@+id/inspdata_lay"
                 android:layout_width="match_parent"
@@ -585,56 +586,59 @@
                     android:layout_marginTop="10dp"
                     android:id="@+id/continuedReadimage"
                     android:src="@drawable/ic_baseline_image_24" />
+
                 <LinearLayout
+                    android:id="@+id/EngNoteDateLay"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:weightSum="3"
-                    android:orientation="horizontal"
-                    android:id="@+id/EngNoteDateLay"
                     android:layout_below="@id/continuedReadimage"
+                    android:layout_marginTop="22dp"
                     android:layoutDirection="rtl"
-                    android:layout_marginTop="15dp">
+                    android:orientation="horizontal"
+                    android:weightSum="3"
+                    android:layout_marginBottom="10dp">
+
                     <TextView
                         android:layout_width="0dp"
-                        android:layout_weight=".85"
-                        android:layout_gravity="center"
-                        android:fontFamily="@font/ad_font"
                         android:layout_height="wrap_content"
-                        android:text="ملاحظات"
+                        android:layout_gravity="center"
                         android:layout_marginRight="20dp"
+                        android:layout_weight=".85"
+                        android:fontFamily="@font/ad_font"
+                        android:text="ملاحظات"
                         android:textSize="15dp"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" />
+
                     <EditText
                         android:id="@+id/EngNoteDate"
                         android:layout_width="0dp"
-                        android:layout_weight="2.15"
-                        android:layout_gravity="center"
                         android:layout_height="30dp"
-                        android:maxLength="20"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="30dp"
                         android:layout_marginRight="5dp"
-                        android:elevation="1dp"
-                        android:fontFamily="@font/ad_font"
-                        android:layout_marginLeft="60dp"
                         android:layout_toLeftOf="@id/tx1"
+                        android:layout_weight="2.15"
                         android:background="@drawable/textboxstyle"
+                        android:elevation="1dp"
                         android:ellipsize="start"
                         android:ems="10"
+                        android:fontFamily="@font/ad_font"
                         android:inputType="textMultiLine"
-                        android:textDirection="rtl"
+                        android:maxLength="20"
+                        android:paddingTop="2dp"
                         android:paddingRight="7dp"
                         android:paddingBottom="2dp"
-                        android:paddingTop="2dp"
                         android:text=""
                         android:textColor="#000000"
-                        android:textSize="15dp"/>
+                        android:textDirection="rtl"
+                        android:textSize="15dp" />
                 </LinearLayout>
 
 
             </RelativeLayout>
-
-
         </LinearLayout>
     </ScrollView>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
