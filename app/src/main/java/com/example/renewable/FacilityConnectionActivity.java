@@ -773,7 +773,6 @@ public class FacilityConnectionActivity extends AppCompatActivity {
                     cusmNum_et.setText("");
                     processNum_et.setEnabled(true);
                     processNum_et.setText("");
-
                 }
             }
         }catch (Exception e){

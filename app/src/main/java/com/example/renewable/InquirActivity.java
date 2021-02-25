@@ -535,7 +535,8 @@ public class InquirActivity extends AppCompatActivity {
                     byte[] encodeData = RSA.encrypt(RSA.getPublicKey2(RSA.GetMap()), data);
                     String base64Encoded = Base64.getEncoder().encodeToString(encodeData);
                     soapObject = soap.GetRenewable_Canceled(base64Encoded);
-                } catch (Exception e) {}
+                } catch (Exception e) {
+                }
 
                 return null;
         }
