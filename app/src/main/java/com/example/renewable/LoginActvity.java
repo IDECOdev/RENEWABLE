@@ -341,8 +341,8 @@ public class LoginActvity extends AppCompatActivity {
                     editor.putString("UserName", username);
                     editor.apply();
 
-                    startActivity(new Intent(LoginActvity.this, InquirActivity.class).putExtra("CusmNum",""));
-//                    startActivity(new Intent(LoginActvity.this, FacilityConnectionActivity.class).putExtra("CusmNum",""));
+//                    startActivity(new Intent(LoginActvity.this, InquirActivity.class).putExtra("CusmNum",""));
+                    startActivity(new Intent(LoginActvity.this, FacilityConnectionActivity.class).putExtra("CusmNum",""));
                     finish(); }
                 else
                     new AlertDialog.Builder(LoginActvity.this)

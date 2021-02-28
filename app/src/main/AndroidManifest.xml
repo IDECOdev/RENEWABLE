@@ -21,12 +21,16 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".LoginActvity"/>
-        <activity android:name=".InquirActivity"/>
-        <activity android:name=".MainActivity"/>
+        <activity android:name=".LoginActvity"
+            android:windowSoftInputMode="adjustPan"/>
+
+        <activity android:name=".InquirActivity"
+            android:windowSoftInputMode="adjustPan"/>
+        <activity android:name=".MainActivity" />
         <activity android:name=".FingerPrintAuthintication"/>
         <activity android:name=".Settings"/>
-        <activity android:name=".FacilityConnectionActivity"/>
+        <activity android:name=".FacilityConnectionActivity"
+            android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

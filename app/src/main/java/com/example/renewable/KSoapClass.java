@@ -1,10 +1,15 @@
 package com.example.renewable;
 
+import android.graphics.Bitmap;
+import android.util.Base64;
+
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapPrimitive;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
+
+import java.io.ByteArrayOutputStream;
 
 public class KSoapClass {
 
@@ -158,6 +163,7 @@ public class KSoapClass {
         try
         {
             androidHttpTransport.call(SoapAction, envelope);
+            SoapPrimitive response = (SoapPrimitive) envelope.getResponse();
             return true;
         }
         catch (Exception exception)
@@ -212,6 +218,62 @@ public class KSoapClass {
         } catch (Exception e) {
             return null;
         }
+
+    }
+
+    public boolean Insert_Renewable_Images(String imageFileName1, String imageFileName2, Bitmap bitmap1, Bitmap bitmap2){
+
+
+        String NameSpace = "http://tempuri.org/";
+        String MethodName = "Insert_Renewable_Images";
+        String SoapAction = "http://tempuri.org/Insert_Renewable_Images";
+        String Url = "http://192.168.14.72/WebSite/PortalPublicWS/Billing.asmx";
+//        String Url= "http://ideco.com.jo/PortalPublicWS/Billing.asmx";
+
+        SoapObject request = new SoapObject(NameSpace, MethodName);
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap1 = Bitmap.createScaledBitmap(bitmap1, 600, 800, false);
+        bitmap1.compress(Bitmap.CompressFormat.JPEG, 75, byteArrayOutputStream);
+        byte[] byteArray = byteArrayOutputStream .toByteArray();
+        String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
+
+        String encoded2;
+
+        try{
+            byteArrayOutputStream = new ByteArrayOutputStream();
+            bitmap2 = Bitmap.createScaledBitmap(bitmap2, 600, 800, false);
+            bitmap2.compress(Bitmap.CompressFormat.JPEG, 75, byteArrayOutputStream);
+            byteArray = byteArrayOutputStream .toByteArray();
+            encoded2 = Base64.encodeToString(byteArray, Base64.DEFAULT);
+        }
+        catch(Exception e){
+            encoded2="";
+        }
+
+        request.addProperty("name1", imageFileName1);
+        request.addProperty("name2", imageFileName2);
+        request.addProperty("Imagebytes1", encoded);
+        request.addProperty("Imagebytes2", encoded2);
+
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.dotNet = true;
+        envelope.setOutputSoapObject(request);
+        HttpTransportSE androidHttpTransport = new HttpTransportSE(Url);
+        androidHttpTransport.debug = true;
+
+        try {
+
+            androidHttpTransport.call(SoapAction, envelope);
+            SoapPrimitive response = (SoapPrimitive) envelope.getResponse();
+            String temp = response.toString();
+            if(temp.contains("true"))
+                return true;
+            else
+                return false;
+        }
+        catch (Exception e) {
+            return false; }
 
     }
 

@@ -83,7 +83,8 @@ public class FacilityConnectionActivity extends AppCompatActivity {
     Button inquir_btn2, inquir_btn1, sendbtn;
     String CustomermNum;
     EditText EngNoteDate;
-    TextView  connectionDate, issuedRead, continuedRead;
+    TextView  connectionDate;
+    EditText issuedRead, continuedRead;
     TextView instext;
     RelativeLayout insLay;
     ImageView issuedReadimage, continuedReadimage;
@@ -91,7 +92,8 @@ public class FacilityConnectionActivity extends AppCompatActivity {
     String ImageUri="";
     Uri ImageData;
     private String pictureImagePath;
-    private Bitmap imageBitmap;
+    private Bitmap imageBitmap, imageBitmap2;
+    String imageFileName1, imageFileName2;
 
     public class ScanDialog extends Dialog {
 
@@ -192,7 +194,8 @@ public class FacilityConnectionActivity extends AppCompatActivity {
         inquir_btn2 = findViewById(R.id.inquir_btn2);
 
         sendbtn = findViewById(R.id.sendbtn);
-        sendbtn.setEnabled(false);
+//        sendbtn.setEnabled(false);
+        sendbtn.setEnabled(true);
         sendbtn. setBackground(getDrawable(R.drawable.shape3));
         sendbtn.setTextColor(getResources().getColor(R.color.grey));
 
@@ -203,8 +206,8 @@ public class FacilityConnectionActivity extends AppCompatActivity {
         lacation = findViewById(R.id.lacation);
 
         connectionDate = findViewById(R.id.connectionDate);
-        issuedRead = findViewById(R.id.noteDate);
-        continuedRead = findViewById(R.id.processNoteDate);
+        issuedRead = findViewById(R.id.issuedRead);
+        continuedRead = findViewById(R.id.continuedRead);
         EngNoteDate = findViewById(R.id.EngNoteDate);
 
         continuedReadimage.setOnClickListener(new View.OnClickListener() {
@@ -227,7 +230,9 @@ public class FacilityConnectionActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(connectionDate.getText().toString().equals("")){
-                    connectionDate.setText("0");
+//                    connectionDate.setText("0");
+                    Toast.makeText(FacilityConnectionActivity.this, "ادخل تاريخ ربط المنشأة", Toast.LENGTH_SHORT).show();
+                    return;
                 }
                 if(issuedRead.getText().toString().equals("")){
                     issuedRead.setText("0");
@@ -238,6 +243,9 @@ public class FacilityConnectionActivity extends AppCompatActivity {
 
                 WorkFlowByAdminAsyncCall workFlowByAdminAsyncCall = new WorkFlowByAdminAsyncCall();
                 workFlowByAdminAsyncCall.execute();
+
+//                SaveImageAsyncCall saveImageAsyncCall = new SaveImageAsyncCall();
+//                saveImageAsyncCall.execute();
 
             }
         });
@@ -296,10 +304,10 @@ public class FacilityConnectionActivity extends AppCompatActivity {
 
         pictureImagePath = "";
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = timeStamp + ".jpg";
+        imageFileName1 = timeStamp + ".jpg";
         File storageDir = Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES);
-        pictureImagePath = storageDir.getAbsolutePath() + "/" + imageFileName;
+        pictureImagePath = storageDir.getAbsolutePath() + "/" + imageFileName1;
         File file = new File(pictureImagePath);
         Uri outputFileUri = Uri.fromFile(file);
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -312,10 +320,10 @@ public class FacilityConnectionActivity extends AppCompatActivity {
 
         pictureImagePath = "";
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = timeStamp + ".jpg";
+        imageFileName2 = timeStamp + ".jpg";
         File storageDir = Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES);
-        pictureImagePath = storageDir.getAbsolutePath() + "/" + imageFileName;
+        pictureImagePath = storageDir.getAbsolutePath() + "/" + imageFileName2;
         File file = new File(pictureImagePath);
         Uri outputFileUri = Uri.fromFile(file);
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -343,9 +351,9 @@ public class FacilityConnectionActivity extends AppCompatActivity {
             if (requestCode == 1989) {
                 try {
                     File imgFile = new File(pictureImagePath);
-                    imageBitmap = decodeFile(imgFile);
-                    if (imageBitmap != null) {
-                        Bitmap temp = Bitmap.createScaledBitmap(imageBitmap, 600, 800, false);
+                    imageBitmap2 = decodeFile(imgFile);
+                    if (imageBitmap2 != null) {
+                        Bitmap temp = Bitmap.createScaledBitmap(imageBitmap2, 600, 800, false);
 //                        ImageView state = findViewById(R.id.img);
                         issuedReadimage.setImageBitmap(temp);
                     }
@@ -595,6 +603,7 @@ public class FacilityConnectionActivity extends AppCompatActivity {
                             "","","","",""));
                 }
 
+
             } catch (Exception e) {}
 
             return null;
@@ -604,7 +613,53 @@ public class FacilityConnectionActivity extends AppCompatActivity {
         protected void onPostExecute(Void result) {
             pd.dismiss();
             try{
-                if(flag){
+                if(flag) {
+                    pd.dismiss();
+                    SaveImageAsyncCall saveImageAsyncCall = new SaveImageAsyncCall();
+                    saveImageAsyncCall.execute();
+                }
+                }catch(Exception e){}
+
+        }
+
+        @Override
+        protected void onPreExecute() {
+
+            pd.setMessage("يرجى الأنتظار...");
+            pd.setCancelable(false);
+            pd.show();
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {}
+
+    }
+
+    private class SaveImageAsyncCall extends AsyncTask<String, Void, Void> {
+        boolean flag1 = false;
+        public SaveImageAsyncCall() {
+            pd = new ProgressDialog(FacilityConnectionActivity.this);
+
+        }
+        @RequiresApi(api = Build.VERSION_CODES.O)
+        @Override
+        protected Void doInBackground(String... params) {
+            try {
+
+                KSoapClass soap = new KSoapClass();
+                flag1 = soap.Insert_Renewable_Images(imageFileName1, imageFileName2, imageBitmap, imageBitmap2);
+
+                } catch (Exception e) {}
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            pd.dismiss();
+            try{
+
+                if(flag1){
                     pd.dismiss();
                     final AlertDialog.Builder builder = new AlertDialog.Builder(FacilityConnectionActivity.this);
                     LayoutInflater inflater = FacilityConnectionActivity.this.getLayoutInflater();

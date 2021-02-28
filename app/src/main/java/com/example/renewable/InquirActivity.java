@@ -620,7 +620,7 @@ public class InquirActivity extends AppCompatActivity {
                     if (updateRen2) {
                         flag = soap.WorkFlowAdvanceByAdmin(getEncodedString3(soap,120, 1005249, Integer.parseInt(inquirInfo.getMAIN_PID()), "Root/RenewableInsp",
                                 "1", " ", " ", " ", " ", " ", " ", " ", " ", " ",
-                                " ",  " ", " ", " ", ""));
+                                " ",  " ", " ", " ", " "));
                     }
                 }
 
