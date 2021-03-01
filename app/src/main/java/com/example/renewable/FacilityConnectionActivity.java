@@ -145,33 +145,8 @@ public class FacilityConnectionActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-
-        final AlertDialog.Builder builder = new AlertDialog.Builder(FacilityConnectionActivity.this);
-        LayoutInflater inflater = FacilityConnectionActivity.this.getLayoutInflater();
-        builder.setView(inflater.inflate(R.layout.dialog_info, null));
-        final AlertDialog dialog = builder.create();
-        ((FrameLayout) dialog.getWindow().getDecorView().findViewById(android.R.id.content)).setForeground(new ColorDrawable(Color.TRANSPARENT));
-        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-        lp.copyFrom(dialog.getWindow().getAttributes());
-        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
-        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-        dialog.show();
-        dialog.getWindow().setAttributes(lp);
-        final Button exit = dialog.findViewById(R.id.btn2);
-        final CircleImageView im = dialog.findViewById(R.id.im);
-        im.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        exit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finishAffinity();
-                System.exit(0);
-            }
-        });
+        startActivity(new Intent(FacilityConnectionActivity.this, MainActivity.class));
+        finish();
     }
 
     @Override

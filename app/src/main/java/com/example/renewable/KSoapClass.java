@@ -164,7 +164,11 @@ public class KSoapClass {
         {
             androidHttpTransport.call(SoapAction, envelope);
             SoapPrimitive response = (SoapPrimitive) envelope.getResponse();
-            return true;
+            if(response.toString().equals("true")){
+                return true;
+            }else {
+                return false;
+            }
         }
         catch (Exception exception)
         {
