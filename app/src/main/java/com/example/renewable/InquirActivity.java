@@ -72,7 +72,7 @@ public class InquirActivity extends AppCompatActivity {
     ProgressDialog pd;
     String CusmNo = "";
     InquirInfo inquirInfo;
-    Button inquir_btn2, inquir_btn1, sendbtn, finishbtn;
+    Button inquir_btn2, inquir_btn1, sendbtn, finishbtn, fillbtn;
     String CustomermNum;
     EditText EngNoteDate;
     TextView inspDate, noteDate, processNoteDate;
@@ -280,6 +280,11 @@ public class InquirActivity extends AppCompatActivity {
         finishbtn. setBackground(getDrawable(R.drawable.shape3));
         finishbtn.setTextColor(getResources().getColor(R.color.grey));
 
+        fillbtn = findViewById(R.id.fillbtn);
+        fillbtn.setEnabled(false);
+        fillbtn. setBackground(getDrawable(R.drawable.shape3));
+        fillbtn.setTextColor(getResources().getColor(R.color.grey));
+
         cusmName = findViewById(R.id.cusmName);
         cusm_No = findViewById(R.id.cusm_No);
         city = findViewById(R.id.city);
@@ -307,6 +312,13 @@ public class InquirActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 SetDate(processNoteDate);
+            }
+        });
+
+        fillbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(InquirActivity.this, FillDataActivity.class));
             }
         });
 
@@ -919,6 +931,11 @@ public class InquirActivity extends AppCompatActivity {
                 finishbtn.setEnabled(true);
                 finishbtn. setBackground(getDrawable(R.drawable.shape4));
                 finishbtn.setTextColor(getResources().getColor(R.color.white));
+
+                fillbtn = findViewById(R.id.fillbtn);
+                fillbtn.setEnabled(true);
+                fillbtn. setBackground(getDrawable(R.drawable.shape4));
+                fillbtn.setTextColor(getResources().getColor(R.color.white));
 
                 insLay.setVisibility(View.VISIBLE);
                 instext.setVisibility(View.VISIBLE);

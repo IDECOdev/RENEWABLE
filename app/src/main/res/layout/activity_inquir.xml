@@ -647,5 +647,19 @@
             android:fontFamily="@font/ad_font"
             android:textStyle="bold"
             android:textColor="#ffffff"/>
+        <Button
+            android:id="@+id/fillbtn"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="15dp"
+            android:textSize="15dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginRight="15dp"
+            android:background="@drawable/shape4"
+            android:text="ارفاق نموذج"
+            android:fontFamily="@font/ad_font"
+            android:textStyle="bold"
+            android:textColor="#ffffff"/>
     </LinearLayout>
 </RelativeLayout>
