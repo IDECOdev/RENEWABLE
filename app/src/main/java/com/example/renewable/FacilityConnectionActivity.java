@@ -656,6 +656,21 @@ public class FacilityConnectionActivity extends AppCompatActivity {
                         @Override
                         public void onClick(View v) {
                             dialog1.dismiss();
+                            if(!cusmNum_et.getText().toString().equals("")){
+                                cusmNum_et.setText("");
+                            }
+                            if(!processNum_et.getText().toString().equals("")){
+                                processNum_et.setText("");
+                            }
+                            cusmName.setText("");
+                            cusm_No.setText("");
+                            city.setText("");
+                            address_name.setText("");
+                            lacation.setText("");
+
+                            sendbtn.setEnabled(false);
+                            sendbtn. setBackground(getDrawable(R.drawable.shape3));
+                            sendbtn.setTextColor(getResources().getColor(R.color.grey));
                         }
                     });
                 }else {
