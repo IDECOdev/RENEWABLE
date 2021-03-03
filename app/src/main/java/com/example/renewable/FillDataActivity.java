@@ -63,8 +63,8 @@ public class FillDataActivity extends AppCompatActivity {
 
                 KSoapClass soap = new KSoapClass();
 
-                String data = ":" +answer1+",:"+answer2+",:" + answer3+",:"+answer4+",:"+answer5+",:"+answer6+",:"+answer7+",:"+answer8+",:"+answer9+",:"+downvalue_discon+",:"+actualvalue_discon+
-                        ",:"+catchedvalue_discon+",:"+downvalue_re+",:"+actualvalue_re+",:"+ catchedvalue_re;
+                String data = ":" +answer1+",:"+answer2+",:" + answer3+",:"+answer4+",:"+answer5+",:"+answer6+",:"+answer7+",:"+answer8+",:"+answer9+",:"+downvalue_discon.getText().toString()+",:"+actualvalue_discon.getText().toString()+
+                        ",:"+catchedvalue_discon.getText().toString()+",:"+downvalue_re.getText().toString()+",:"+actualvalue_re.getText().toString()+",:"+ catchedvalue_re.getText().toString();
 
                 try {
                     KeyFactory kf = KeyFactory.getInstance("RSA");
