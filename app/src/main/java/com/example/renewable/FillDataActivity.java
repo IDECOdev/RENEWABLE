@@ -1,21 +1,114 @@
 package com.example.renewable;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RadioButton;
+
+import java.security.KeyFactory;
+import java.security.PrivateKey;
+import java.security.interfaces.RSAPublicKey;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
 
 public class FillDataActivity extends AppCompatActivity {
     String answer1 = "0", answer2 = "0", answer3 = "0", answer4 = "0", answer5 = "0",
-            answer6 = "", answer7 = "", answer8 = "", answer9 = "", answer10 = "", answer11 = "",
-            answer12 = "", answer13 = "", answer14 = "", answer15 = "", answer16 = "",
-            answer17 = "", answer18 = "", asnwer19 = "";
+            answer6 = "0", answer7 = "0", answer8 = "0", answer9 = "0";
+
+    EditText downvalue_discon, actualvalue_discon, catchedvalue_discon, downvalue_re, actualvalue_re, catchedvalue_re;
+    Button sendbtn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fill_data);
+
+        downvalue_discon = findViewById(R.id.downvalue_discon);
+        actualvalue_discon = findViewById(R.id.actualvalue_discon);
+        catchedvalue_discon = findViewById(R.id.catchedvalue_discon);
+        downvalue_re = findViewById(R.id.downvalue_re);
+        actualvalue_re = findViewById(R.id.actualvalue_re);
+        catchedvalue_re = findViewById(R.id.catchedvalue_re);
+
+        sendbtn = findViewById(R.id.sendbtn);
+
+        sendbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               SaveFilledDataAsyncCall saveFilledDataAsyncCall = new SaveFilledDataAsyncCall();
+               saveFilledDataAsyncCall.execute();
+            }
+        });
     }
+    ProgressDialog pd;
+    private class SaveFilledDataAsyncCall extends AsyncTask<String, Void, Void> {
+        boolean flag = false;
+        boolean updateRen1 = false,updateRen2 = false;
+        public SaveFilledDataAsyncCall() {
+            pd = new ProgressDialog(FillDataActivity.this);
+
+        }
+        @RequiresApi(api = Build.VERSION_CODES.O)
+        @Override
+        protected Void doInBackground(String... params) {
+
+                KSoapClass soap = new KSoapClass();
+
+                String data = ":" +answer1+",:"+answer2+",:" + answer3+",:"+answer4+",:"+answer5+",:"+answer6+",:"+answer7+",:"+answer8+",:"+answer9+",:"+downvalue_discon+",:"+actualvalue_discon+
+                        ",:"+catchedvalue_discon+",:"+downvalue_re+",:"+actualvalue_re+",:"+ catchedvalue_re;
+
+                try {
+                    KeyFactory kf = KeyFactory.getInstance("RSA");
+                    PKCS8EncodedKeySpec keySpecPKCS8 = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(soap.privateKey));
+                    PrivateKey privKey = kf.generatePrivate(keySpecPKCS8);
+                    X509EncodedKeySpec keySpecX509 = new X509EncodedKeySpec(Base64.getDecoder().decode(soap.publicKey));
+                    RSAPublicKey pubKey = (RSAPublicKey) kf.generatePublic(keySpecX509);
+
+                    RSA.setKey(pubKey, privKey);
+
+                    byte[] encodeData = RSA.encrypt(RSA.getPublicKey2(RSA.GetMap()), data);
+                    String base64Encoded = Base64.getEncoder().encodeToString(encodeData);
+                    updateRen1 = soap.UpdateTransRenewableNew(base64Encoded);
+
+                } catch (Exception e) {}
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            pd.dismiss();
+            try{
+                if(flag) {
+                    pd.dismiss();
+
+                }
+            }catch(Exception e){}
+
+        }
+
+        @Override
+        protected void onPreExecute() {
+
+            pd.setMessage("يرجى الأنتظار...");
+            pd.setCancelable(false);
+            pd.show();
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {}
+
+    }
+
 
     public void onRadioButtonClicked1(View view) {
         boolean checked = ((RadioButton) view).isChecked();
