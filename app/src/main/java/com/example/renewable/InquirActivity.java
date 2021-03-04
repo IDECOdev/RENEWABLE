@@ -318,7 +318,8 @@ public class InquirActivity extends AppCompatActivity {
         fillbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(InquirActivity.this, FillDataActivity.class));
+                startActivity(new Intent(InquirActivity.this, FillDataActivity.class).putExtra("MPID", inquirInfo.getMAIN_PID()));
+
             }
         });
 

@@ -281,4 +281,79 @@ public class KSoapClass {
 
     }
 
+    public SoapObject GetINSPRenTemplate(String data){
+
+        String NameSpace = "http://tempuri.org/";
+        String MethodName = "GetINSPRenTemplate";
+        String SoapAction = "http://tempuri.org/IBillingWcfsrv/GetINSPRenTemplate";
+        SoapObject request = new SoapObject(NameSpace, MethodName);
+
+        request.addProperty("data", data);
+
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.dotNet = true;
+        envelope.setOutputSoapObject(request);
+        HttpTransportSE androidHttpTransport = new HttpTransportSE(Url);
+        androidHttpTransport.debug = true;
+
+        try {
+            androidHttpTransport.call(SoapAction, envelope);
+            SoapObject response = (SoapObject) envelope.getResponse();
+            return response;
+        } catch (Exception e) {
+            return null;
+        }
+
+    }
+
+    public SoapPrimitive InsertINSPTemplate(String data){
+
+        String NameSpace = "http://tempuri.org/";
+        String MethodName = "InsertINSPTemplate";
+        String SoapAction = "http://tempuri.org/IBillingWcfsrv/InsertINSPTemplate";
+        SoapObject request = new SoapObject(NameSpace, MethodName);
+
+        request.addProperty("data", data);
+
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.dotNet = true;
+        envelope.setOutputSoapObject(request);
+        HttpTransportSE androidHttpTransport = new HttpTransportSE(Url);
+        androidHttpTransport.debug = true;
+
+        try {
+            androidHttpTransport.call(SoapAction, envelope);
+            SoapPrimitive response = (SoapPrimitive) envelope.getResponse();
+            return response;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public SoapPrimitive UpdateINSPTemplate(String data){
+
+        String NameSpace = "http://tempuri.org/";
+        String MethodName = "UpdateINSPTemplate";
+        String SoapAction = "http://tempuri.org/IBillingWcfsrv/UpdateINSPTemplate";
+        SoapObject request = new SoapObject(NameSpace, MethodName);
+
+        request.addProperty("data", data);
+
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.dotNet = true;
+        envelope.setOutputSoapObject(request);
+        HttpTransportSE androidHttpTransport = new HttpTransportSE(Url);
+        androidHttpTransport.debug = true;
+
+        try {
+            androidHttpTransport.call(SoapAction, envelope);
+            SoapPrimitive response = (SoapPrimitive) envelope.getResponse();
+            return response;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+
+
 }
