@@ -71,6 +71,9 @@ public class FillDataActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(String... params) {
 //findme     لبيانات كيف سيتم بعثها في ال data
+
+//            MainPID, MemberID, YesFlag, MinimumValue, MeasuredValue, ExactValue, ENtryUser, MemberType
+
                 KSoapClass soap = new KSoapClass();
                 String data = ":"+MPID+
                         ",:"+answer1+
@@ -87,7 +90,7 @@ public class FillDataActivity extends AppCompatActivity {
                         ",:"+catchedvalue_discon.getText().toString()+
                         ",:"+downvalue_re.getText().toString()+
                         ",:"+actualvalue_re.getText().toString()+
-                        ",:"+ catchedvalue_re.getText().toString();
+                        ",:"+catchedvalue_re.getText().toString();
 
                 try {
                     KeyFactory kf = KeyFactory.getInstance("RSA");
