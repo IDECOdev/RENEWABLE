@@ -427,164 +427,173 @@
                 android:id="@+id/inspdata_lay"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
                 android:layout_marginTop="-14dp"
                 android:layout_marginRight="10dp"
-                android:layout_marginLeft="10dp"
                 android:background="@drawable/selector_fieldset_background"
                 android:visibility="visible">
 
                 <LinearLayout
+                    android:id="@+id/connectionDateLay"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:weightSum="3"
-                    android:orientation="horizontal"
-                    android:id="@+id/connectionDateLay"
+                    android:layout_marginTop="20dp"
                     android:layoutDirection="rtl"
-                    android:layout_marginTop="20dp">
+                    android:orientation="horizontal"
+                    android:weightSum="3">
+
                     <TextView
                         android:layout_width="0dp"
-                        android:layout_weight=".85"
-                        android:layout_gravity="center"
-                        android:fontFamily="@font/ad_font"
                         android:layout_height="wrap_content"
-                        android:text="تاريخ ربط المنشأة"
+                        android:layout_gravity="center"
                         android:layout_marginRight="20dp"
+                        android:layout_weight=".85"
+                        android:fontFamily="@font/ad_font"
+                        android:text="تاريخ ربط المنشأة"
                         android:textSize="15dp"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" />
+
                     <TextView
                         android:id="@+id/connectionDate"
                         android:layout_width="0dp"
-                        android:layout_weight="2.15"
-                        android:layout_gravity="center"
                         android:layout_height="30dp"
-                        android:layout_marginRight="5dp"
-                        android:elevation="1dp"
-                        android:fontFamily="@font/ad_font"
+                        android:layout_gravity="center"
                         android:layout_marginLeft="30dp"
+                        android:layout_marginRight="5dp"
                         android:layout_toLeftOf="@id/tx1"
+                        android:layout_weight="2.15"
                         android:background="@drawable/textboxstyle"
+                        android:elevation="1dp"
                         android:ellipsize="start"
                         android:ems="10"
+                        android:fontFamily="@font/ad_font"
                         android:inputType="text"
-                        android:textDirection="rtl"
+                        android:maxLength="20"
+                        android:paddingTop="2dp"
                         android:paddingRight="7dp"
                         android:paddingBottom="2dp"
-                        android:paddingTop="2dp"
                         android:text=""
-                        android:maxLength="20"
                         android:textColor="#000000"
-                        android:textSize="15dp"/>
+                        android:textDirection="rtl"
+                        android:textSize="15dp" />
                 </LinearLayout>
+
                 <LinearLayout
+                    android:id="@+id/issuedReadLay"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:weightSum="3"
-                    android:orientation="horizontal"
-                    android:id="@+id/issuedReadLay"
                     android:layout_below="@id/connectionDateLay"
+                    android:layout_marginTop="15dp"
                     android:layoutDirection="rtl"
-                    android:layout_marginTop="15dp">
+                    android:orientation="horizontal"
+                    android:weightSum="3">
+
                     <TextView
                         android:layout_width="0dp"
-                        android:layout_weight=".85"
-                        android:layout_gravity="center"
-                        android:fontFamily="@font/ad_font"
                         android:layout_height="wrap_content"
-                        android:text="القراءة المصدرة"
+                        android:layout_gravity="center"
                         android:layout_marginRight="20dp"
+                        android:layout_weight=".85"
+                        android:fontFamily="@font/ad_font"
+                        android:text="القراءة المصدرة"
                         android:textSize="15dp"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" />
+
                     <EditText
                         android:id="@+id/issuedRead"
                         android:layout_width="0dp"
-                        android:layout_weight="2.15"
-                        android:maxLength="20"
-                        android:layout_gravity="center"
                         android:layout_height="30dp"
-                        android:layout_marginRight="5dp"
-                        android:elevation="1dp"
-                        android:fontFamily="@font/ad_font"
+                        android:layout_gravity="center"
                         android:layout_marginLeft="30dp"
+                        android:layout_marginRight="5dp"
                         android:layout_toLeftOf="@id/tx1"
+                        android:layout_weight="2.15"
                         android:background="@drawable/textboxstyle"
+                        android:elevation="1dp"
                         android:ellipsize="start"
                         android:ems="10"
+                        android:fontFamily="@font/ad_font"
                         android:inputType="text"
-                        android:textDirection="rtl"
+                        android:maxLength="20"
+                        android:paddingTop="2dp"
                         android:paddingRight="7dp"
                         android:paddingBottom="2dp"
-                        android:paddingTop="2dp"
                         android:text=""
                         android:textColor="#000000"
-                        android:textSize="15dp"/>
+                        android:textDirection="rtl"
+                        android:textSize="15dp" />
                 </LinearLayout>
+
                 <ImageView
+                    android:id="@+id/issuedReadimage"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
-                    android:orientation="horizontal"
+                    android:layout_below="@+id/issuedReadLay"
                     android:layout_gravity="center"
                     android:layout_marginLeft="15dp"
-                    android:layout_below="@+id/issuedReadLay"
+                    android:layout_marginTop="10dp"
                     android:layout_marginRight="15dp"
                     android:layout_marginBottom="10dp"
-                    android:layout_marginTop="10dp"
-                    android:id="@+id/issuedReadimage"
+                    android:orientation="horizontal"
                     android:src="@drawable/ic_baseline_image_24" />
 
                 <LinearLayout
+                    android:id="@+id/continuedReadLay"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:weightSum="3"
-                    android:orientation="horizontal"
-                    android:id="@+id/continuedReadLay"
                     android:layout_below="@id/issuedReadimage"
+                    android:layout_marginTop="15dp"
                     android:layoutDirection="rtl"
-                    android:layout_marginTop="15dp">
+                    android:orientation="horizontal"
+                    android:weightSum="3">
+
                     <TextView
                         android:layout_width="0dp"
-                        android:layout_weight=".85"
-                        android:layout_gravity="center"
-                        android:fontFamily="@font/ad_font"
                         android:layout_height="wrap_content"
-                        android:text="القراءة المستجرة"
+                        android:layout_gravity="center"
                         android:layout_marginRight="20dp"
+                        android:layout_weight=".85"
+                        android:fontFamily="@font/ad_font"
+                        android:text="القراءة المستجرة"
                         android:textSize="15dp"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" />
+
                     <EditText
                         android:id="@+id/continuedRead"
                         android:layout_width="0dp"
-                        android:layout_weight="2.15"
-                        android:layout_gravity="center"
                         android:layout_height="30dp"
-                        android:maxLength="20"
-                        android:layout_marginRight="5dp"
-                        android:elevation="1dp"
-                        android:fontFamily="@font/ad_font"
+                        android:layout_gravity="center"
                         android:layout_marginLeft="30dp"
+                        android:layout_marginRight="5dp"
                         android:layout_toLeftOf="@id/tx1"
+                        android:layout_weight="2.15"
                         android:background="@drawable/textboxstyle"
+                        android:elevation="1dp"
                         android:ellipsize="start"
                         android:ems="10"
+                        android:fontFamily="@font/ad_font"
                         android:inputType="text"
-                        android:textDirection="rtl"
+                        android:maxLength="20"
+                        android:paddingTop="2dp"
                         android:paddingRight="7dp"
                         android:paddingBottom="2dp"
-                        android:paddingTop="2dp"
                         android:text=""
                         android:textColor="#000000"
-                        android:textSize="15dp"/>
+                        android:textDirection="rtl"
+                        android:textSize="15dp" />
                 </LinearLayout>
+
                 <ImageView
+                    android:id="@+id/continuedReadimage"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
-                    android:orientation="horizontal"
+                    android:layout_below="@+id/continuedReadLay"
                     android:layout_gravity="center"
                     android:layout_marginLeft="15dp"
-                    android:layout_below="@+id/continuedReadLay"
+                    android:layout_marginTop="10dp"
                     android:layout_marginRight="15dp"
                     android:layout_marginBottom="10dp"
-                    android:layout_marginTop="10dp"
-                    android:id="@+id/continuedReadimage"
+                    android:orientation="horizontal"
                     android:src="@drawable/ic_baseline_image_24" />
 
                 <LinearLayout
@@ -593,10 +602,10 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/continuedReadimage"
                     android:layout_marginTop="22dp"
+                    android:layout_marginBottom="10dp"
                     android:layoutDirection="rtl"
                     android:orientation="horizontal"
-                    android:weightSum="3"
-                    android:layout_marginBottom="10dp">
+                    android:weightSum="3">
 
                     <TextView
                         android:layout_width="0dp"

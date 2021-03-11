@@ -316,6 +316,7 @@ public class LoginActvity extends AppCompatActivity {
             SoapObject so1, so2, so3;
             String ID = "";
             String GM_FLAG = "";
+            String EMP_NO = "";
 
             if (sp != null && sp.getPropertyCount() > 0){
                 so1 = (SoapObject) sp.getProperty(1);
@@ -325,6 +326,7 @@ public class LoginActvity extends AppCompatActivity {
                         so3 = (SoapObject) so2.getProperty(0);
                         try{
                             ID = so3.getPropertyAsString("ID");
+                            EMP_NO = so3.getPropertyAsString("EMP_NO");
                             GM_FLAG = so3.getPropertyAsString("GM_FLAG"); }
                         catch (Exception ex){ GM_FLAG = "0"; }
                     }
@@ -338,6 +340,7 @@ public class LoginActvity extends AppCompatActivity {
                             getSharedPreferences("Info", Context.MODE_PRIVATE).edit();
                     editor.putString("ID", ID);
                     editor.putString("GM_FLAG", GM_FLAG);
+                    editor.putString("EMP_NO", EMP_NO);
                     editor.putString("UserName", username);
                     editor.apply();
 
