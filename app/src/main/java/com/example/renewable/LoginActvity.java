@@ -2,6 +2,7 @@ package com.example.renewable;
 
 import android.Manifest;
 import android.app.KeyguardManager;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -255,7 +256,7 @@ public class LoginActvity extends AppCompatActivity {
     public class LoginInfoAsyncCall extends AsyncTask<String, Void, Void> {
 
         SoapObject soapObject;
-//        ProgressDialog progressDialog;
+        ProgressDialog progressDialog;
         String username;
         String password;
 
@@ -263,7 +264,7 @@ public class LoginActvity extends AppCompatActivity {
 
             this.username = username;
             this.password = password;
-//            progressDialog = new ProgressDialog();
+            progressDialog = new ProgressDialog(LoginActvity.this);
         }
 
         @RequiresApi(api = Build.VERSION_CODES.O)
@@ -299,14 +300,14 @@ public class LoginActvity extends AppCompatActivity {
 
         @Override
         protected void onPreExecute() {
-//            progressDialog.show();
+            progressDialog.show();
+            progressDialog.setMessage("يرجى الانتظار...");
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
-
+            progressDialog.dismiss();
             GetReadable(soapObject);
-//            progressDialog.dismiss();
         }
 
         @Override

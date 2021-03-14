@@ -94,14 +94,14 @@ public class FillDataActivity extends AppCompatActivity {
                     answersList2.add(new AnswersList2("0",downvalue_re.getText().toString(), actualvalue_re.getText().toString(), catchedvalue_re.getText().toString()));
 
                     SaveFilledDataAsyncCall saveFilledDataAsyncCall = new SaveFilledDataAsyncCall();
-                    saveFilledDataAsyncCall.execute(); }
+                    saveFilledDataAsyncCall.execute();
+                }
                 else
                     Toast.makeText(FillDataActivity.this, "يرجى الإجابة على جميع الأسئلة", Toast.LENGTH_SHORT).show();
             }
         });
 
     }
-
 
     private class GenericAsyncCall extends AsyncTask<String, Void, Void> {
         ProgressDialog dialog;
