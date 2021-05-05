@@ -771,6 +771,7 @@ public class FacilityConnectionActivity extends AppCompatActivity {
                 processNum_et.setEnabled(true);
             } else{
                 SoapObject so1, so2, so3;
+                String ID="",MAIN_PID="",CA_CUSM_NAME="",CITY_ID="",CTYM_NAME="",ca_cusm_num="",CA_X_COORDINATE="",CA_Y_COORDINATE="";
 
                 if (res != null && res.getPropertyCount() > 0){
                     so1 = (SoapObject) res.getProperty(1);
@@ -780,13 +781,35 @@ public class FacilityConnectionActivity extends AppCompatActivity {
                             for(int i=0; i<so2.getPropertyCount(); i++){
                                 so3 = (SoapObject) so2.getProperty(i);
                                 try{
-                                    inquirInfo = new InquirInfo(
-                                            so3.getPropertyAsString("ID"),
-                                            so3.getPropertyAsString("MAIN_PID"),
-                                            so3.getPropertyAsString("CA_CUSM_NAME"),
-                                            so3.getPropertyAsString("CITY_ID"),
-                                            so3.getPropertyAsString("CTYM_NAME"),
-                                            so3.getPropertyAsString("ca_cusm_num"));
+
+                                    try{
+                                        ID = so3.getPropertyAsString("ID");
+                                    }catch (Exception e){}
+
+                                    try{
+                                        MAIN_PID = so3.getPropertyAsString("MAIN_PID");
+                                    }catch (Exception e){}
+                                    try{
+                                        CA_CUSM_NAME =  so3.getPropertyAsString("CA_CUSM_NAME");
+                                    }catch (Exception e){}
+                                    try{
+                                        CITY_ID=  so3.getPropertyAsString("CITY_ID");
+                                    }catch (Exception e){}
+                                    try{
+                                        CTYM_NAME = so3.getPropertyAsString("CTYM_NAME");
+                                    }catch (Exception e){}
+                                    try{
+                                        ca_cusm_num = so3.getPropertyAsString("ca_cusm_num");
+                                    }catch (Exception e){}
+                                    try{
+                                        CA_X_COORDINATE = so3.getPropertyAsString("CA_X_COORDINATE");
+                                    }catch (Exception e){}
+                                    try{
+                                        CA_Y_COORDINATE = so3.getPropertyAsString("CA_Y_COORDINATE");
+                                    }catch (Exception e){}
+
+                                    inquirInfo = new InquirInfo(ID,MAIN_PID,CA_CUSM_NAME,CITY_ID,CTYM_NAME,ca_cusm_num,CA_X_COORDINATE,CA_Y_COORDINATE);
+
                                 }catch (Exception e){
 
                                 }

@@ -210,14 +210,6 @@ public class InquirActivity extends AppCompatActivity {
                     Toast.makeText(InquirActivity.this, "ادخل تاريخ التفتيش", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if(noteDate.getText().toString().equals("")){
-                    Toast.makeText(InquirActivity.this, "ادخل تاريخ تزويد الجهة بالملاحظات", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if(processNoteDate.getText().toString().equals("")){
-                    Toast.makeText(InquirActivity.this, "ادخل تاريخ معالجة الملاحظات", Toast.LENGTH_SHORT).show();
-                    return;
-                }
 
                 WorkFlowByAdminAsyncCall workFlowByAdminAsyncCall = new WorkFlowByAdminAsyncCall();
                 workFlowByAdminAsyncCall.execute();
@@ -228,14 +220,6 @@ public class InquirActivity extends AppCompatActivity {
         finishbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(noteDate.getText().toString().equals("")){
-                    Toast.makeText(InquirActivity.this, "ادخل تاريخ تزويد الجهة بالملاحظات", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if(processNoteDate.getText().toString().equals("")){
-                    Toast.makeText(InquirActivity.this, "ادخل تاريخ معالجة الملاحظات", Toast.LENGTH_SHORT).show();
-                    return;
-                }
                 InsertFollowUpAsyncCall insertFollowUpAsyncCall = new InsertFollowUpAsyncCall();
                 insertFollowUpAsyncCall.execute();
             }
@@ -294,15 +278,10 @@ public class InquirActivity extends AppCompatActivity {
                 try {
                     Date PickedDate = new SimpleDateFormat("dd/MM/yyyy", Locale.US).parse(dateFormatter.format(newDate.getTime()));
                     String da = new SimpleDateFormat("dd/MM/yyyy", Locale.US).format(PickedDate);
-//                    Fyear = String.valueOf(year);
-//                    Fmonth = String.valueOf(monthOfYear);
-//                    Fday = String.valueOf(dayOfMonth);
                     Date.setText(da);
-//                    insDate.setTextColor(Color.parseColor("#009900"));
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-
 
             }
 
@@ -363,31 +342,26 @@ public class InquirActivity extends AppCompatActivity {
 
     private class CustomerCashAsyncCall extends AsyncTask<String, Void, Void> {
         String temp;
-        SoapObject soapObject;
+        SoapObject soapObject, soapObject1;
         String strWhereOracle = "";
 
         public CustomerCashAsyncCall() {
             pd = new ProgressDialog(InquirActivity.this);
             temp = cusmNum_et.getText().toString();
         }
-        @RequiresApi(api = Build.VERSION_CODES.O)
         @Override
         protected Void doInBackground(String... params) {
             if(!cusmNum_et.getText().toString().equals("")){
                 int cn = Integer.parseInt(cusmNum_et.getText().toString().substring(4));
-                int cc =  Integer.parseInt(cusmNum_et.getText().toString().substring(0,4));
-//            and a."ca_cusm_num"=2536 and a.city_id =188
+                int cc =  Integer.parseInt(cusmNum_et.getText().toString().substring(0,3));
+
                 if (!String.valueOf(cn).equals("") )
                     strWhereOracle += " and a.\"ca_cusm_num\"=" + cn;
-//            if (txtSupSecriberName.Text.Trim() != "")
-//            strWhereSql += " and CA_CUSM_NAME like ''%" + "" + "%''";
+
                 if (!String.valueOf(cc).equals("") && !String.valueOf(cc).equals("-1"))
                     strWhereOracle += " and a.city_id =" + cc;
-            }
-            if (!processNum_et.getText().toString().equals(""))
-                strWhereOracle += " and a.MAIN_PID =" + processNum_et.getText().toString();
 
-            String data = "strWhereOracle:"+strWhereOracle+",strWhereSql: ,taskId:120,datatype:5";
+                String data = "strWhereOracle:"+strWhereOracle+",strWhereSql: ,taskId:120,datatype:5";
                 try {
                     KeyFactory kf = KeyFactory.getInstance("RSA");
                     KSoapClass soap = new KSoapClass();
@@ -402,9 +376,52 @@ public class InquirActivity extends AppCompatActivity {
                     byte[] encodeData = RSA.encrypt(RSA.getPublicKey2(RSA.GetMap()), data);
                     String base64Encoded = Base64.getEncoder().encodeToString(encodeData);
                     soapObject = soap.GetRenewable_Canceled(base64Encoded);
+                } catch (Exception e) {}
+            }
+
+            if (!processNum_et.getText().toString().equals("")){
+
+                String data1 = "iMPID:"+processNum_et.getText().toString()+",DataType:0";
+                try {
+                    KeyFactory kf = KeyFactory.getInstance("RSA");
+                    KSoapClass soap = new KSoapClass();
+
+                    PKCS8EncodedKeySpec keySpecPKCS8 = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(soap.privateKey));
+                    PrivateKey privKey = kf.generatePrivate(keySpecPKCS8);
+                    X509EncodedKeySpec keySpecX509 = new X509EncodedKeySpec(Base64.getDecoder().decode(soap.publicKey));
+                    RSAPublicKey pubKey = (RSAPublicKey) kf.generatePublic(keySpecX509);
+
+                    RSA.setKey(pubKey, privKey);
+
+                    byte[] encodeData = RSA.encrypt(RSA.getPublicKey2(RSA.GetMap()), data1);
+                    String base64Encoded = Base64.getEncoder().encodeToString(encodeData);
+                    soapObject1 = soap.GetTransRenewable(base64Encoded);
                 } catch (Exception e) {
                 }
 
+                if(soapObject1!=null){
+                    GetReadableData(soapObject1);
+                }else{
+                    strWhereOracle += " and a.MAIN_PID =" + processNum_et.getText().toString();
+                    String data = "strWhereOracle:"+strWhereOracle+",strWhereSql: ,taskId:120,datatype:5";
+                    try {
+                        KeyFactory kf = KeyFactory.getInstance("RSA");
+                        KSoapClass soap = new KSoapClass();
+
+                        PKCS8EncodedKeySpec keySpecPKCS8 = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(soap.privateKey));
+                        PrivateKey privKey = kf.generatePrivate(keySpecPKCS8);
+                        X509EncodedKeySpec keySpecX509 = new X509EncodedKeySpec(Base64.getDecoder().decode(soap.publicKey));
+                        RSAPublicKey pubKey = (RSAPublicKey) kf.generatePublic(keySpecX509);
+
+                        RSA.setKey(pubKey, privKey);
+
+                        byte[] encodeData = RSA.encrypt(RSA.getPublicKey2(RSA.GetMap()), data);
+                        String base64Encoded = Base64.getEncoder().encodeToString(encodeData);
+                        soapObject = soap.GetRenewable_Canceled(base64Encoded);
+                    } catch (Exception e) {
+                    }
+                }
+            }
                 return null;
         }
 
@@ -430,6 +447,55 @@ public class InquirActivity extends AppCompatActivity {
         @Override
         protected void onProgressUpdate(Void... values) {}
 
+    }
+
+    private void GetReadableData(SoapObject soapObject1) {
+        SoapObject so1, so2, so3;
+        String ID="",MAIN_PID="",CA_CUSM_NAME="",CITY_ID="",CTYM_NAME="",ca_cusm_num="",CA_X_COORDINATE="",CA_Y_COORDINATE="";
+
+        if (soapObject1 != null && soapObject1.getPropertyCount() > 0){
+            so1 = (SoapObject) soapObject1.getProperty(1);
+            if (so1 != null && so1.getPropertyCount() > 0){
+                so2 = (SoapObject) so1.getProperty(0);
+                if (so2 != null && so2.getPropertyCount() > 0){
+                    for(int i=0; i<so2.getPropertyCount(); i++){
+                        so3 = (SoapObject) so2.getProperty(i);
+                        try{
+                            try{
+                                ID = so3.getPropertyAsString("ID");
+                            }catch (Exception e){}
+
+                            try{
+                                MAIN_PID = so3.getPropertyAsString("MAIN_PID");
+                            }catch (Exception e){}
+                            try{
+                                CA_CUSM_NAME =  so3.getPropertyAsString("CA_CUSM_NAME");
+                            }catch (Exception e){}
+                            try{
+                                CITY_ID=  so3.getPropertyAsString("CITY_ID");
+                            }catch (Exception e){}
+                            try{
+                                CTYM_NAME = so3.getPropertyAsString("CTYM_NAME");
+                            }catch (Exception e){}
+                            try{
+                                ca_cusm_num = so3.getPropertyAsString("ca_cusm_num");
+                            }catch (Exception e){}
+                            try{
+                                CA_X_COORDINATE = so3.getPropertyAsString("CA_X_COORDINATE");
+                            }catch (Exception e){}
+                            try{
+                                CA_Y_COORDINATE = so3.getPropertyAsString("CA_Y_COORDINATE");
+                            }catch (Exception e){}
+
+                            inquirInfo = new InquirInfo(ID,MAIN_PID,CA_CUSM_NAME,CITY_ID,CTYM_NAME,ca_cusm_num,CA_X_COORDINATE,CA_Y_COORDINATE);
+
+                        }catch (Exception e){
+
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private class WorkFlowByAdminAsyncCall extends AsyncTask<String, Void, Void> {
@@ -687,7 +753,7 @@ public class InquirActivity extends AppCompatActivity {
                         LocalDateTime now = LocalDateTime.now();
 
                         String data3 = "uId:" + getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID", "") + ",strUserName:" + getSharedPreferences("Info", Context.MODE_PRIVATE).getString("UserName", "")
-                                + ",mPID:" + inquirInfo.getMAIN_PID() + ",txtFollowUps:تم الكشف على نظام الطاقة المتجددة" + dtf.format(now) + " ووجدت هناك ملاحظات ولم يتم استكمال اجراءات التشغيل";
+                                + ",mPID:" + inquirInfo.getMAIN_PID() + ",txtFollowUps:تم الكشف على نظام الطاقة المتجددة بتاريخ " + dtf.format(now) + " ووجدت هناك ملاحظات ولم يتم استكمال اجراءات التشغيل";
 
                         try {
                             KeyFactory kf = KeyFactory.getInstance("RSA");
@@ -794,6 +860,7 @@ public class InquirActivity extends AppCompatActivity {
             processNum_et.setEnabled(true);
         } else{
             SoapObject so1, so2, so3;
+            String ID="",MAIN_PID="",CA_CUSM_NAME="",CITY_ID="",CTYM_NAME="",ca_cusm_num="",CA_X_COORDINATE="",CA_Y_COORDINATE="";
 
             if (res != null && res.getPropertyCount() > 0){
                 so1 = (SoapObject) res.getProperty(1);
@@ -803,13 +870,34 @@ public class InquirActivity extends AppCompatActivity {
                         for(int i=0; i<so2.getPropertyCount(); i++){
                             so3 = (SoapObject) so2.getProperty(i);
                             try{
-                                inquirInfo = new InquirInfo(
-                                        so3.getPropertyAsString("ID"),
-                                        so3.getPropertyAsString("MAIN_PID"),
-                                        so3.getPropertyAsString("CA_CUSM_NAME"),
-                                        so3.getPropertyAsString("CITY_ID"),
-                                        so3.getPropertyAsString("CTYM_NAME"),
-                                        so3.getPropertyAsString("ca_cusm_num"));
+                                try{
+                                    ID = so3.getPropertyAsString("ID");
+                                }catch (Exception e){}
+
+                                try{
+                                    MAIN_PID = so3.getPropertyAsString("MAIN_PID");
+                                }catch (Exception e){}
+                                try{
+                                    CA_CUSM_NAME =  so3.getPropertyAsString("CA_CUSM_NAME");
+                                }catch (Exception e){}
+                                try{
+                                    CITY_ID=  so3.getPropertyAsString("CITY_ID");
+                                }catch (Exception e){}
+                                try{
+                                    CTYM_NAME = so3.getPropertyAsString("CTYM_NAME");
+                                }catch (Exception e){}
+                                try{
+                                    ca_cusm_num = so3.getPropertyAsString("ca_cusm_num");
+                                }catch (Exception e){}
+                                try{
+                                    CA_X_COORDINATE = so3.getPropertyAsString("CA_X_COORDINATE");
+                                }catch (Exception e){}
+                                try{
+                                    CA_Y_COORDINATE = so3.getPropertyAsString("CA_Y_COORDINATE");
+                                }catch (Exception e){}
+
+                                inquirInfo = new InquirInfo(ID,MAIN_PID,CA_CUSM_NAME,CITY_ID,CTYM_NAME,ca_cusm_num,CA_X_COORDINATE,CA_Y_COORDINATE);
+
                             }catch (Exception e){
 
                             }
@@ -826,7 +914,11 @@ public class InquirActivity extends AppCompatActivity {
                 cusm_No.setText(CustomermNum);
                 city.setText(inquirInfo.getCITY_ID());
                 address_name.setText(inquirInfo.getCTYM_NAME());
-                lacation.setText("لم يتم جلبه مع البيانات");
+                if(!CA_X_COORDINATE.equals("") && !CA_X_COORDINATE.equals("")){
+                    lacation.setText(CA_X_COORDINATE + "," + CA_Y_COORDINATE);
+                }else{
+                    lacation.setText("لم يتم تحديد احداثيات الموقع");
+                }
 
                 sendbtn.setEnabled(true);
                 sendbtn. setBackground(getDrawable(R.drawable.shape4));
