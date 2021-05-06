@@ -20,7 +20,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".FillDataActivity"></activity>
+        <activity android:name=".InspectionIncquireActivity"></activity>
+        <activity android:name=".FillDataActivity" />
         <activity
             android:name=".LoginActvity"
             android:windowSoftInputMode="adjustPan" />

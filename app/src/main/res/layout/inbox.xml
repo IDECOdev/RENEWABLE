@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#D50485CC"
+    android:layoutDirection="rtl">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/colcardview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:background="#D50485CC">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:background="#D50485CC"
+            android:id="@+id/card_lay"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/status"
+                android:layout_width="match_parent"
+                android:gravity="center"
+                android:layout_marginLeft="15dp"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_marginTop="5dp"
+                android:textColor="#ffffff"
+                android:layout_toRightOf="@+id/im"
+                android:paddingRight="5dp"
+                android:text="الحالة "
+                android:fontFamily="@font/ad_font"
+                android:textSize="16dp" />
+
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="match_parent"
+                android:gravity="center"
+                android:layout_marginLeft="15dp"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:layout_marginTop="5dp"
+                android:layout_below="@+id/status"
+                android:layout_toRightOf="@+id/im"
+                android:textColor="#ffffff"
+                android:paddingRight="5dp"
+                android:text="القيمة "
+                android:fontFamily="@font/ad_font"
+                android:textSize="16dp" />
+
+
+
+            <ImageView
+                android:layout_width="40dp"
+                android:id="@+id/im"
+                android:layout_centerVertical="true"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:layout_marginLeft="5dp"
+                android:layout_alignParentLeft="true"
+                android:layout_height="40dp" />
+
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>
+
+
+</RelativeLayout>
