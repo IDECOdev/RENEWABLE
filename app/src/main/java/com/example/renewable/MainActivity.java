@@ -158,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
         connectBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, FacilityConnectionActivity.class));
+                startActivity(new Intent(MainActivity.this, ConnectionIncquireActivity.class));
             }
         });
     }

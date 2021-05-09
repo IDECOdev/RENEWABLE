@@ -1,6 +1,7 @@
 package com.example.renewable;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -75,7 +76,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 
 public class FacilityConnectionActivity extends AppCompatActivity {
-    EditText cusmNum_et, processNum_et, cusmName, cusm_No, city, address_name, lacation;
+    EditText cusmName, cusm_No, city, address_name, lacation;
     SharedPreferences shared;
     ProgressDialog pd;
     String CusmNo = "";
@@ -94,58 +95,11 @@ public class FacilityConnectionActivity extends AppCompatActivity {
     private String pictureImagePath;
     private Bitmap imageBitmap, imageBitmap2;
     String imageFileName1, imageFileName2;
-
-    public class ScanDialog extends Dialog {
-
-        public Activity activity;
-        public Dialog dialog;
-        public ScanDialog(Activity act) {
-            super(act);
-            // TODO Auto-generated constructor stub
-            this.activity = act;
-        }
-
-        @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            requestWindowFeature(Window.FEATURE_NO_TITLE);
-            setContentView(R.layout.scan);
-
-                startScanning();
-
-
-        }
-        public void startScanning() {
-
-            CodeScanner mCodeScanner;
-            CodeScannerView mCodeScannerView;
-
-            mCodeScannerView = findViewById(R.id.scanner_view);
-            mCodeScanner = new CodeScanner(activity, mCodeScannerView);
-            mCodeScanner.startPreview();   // this line is very important, as you will not be able to scan your code without this, you will only get blank screen
-            mCodeScanner.setDecodeCallback(new DecodeCallback() {
-                @Override
-                public void onDecoded(@NonNull final Result result) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if(!result.toString().equals("")){
-                                cusmNum_et.setText(result.toString().replaceAll(" ", ""));
-                                CustomerCashAsyncCall api = new CustomerCashAsyncCall();
-                                api.execute();
-                                ScanDialog.this.dismiss(); }
-                            else
-                                cusmNum_et.setText("");
-                        }
-                    });
-                }
-            });
-        }
-    }
+    ConPresInfo presInfo;
 
     @Override
     public void onBackPressed() {
-        startActivity(new Intent(FacilityConnectionActivity.this, MainActivity.class));
+        startActivity(new Intent(FacilityConnectionActivity.this, ConnectionIncquireActivity.class));
         finish();
     }
 
@@ -156,8 +110,8 @@ public class FacilityConnectionActivity extends AppCompatActivity {
 
         checkAndRequestPermissions();
 
-        cusmNum_et = findViewById(R.id.cusmNum_et);
-        processNum_et = findViewById(R.id.processNum_et);
+        Intent i = getIntent();
+        inquirInfo = (InquirInfo) i.getSerializableExtra("inboxDetail");
 
         continuedReadimage = findViewById(R.id.continuedReadimage);
         issuedReadimage = findViewById(R.id.issuedReadimage);
@@ -169,10 +123,9 @@ public class FacilityConnectionActivity extends AppCompatActivity {
         inquir_btn2 = findViewById(R.id.inquir_btn2);
 
         sendbtn = findViewById(R.id.sendbtn);
-//        sendbtn.setEnabled(false);
         sendbtn.setEnabled(true);
         sendbtn. setBackground(getDrawable(R.drawable.shape3));
-        sendbtn.setTextColor(getResources().getColor(R.color.grey));
+//        sendbtn.setTextColor(getResources().getColor(R.color.grey));
 
         cusmName = findViewById(R.id.cusmName);
         cusm_No = findViewById(R.id.cusm_No);
@@ -184,6 +137,9 @@ public class FacilityConnectionActivity extends AppCompatActivity {
         issuedRead = findViewById(R.id.issuedRead);
         continuedRead = findViewById(R.id.continuedRead);
         EngNoteDate = findViewById(R.id.EngNoteDate);
+
+        PresntDataAsyncCall presntDataAsyncCall=new PresntDataAsyncCall();
+        presntDataAsyncCall.execute();
 
         continuedReadimage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -232,44 +188,142 @@ public class FacilityConnectionActivity extends AppCompatActivity {
             }
         });
 
-        CircleImageView bar = findViewById(R.id.copy1);
-
-        bar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ScanDialog dialog = new ScanDialog(FacilityConnectionActivity.this);
-                dialog.show();
-            }
-        });
         checkAndRequestPermissions();
 
-        cusmNum_et.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                cusmNum_et.setTextColor(Color.parseColor("#009900"));
-            }
-            @Override
-            public void afterTextChanged(Editable editable) {
+    }
+
+    private class PresntDataAsyncCall extends AsyncTask<String, Void, Void> {
+
+        SoapObject present;
+
+        public PresntDataAsyncCall() {
+            pd = new ProgressDialog(FacilityConnectionActivity.this);
+        }
+
+        @SuppressLint("WrongThread")
+        @Override
+        protected Void doInBackground(String... params) {
+            try{
+                String data1 = "iMPID:"+inquirInfo.getMAIN_PID()+",DataType:0";
+                try {
+                    KeyFactory kf = KeyFactory.getInstance("RSA");
+                    KSoapClass soap = new KSoapClass();
+
+                    PKCS8EncodedKeySpec keySpecPKCS8 = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(soap.privateKey));
+                    PrivateKey privKey = kf.generatePrivate(keySpecPKCS8);
+                    X509EncodedKeySpec keySpecX509 = new X509EncodedKeySpec(Base64.getDecoder().decode(soap.publicKey));
+                    RSAPublicKey pubKey = (RSAPublicKey) kf.generatePublic(keySpecX509);
+
+                    RSA.setKey(pubKey, privKey);
+
+                    byte[] encodeData = RSA.encrypt(RSA.getPublicKey2(RSA.GetMap()), data1);
+                    String base64Encoded = Base64.getEncoder().encodeToString(encodeData);
+                    present = soap.GetTransRenewable(base64Encoded);
+
+                } catch (Exception e) {
+                }
 
             }
-        });
+            catch (Exception exception)
+            {
+            }
+            return null;
+        }
 
-        processNum_et.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        @Override
+        protected void onPostExecute(Void result) {
+            pd.dismiss();
+            if(present!=null && present.getPropertyCount()>0 && !present.equals("anyType")){
+                GetPresentData(present);
             }
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                processNum_et.setTextColor(Color.parseColor("#009900"));
-            }
-            @Override
-            public void afterTextChanged(Editable editable) {
+        }
 
+        @Override
+        protected void onPreExecute() {
+            pd.setMessage("الرجاء الانتظار...");
+            pd.setCancelable(false);
+            pd.show();
+        }
+        @Override
+        protected void onProgressUpdate(Void... values) {
+        }
+
+    }
+
+    private void GetPresentData(SoapObject soapObject1) {
+        SoapObject so1, so2, so3;
+        String ID="",MAIN_PID="",CA_CUSM_NAME="",CITY_ID="",CTYM_NAME="",ca_cusm_num="", SYSTEM_CONN_DATEX="", REN_M_LREAD_OP="", REN_M_PREAD_OP="", NOTES="";
+
+        if (soapObject1 != null && soapObject1.getPropertyCount() > 0){
+            so1 = (SoapObject) soapObject1.getProperty(1);
+            if (so1 != null && so1.getPropertyCount() > 0){
+                so2 = (SoapObject) so1.getProperty(0);
+                if (so2 != null && so2.getPropertyCount() > 0){
+                    for(int i=0; i<so2.getPropertyCount(); i++){
+                        so3 = (SoapObject) so2.getProperty(i);
+                        try{
+                            try{
+                                ID = so3.getPropertyAsString("ID");
+                            }catch (Exception e){}
+
+                            try{
+                                MAIN_PID = so3.getPropertyAsString("MAIN_PID");
+                            }catch (Exception e){}
+                            try{
+                                CA_CUSM_NAME =  so3.getPropertyAsString("CA_CUSM_NAME");
+                            }catch (Exception e){}
+                            try{
+                                CITY_ID=  so3.getPropertyAsString("CITY_ID");
+                            }catch (Exception e){}
+                            try{
+                                CTYM_NAME = so3.getPropertyAsString("CTYM_NAME");
+                            }catch (Exception e){}
+                            try{
+                                ca_cusm_num = so3.getPropertyAsString("CA_CUSM_NUM");
+                            }catch (Exception e){}
+                            try{
+                                SYSTEM_CONN_DATEX = so3.getPropertyAsString("SYSTEM_CONN_DATEX");
+                            }catch (Exception e){}
+                            try{
+                                REN_M_PREAD_OP = so3.getPropertyAsString("REN_M_PREAD_OP");
+                            }catch (Exception e){}
+                            try{
+                                REN_M_LREAD_OP = so3.getPropertyAsString("REN_M_LREAD_OP");
+                            }catch (Exception e){}
+                            try{
+                                NOTES = so3.getPropertyAsString("NOTES");
+                            }catch (Exception e){}
+
+                            presInfo = new ConPresInfo(ID,MAIN_PID,CA_CUSM_NAME,CITY_ID,CTYM_NAME,ca_cusm_num, SYSTEM_CONN_DATEX, REN_M_LREAD_OP, REN_M_PREAD_OP, NOTES);
+
+                        }catch (Exception e){
+
+                        }
+                    }
+                }
             }
-        });
+        }
+
+        if(presInfo!=null){
+            CusmNo = presInfo.getCa_cusm_num();
+            CustomermNum="";
+            CustomermNum+= String.format(Locale.ENGLISH, "%03d", Integer.parseInt(presInfo.getCITY_ID()));
+            CustomermNum+= "0"+String.format(Locale.ENGLISH, "%06d", Integer.parseInt(presInfo.getCa_cusm_num()));
+            cusmName.setText(presInfo.getCA_CUSM_NAME());
+            cusm_No.setText(CustomermNum);
+            city.setText(presInfo.getCITY_ID());
+            address_name.setText(presInfo.getCTYM_NAME());
+            if(!inquirInfo.getCA_X_COORDINATE().equals("") && !inquirInfo.getCA_Y_COORDINATE().equals("")){
+                lacation.setText(inquirInfo.getCA_X_COORDINATE() + "," + inquirInfo.getCA_Y_COORDINATE());
+            }else{
+                lacation.setText("لم يتم تحديد احداثيات الموقع");
+            }
+
+            connectionDate.setText(presInfo.getSYSTEM_CONN_DATEX());
+            issuedRead.setText(presInfo.getREN_M_PREAD_OP());
+            continuedRead.setText(presInfo.getREN_M_LREAD_OP());
+            EngNoteDate.setText(presInfo.getNOTES());
+        }
 
     }
 
@@ -289,6 +343,7 @@ public class FacilityConnectionActivity extends AppCompatActivity {
         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
         startActivityForResult(cameraIntent, 1991);
     }
+
     private void TakeImage1() {
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
@@ -400,6 +455,7 @@ public class FacilityConnectionActivity extends AppCompatActivity {
         datePickerDialog.show();
 
     }
+
     private  boolean checkAndRequestPermissions() {
         int internet = ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET);
         int write = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
@@ -427,99 +483,11 @@ public class FacilityConnectionActivity extends AppCompatActivity {
         return true;
     }
 
-    public void InquirProcessNum(View view) {
-        if(processNum_et.getText().toString().equals(""))
-        {
-            Toast.makeText(FacilityConnectionActivity.this, "يرجى إدخال رقم العملية", Toast.LENGTH_LONG).show();
-        }else{
-            CustomerCashAsyncCall customerCashAsyncCall = new CustomerCashAsyncCall();
-            customerCashAsyncCall.execute();
-        }
-    }
-
-    public void InquirCusmNum(View view) {
-        if(cusmNum_et.getText().toString().equals(""))
-        {
-            Toast.makeText(FacilityConnectionActivity.this, "يرجى إدخال رقم الاشتراك", Toast.LENGTH_LONG).show();
-        }else{
-            CustomerCashAsyncCall customerCashAsyncCall = new CustomerCashAsyncCall();
-            customerCashAsyncCall.execute();
-        }
-    }
 
     public void settings(View view) {
         startActivity(new Intent(FacilityConnectionActivity.this, Settings.class));
     }
 
-    private class CustomerCashAsyncCall extends AsyncTask<String, Void, Void> {
-        String temp;
-        SoapObject soapObject;
-        String strWhereOracle = "";
-
-        public CustomerCashAsyncCall() {
-            pd = new ProgressDialog(FacilityConnectionActivity.this);
-            temp = cusmNum_et.getText().toString();
-        }
-        @RequiresApi(api = Build.VERSION_CODES.O)
-        @Override
-        protected Void doInBackground(String... params) {
-            if(!cusmNum_et.getText().toString().equals("")){
-                int cn = Integer.parseInt(cusmNum_et.getText().toString().substring(4));
-                int cc =  Integer.parseInt(cusmNum_et.getText().toString().substring(0,4));
-
-                if (!String.valueOf(cn).equals("") )
-                    strWhereOracle += " and a.\"ca_cusm_num\"=" + cn;
-//            if (txtSupSecriberName.Text.Trim() != "")
-//            strWhereSql += " and CA_CUSM_NAME like ''%" + "" + "%''";
-                if (!String.valueOf(cc).equals("") && !String.valueOf(cc).equals("-1"))
-                    strWhereOracle += " and a.city_id =" + cc;
-            }
-            if (!processNum_et.getText().toString().equals(""))
-                strWhereOracle += " and a.MAIN_PID =" + processNum_et.getText().toString();
-
-            String data = "strWhereOracle:"+strWhereOracle+",strWhereSql: ,taskId:84,datatype:5";
-                try {
-                    KeyFactory kf = KeyFactory.getInstance("RSA");
-                    KSoapClass soap = new KSoapClass();
-
-                    PKCS8EncodedKeySpec keySpecPKCS8 = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(soap.privateKey));
-                    PrivateKey privKey = kf.generatePrivate(keySpecPKCS8);
-                    X509EncodedKeySpec keySpecX509 = new X509EncodedKeySpec(Base64.getDecoder().decode(soap.publicKey));
-                    RSAPublicKey pubKey = (RSAPublicKey) kf.generatePublic(keySpecX509);
-
-                    RSA.setKey(pubKey, privKey);
-
-                    byte[] encodeData = RSA.encrypt(RSA.getPublicKey2(RSA.GetMap()), data);
-                    String base64Encoded = Base64.getEncoder().encodeToString(encodeData);
-                    soapObject = soap.GetRenewable_Canceled(base64Encoded);
-                } catch (Exception e) {}
-
-                return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            pd.dismiss();
-            try{
-                if(soapObject!=null && soapObject.getPropertyCount() > 0 && !soapObject.equals("anyType")){
-                    GetReadableData1(soapObject);
-                }
-            }catch(Exception e){}
-
-        }
-
-        @Override
-        protected void onPreExecute() {
-
-            pd.setMessage("يرجى الأنتظار...");
-            pd.setCancelable(false);
-            pd.show();
-        }
-
-        @Override
-        protected void onProgressUpdate(Void... values) {}
-
-    }
 
     private class WorkFlowByAdminAsyncCall extends AsyncTask<String, Void, Void> {
         boolean flag = false;
@@ -656,12 +624,7 @@ public class FacilityConnectionActivity extends AppCompatActivity {
                         @Override
                         public void onClick(View v) {
                             dialog1.dismiss();
-                            if(!cusmNum_et.getText().toString().equals("")){
-                                cusmNum_et.setText("");
-                            }
-                            if(!processNum_et.getText().toString().equals("")){
-                                processNum_et.setText("");
-                            }
+
                             cusmName.setText("");
                             cusm_No.setText("");
                             city.setText("");
@@ -671,6 +634,7 @@ public class FacilityConnectionActivity extends AppCompatActivity {
                             sendbtn.setEnabled(false);
                             sendbtn. setBackground(getDrawable(R.drawable.shape3));
                             sendbtn.setTextColor(getResources().getColor(R.color.grey));
+
                         }
                     });
                 }else {
@@ -714,6 +678,7 @@ public class FacilityConnectionActivity extends AppCompatActivity {
         protected void onProgressUpdate(Void... values) {}
 
     }
+
     private String getEncodedString3(KSoapClass service, int TID, int ModelID, int PID,
                                      String XML1, String XMLData1, String XML2, String XMLData2,
                                      String XML3, String XMLData3, String XML4, String XMLData4,
@@ -756,101 +721,5 @@ public class FacilityConnectionActivity extends AppCompatActivity {
             return null;
         }
     }
-
-    private void GetReadableData1(SoapObject res){
-        try{
-            inquirInfo=null;
-            if(res == null){
-                Toast.makeText(this, "لا يوجد معلومات لهذا العداد", Toast.LENGTH_LONG).show();
-                cusmNum_et.setEnabled(true);
-                processNum_et.setEnabled(true);
-            }
-            else if(res.equals("anyType{}")){
-                Toast.makeText(this, "لا يوجد معلومات لهذا العداد", Toast.LENGTH_LONG).show();
-                cusmNum_et.setEnabled(true);
-                processNum_et.setEnabled(true);
-            } else{
-                SoapObject so1, so2, so3;
-                String ID="",MAIN_PID="",CA_CUSM_NAME="",CITY_ID="",CTYM_NAME="",ca_cusm_num="",CA_X_COORDINATE="",CA_Y_COORDINATE="";
-
-                if (res != null && res.getPropertyCount() > 0){
-                    so1 = (SoapObject) res.getProperty(1);
-                    if (so1 != null && so1.getPropertyCount() > 0){
-                        so2 = (SoapObject) so1.getProperty(0);
-                        if (so2 != null && so2.getPropertyCount() > 0){
-                            for(int i=0; i<so2.getPropertyCount(); i++){
-                                so3 = (SoapObject) so2.getProperty(i);
-                                try{
-
-                                    try{
-                                        ID = so3.getPropertyAsString("ID");
-                                    }catch (Exception e){}
-
-                                    try{
-                                        MAIN_PID = so3.getPropertyAsString("MAIN_PID");
-                                    }catch (Exception e){}
-                                    try{
-                                        CA_CUSM_NAME =  so3.getPropertyAsString("CA_CUSM_NAME");
-                                    }catch (Exception e){}
-                                    try{
-                                        CITY_ID=  so3.getPropertyAsString("CITY_ID");
-                                    }catch (Exception e){}
-                                    try{
-                                        CTYM_NAME = so3.getPropertyAsString("CTYM_NAME");
-                                    }catch (Exception e){}
-                                    try{
-                                        ca_cusm_num = so3.getPropertyAsString("ca_cusm_num");
-                                    }catch (Exception e){}
-                                    try{
-                                        CA_X_COORDINATE = so3.getPropertyAsString("CA_X_COORDINATE");
-                                    }catch (Exception e){}
-                                    try{
-                                        CA_Y_COORDINATE = so3.getPropertyAsString("CA_Y_COORDINATE");
-                                    }catch (Exception e){}
-
-                                    inquirInfo = new InquirInfo(ID,MAIN_PID,CA_CUSM_NAME,CITY_ID,CTYM_NAME,ca_cusm_num,CA_X_COORDINATE,CA_Y_COORDINATE);
-
-                                }catch (Exception e){
-
-                                }
-                            }
-                        }
-                    }
-                }
-                if(inquirInfo!=null){
-                    CusmNo = cusmNum_et.getText().toString();
-                    CustomermNum="";
-                    CustomermNum+= String.format(Locale.ENGLISH, "%03d", Integer.parseInt(inquirInfo.getCITY_ID()));
-                    CustomermNum+= "0"+String.format(Locale.ENGLISH, "%06d", Integer.parseInt(inquirInfo.getCa_cusm_num()));
-                    cusmName.setText(inquirInfo.getCA_CUSM_NAME());
-                    cusm_No.setText(CustomermNum);
-                    city.setText(inquirInfo.getCITY_ID());
-                    address_name.setText(inquirInfo.getCTYM_NAME());
-                    lacation.setText("لم يتم جلبه مع البيانات");
-                    sendbtn.setEnabled(true);
-                    sendbtn. setBackground(getDrawable(R.drawable.shape4));
-                    sendbtn.setTextColor(getResources().getColor(R.color.white));
-
-
-                    insLay.setVisibility(View.VISIBLE);
-                    instext.setVisibility(View.VISIBLE);
-                }
-                else{
-                    Toast.makeText(this, "يوجد خطأ في رقم الاشتراك او رقم المعاملة", Toast.LENGTH_LONG).show();
-                    cusmNum_et.setEnabled(true);
-                    cusmNum_et.setText("");
-                    processNum_et.setEnabled(true);
-                    processNum_et.setText("");
-                }
-            }
-        }catch (Exception e){
-            Toast.makeText(this, "لقد حدث خطأ", Toast.LENGTH_SHORT).show();
-
-        }
-
-
-    }
-
-
 
 }

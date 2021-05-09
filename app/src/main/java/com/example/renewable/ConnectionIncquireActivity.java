@@ -1,8 +1,5 @@
 package com.example.renewable;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -27,6 +24,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.budiyev.android.codescanner.CodeScanner;
 import com.budiyev.android.codescanner.CodeScannerView;
 import com.budiyev.android.codescanner.DecodeCallback;
@@ -44,7 +44,7 @@ import java.util.Base64;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class InspectionIncquireActivity extends AppCompatActivity {
+public class ConnectionIncquireActivity extends AppCompatActivity {
     EditText cusmNum_et, processNum_et;
     ProgressDialog pd;
     InquirInfo inquirInfo;
@@ -103,14 +103,14 @@ public class InspectionIncquireActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        startActivity(new Intent(InspectionIncquireActivity.this, MainActivity.class));
+        startActivity(new Intent(ConnectionIncquireActivity.this, MainActivity.class));
         finish();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_inspection_incquire);
+        setContentView(R.layout.activity_connection_incquire);
 
         cusmNum_et = findViewById(R.id.cusmNum_et);
         processNum_et = findViewById(R.id.processNum_et);
@@ -157,7 +157,7 @@ public class InspectionIncquireActivity extends AppCompatActivity {
         bar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               ScanDialog dialog = new ScanDialog(InspectionIncquireActivity.this);
+                ScanDialog dialog = new ScanDialog(ConnectionIncquireActivity.this);
                 dialog.show();
             }
         });
@@ -166,7 +166,7 @@ public class InspectionIncquireActivity extends AppCompatActivity {
     public void InquirProcessNum(View view) {
         if(processNum_et.getText().toString().equals(""))
         {
-            Toast.makeText(InspectionIncquireActivity.this, "يرجى إدخال رقم العملية", Toast.LENGTH_LONG).show();
+            Toast.makeText(ConnectionIncquireActivity.this, "يرجى إدخال رقم العملية", Toast.LENGTH_LONG).show();
         }else{
             CustomerCashAsyncCall customerCashAsyncCall = new CustomerCashAsyncCall();
             customerCashAsyncCall.execute();
@@ -176,14 +176,14 @@ public class InspectionIncquireActivity extends AppCompatActivity {
     public void InquirCusmNum(View view) {
         if(cusmNum_et.getText().toString().equals(""))
         {
-            Toast.makeText(InspectionIncquireActivity.this, "يرجى إدخال رقم الاشتراك", Toast.LENGTH_LONG).show();
+            Toast.makeText(ConnectionIncquireActivity.this, "يرجى إدخال رقم الاشتراك", Toast.LENGTH_LONG).show();
         }else{
             CustomerCashAsyncCall customerCashAsyncCall = new CustomerCashAsyncCall();
             customerCashAsyncCall.execute();
         }
     }
     public void settings(View view) {
-        startActivity(new Intent(InspectionIncquireActivity.this, Settings.class));
+        startActivity(new Intent(ConnectionIncquireActivity.this, Settings.class));
     }
 
     private class CustomerCashAsyncCall extends AsyncTask<String, Void, Void> {
@@ -192,7 +192,7 @@ public class InspectionIncquireActivity extends AppCompatActivity {
         String strWhereOracle = "";
 
         public CustomerCashAsyncCall() {
-            pd = new ProgressDialog(InspectionIncquireActivity.this);
+            pd = new ProgressDialog(ConnectionIncquireActivity.this);
             temp = cusmNum_et.getText().toString();
         }
         @Override
@@ -203,55 +203,28 @@ public class InspectionIncquireActivity extends AppCompatActivity {
 
                 if (!String.valueOf(cn).equals("") )
                     strWhereOracle += " and a.\"ca_cusm_num\"=" + cn;
-
                 if (!String.valueOf(cc).equals("") && !String.valueOf(cc).equals("-1"))
                     strWhereOracle += " and a.city_id =" + cc;
-
             }
-
-            if (!processNum_et.getText().toString().equals("")){
+            if (!processNum_et.getText().toString().equals(""))
                 strWhereOracle += " and a.MAIN_PID =" + processNum_et.getText().toString();
-//                String data1 = "iMPID:"+processNum_et.getText().toString()+",DataType:0";
-//                try {
-//                    KeyFactory kf = KeyFactory.getInstance("RSA");
-//                    KSoapClass soap = new KSoapClass();
-//
-//                    PKCS8EncodedKeySpec keySpecPKCS8 = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(soap.privateKey));
-//                    PrivateKey privKey = kf.generatePrivate(keySpecPKCS8);
-//                    X509EncodedKeySpec keySpecX509 = new X509EncodedKeySpec(Base64.getDecoder().decode(soap.publicKey));
-//                    RSAPublicKey pubKey = (RSAPublicKey) kf.generatePublic(keySpecX509);
-//
-//                    RSA.setKey(pubKey, privKey);
-//
-//                    byte[] encodeData = RSA.encrypt(RSA.getPublicKey2(RSA.GetMap()), data1);
-//                    String base64Encoded = Base64.getEncoder().encodeToString(encodeData);
-//                    soapObject1 = soap.GetTransRenewable(base64Encoded);
-//                } catch (Exception e) {
-//                }
-//
-//                if(soapObject1!=null){
-//                    GetReadableData(soapObject1);}
-//
-            }
 
-        String data = "strWhereOracle:"+strWhereOracle+",strWhereSql: ,taskId:120,datatype:5";
-                try {
-            KeyFactory kf = KeyFactory.getInstance("RSA");
-            KSoapClass soap = new KSoapClass();
+            String data = "strWhereOracle:"+strWhereOracle+",strWhereSql: ,taskId:84,datatype:5";
+            try {
+                KeyFactory kf = KeyFactory.getInstance("RSA");
+                KSoapClass soap = new KSoapClass();
 
-            PKCS8EncodedKeySpec keySpecPKCS8 = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(soap.privateKey));
-            PrivateKey privKey = kf.generatePrivate(keySpecPKCS8);
-            X509EncodedKeySpec keySpecX509 = new X509EncodedKeySpec(Base64.getDecoder().decode(soap.publicKey));
-            RSAPublicKey pubKey = (RSAPublicKey) kf.generatePublic(keySpecX509);
+                PKCS8EncodedKeySpec keySpecPKCS8 = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(soap.privateKey));
+                PrivateKey privKey = kf.generatePrivate(keySpecPKCS8);
+                X509EncodedKeySpec keySpecX509 = new X509EncodedKeySpec(Base64.getDecoder().decode(soap.publicKey));
+                RSAPublicKey pubKey = (RSAPublicKey) kf.generatePublic(keySpecX509);
 
-            RSA.setKey(pubKey, privKey);
+                RSA.setKey(pubKey, privKey);
 
-            byte[] encodeData = RSA.encrypt(RSA.getPublicKey2(RSA.GetMap()), data);
-            String base64Encoded = Base64.getEncoder().encodeToString(encodeData);
-            soapObject = soap.GetRenewable_Canceled(base64Encoded);
-
-        } catch (Exception e) {
-                }
+                byte[] encodeData = RSA.encrypt(RSA.getPublicKey2(RSA.GetMap()), data);
+                String base64Encoded = Base64.getEncoder().encodeToString(encodeData);
+                soapObject = soap.GetRenewable_Canceled(base64Encoded);
+            } catch (Exception e) {}
             return null;
         }
 
@@ -347,7 +320,7 @@ public class InspectionIncquireActivity extends AppCompatActivity {
             data.setVisibility(View.VISIBLE);
         }else {
 
-            expandableListAdapter = new CustomExpandableListAdapter(InspectionIncquireActivity.this);
+            expandableListAdapter = new CustomExpandableListAdapter(ConnectionIncquireActivity.this);
             expandableListView.setAdapter(expandableListAdapter);
         }
     }
@@ -427,7 +400,7 @@ public class InspectionIncquireActivity extends AppCompatActivity {
             card_lay.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                        Intent intent = new Intent(InspectionIncquireActivity.this, InquirActivity.class);
+                        Intent intent = new Intent(ConnectionIncquireActivity.this, FacilityConnectionActivity.class);
                         intent.putExtra("inboxDetail", info.get(listPosition));
                         startActivity(intent);
 
@@ -440,7 +413,7 @@ public class InspectionIncquireActivity extends AppCompatActivity {
             img.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(InspectionIncquireActivity.this, InquirActivity.class);
+                    Intent intent = new Intent(ConnectionIncquireActivity.this, InquirActivity.class);
                     intent.putExtra("inboxDetail", info.get(listPosition));
                     startActivity(intent);
                 }

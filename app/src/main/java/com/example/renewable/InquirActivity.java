@@ -321,7 +321,7 @@ public class InquirActivity extends AppCompatActivity {
 
     private void GetPresentData(SoapObject soapObject1) {
         SoapObject so1, so2, so3;
-        String ID="",MAIN_PID="",CA_CUSM_NAME="",CITY_ID="",CTYM_NAME="",ca_cusm_num="", PROVIDE_NOTES_DATEX="", PROCESS_NOTES_DATEX="", INSP_ESTABLISH_DATEX="";
+        String ID="",MAIN_PID="",CA_CUSM_NAME="",CITY_ID="",CTYM_NAME="",ca_cusm_num="", PROVIDE_NOTES_DATEX="", PROCESS_NOTES_DATEX="", INSP_ESTABLISH_DATEX="", Eng_Notes = "";
 
         if (soapObject1 != null && soapObject1.getPropertyCount() > 0){
             so1 = (SoapObject) soapObject1.getProperty(1);
@@ -348,7 +348,7 @@ public class InquirActivity extends AppCompatActivity {
                                 CTYM_NAME = so3.getPropertyAsString("CTYM_NAME");
                             }catch (Exception e){}
                             try{
-                                ca_cusm_num = so3.getPropertyAsString("ca_cusm_num");
+                                ca_cusm_num = so3.getPropertyAsString("CA_CUSM_NUM");
                             }catch (Exception e){}
                             try{
                                 INSP_ESTABLISH_DATEX = so3.getPropertyAsString("INSP_ESTABLISH_DATEX");
@@ -359,8 +359,11 @@ public class InquirActivity extends AppCompatActivity {
                             try{
                                 PROCESS_NOTES_DATEX = so3.getPropertyAsString("PROCESS_NOTES_DATEX");
                             }catch (Exception e){}
+                            try{
+                                Eng_Notes = so3.getPropertyAsString("Eng_Notes");
+                            }catch (Exception e){}
 
-                            presInfo = new InsPresInfo(ID,MAIN_PID,CA_CUSM_NAME,CITY_ID,CTYM_NAME,ca_cusm_num, PROVIDE_NOTES_DATEX, PROCESS_NOTES_DATEX, INSP_ESTABLISH_DATEX);
+                            presInfo = new InsPresInfo(ID,MAIN_PID,CA_CUSM_NAME,CITY_ID,CTYM_NAME,ca_cusm_num, PROVIDE_NOTES_DATEX, PROCESS_NOTES_DATEX, INSP_ESTABLISH_DATEX, Eng_Notes);
 
                         }catch (Exception e){
 
@@ -374,7 +377,7 @@ public class InquirActivity extends AppCompatActivity {
             CusmNo = presInfo.getCa_cusm_num();
             CustomermNum="";
             CustomermNum+= String.format(Locale.ENGLISH, "%03d", Integer.parseInt(presInfo.getCITY_ID()));
-            CustomermNum+= "0"+String.format(Locale.ENGLISH, "%06d", Integer.parseInt(inquirInfo.getCa_cusm_num()));
+            CustomermNum+= "0"+String.format(Locale.ENGLISH, "%06d", Integer.parseInt(presInfo.getCa_cusm_num()));
             cusmName.setText(presInfo.getCA_CUSM_NAME());
             cusm_No.setText(CustomermNum);
             city.setText(presInfo.getCITY_ID());
@@ -388,6 +391,7 @@ public class InquirActivity extends AppCompatActivity {
             inspDate.setText(presInfo.getINSP_ESTABLISH_DATEX());
             noteDate.setText(presInfo.getPROVIDE_NOTES_DATEX());
             processNoteDate.setText(presInfo.getPROCESS_NOTES_DATEX());
+            EngNoteDate.setText(presInfo.getEng_Notes());
         }
 
     }

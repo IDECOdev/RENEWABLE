@@ -48,9 +48,11 @@ public class FillDataActivity extends AppCompatActivity {
     JSONObject Q1;
     JSONArray jsonArray = new JSONArray();
     ArrayList<Questions> qlist;
+    ArrayList<PresentInfo> presentInfo;
     ArrayList<AnswersList> answersLists;
     ArrayList<AnswersList2> answersList2;
     ProgressDialog pd;
+    boolean fill =false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +109,7 @@ public class FillDataActivity extends AppCompatActivity {
         ProgressDialog dialog;
 
         SoapObject questions;
+        SoapObject present;
 
         public GenericAsyncCall() {
             dialog = new ProgressDialog(FillDataActivity.this);
@@ -116,7 +119,6 @@ public class FillDataActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(String... params) {
             //Invoke webservice
-            dialog.dismiss();
             try{
                 KSoapClass service = new KSoapClass();
 
@@ -131,6 +133,8 @@ public class FillDataActivity extends AppCompatActivity {
                 String base64Encoded = android.util.Base64.encodeToString(encodeData, android.util.Base64.DEFAULT);
 
                 questions=service.GetINSPRenTemplate(base64Encoded);
+
+//
             }
             catch (Exception exception)
             {
@@ -140,13 +144,17 @@ public class FillDataActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Void result) {
-            try {
+            dialog.dismiss();
+            if(questions!=null && questions.getPropertyCount() > 0){
+                GetReadableqstData(questions);
+            }
+            if(fill){
+                try {
+                    FillAsyncCall2 ds = new FillAsyncCall2();
+                    ds.execute();
 
-                if(questions!=null && questions.getPropertyCount() > 0){
-                    GetReadableqstData(questions);
-                }
-            }catch (Exception e){}
-
+                }catch (Exception e){}
+            }
         }
 
         @Override
@@ -160,6 +168,120 @@ public class FillDataActivity extends AppCompatActivity {
         }
 
     }
+
+    private class FillAsyncCall2 extends AsyncTask<String, Void, Void> {
+        ProgressDialog dialog;
+
+        SoapObject questions;
+        SoapObject present;
+
+        public FillAsyncCall2() {
+            dialog = new ProgressDialog(FillDataActivity.this);
+        }
+
+
+        @Override
+        protected Void doInBackground(String... params) {
+            //Invoke webservice
+            try{
+                KSoapClass service1 = new KSoapClass();
+
+                String data1 = ": and B.MPID ="+ MPID+",:1";
+                KeyFactory kf1 = KeyFactory.getInstance("RSA");
+                PKCS8EncodedKeySpec keySpecPKCS81 = new PKCS8EncodedKeySpec(android.util.Base64.decode(service1.privateKey, android.util.Base64.DEFAULT));
+                PrivateKey privKey1 = kf1.generatePrivate(keySpecPKCS81);
+                X509EncodedKeySpec keySpecX5091 = new X509EncodedKeySpec(android.util.Base64.decode(service1.publicKey, android.util.Base64.DEFAULT));
+                RSAPublicKey pubKey1 = (RSAPublicKey) kf1.generatePublic(keySpecX5091);
+                RSA.setKey(pubKey1, privKey1);
+                byte[] encodeData1 = RSA.encrypt(RSA.getPublicKey2(RSA.GetMap()), data1);
+                String base64Encoded1 = android.util.Base64.encodeToString(encodeData1, android.util.Base64.DEFAULT);
+
+                present=service1.GetINSPRenTemplate(base64Encoded1);
+
+            }
+            catch (Exception exception)
+            {
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            dialog.dismiss();
+
+            if(present!=null && present.getPropertyCount() > 0){
+                GetReadableqstData1(present);
+            }
+        }
+
+        @Override
+        protected void onPreExecute() {
+            dialog.setMessage("الرجاء الانتظار...");
+            dialog.setCancelable(false);
+            dialog.show();
+        }
+        @Override
+        protected void onProgressUpdate(Void... values) {
+        }
+
+    }
+
+    private void GetReadableqstData1(SoapObject present) {
+        SoapObject so1, so2, so3;
+
+        if (present != null && present.getPropertyCount() > 0){
+            so1 = (SoapObject) present.getProperty(1);
+            if (so1 != null && so1.getPropertyCount() > 0){
+                so2 = (SoapObject) so1.getProperty(0);
+                if (so2 != null && so2.getPropertyCount() > 0){
+                    for(int i=0; i<so2.getPropertyCount(); i++){
+                        so3 = (SoapObject) so2.getProperty(i);
+                        String ID="", ENTRY_USER="",ENTRY_DATE= "",MPID = "", MEMBER_ID = "", MEMBER_DESC = "", YES_FLAG = "", MINIMUM_VALUE = "", MEASURED_VALUE = "", EXACT_VALUE ="", INSERT_TYPE = "";
+                        try{
+                            ID =so3.getPropertyAsString("ID");
+                        }catch (Exception e){
+                        }  try{
+                            ENTRY_USER =so3.getPropertyAsString("ENTRY_USER");
+                        }catch (Exception e){
+                        }  try{
+                            ENTRY_DATE =so3.getPropertyAsString("ENTRY_DATE");
+                        }catch (Exception e){
+                        }  try{
+                            MPID =so3.getPropertyAsString("MPID");
+                        }catch (Exception e){
+                        }  try{
+                            MEMBER_ID =so3.getPropertyAsString("MEMBER_ID");
+                        }catch (Exception e){
+                        }  try{
+                            MEMBER_DESC =so3.getPropertyAsString("MEMBER_DESC");
+                        }catch (Exception e){
+                        }  try{
+                            YES_FLAG =so3.getPropertyAsString("YES_FLAG");
+                        }catch (Exception e){
+                        }  try{
+                            MINIMUM_VALUE =so3.getPropertyAsString("MINIMUM_VALUE");
+                        }catch (Exception e){
+                        }  try{
+                            EXACT_VALUE =so3.getPropertyAsString("EXACT_VALUE");
+                        }catch (Exception e){
+                        }  try{
+                            MEASURED_VALUE =so3.getPropertyAsString("MEASURED_VALUE");
+                        }catch (Exception e){
+                        }  try{
+                            INSERT_TYPE =so3.getPropertyAsString("INSERT_TYPE");
+                        }catch (Exception e){
+                        }
+                        presentInfo.add(new PresentInfo(ID, ENTRY_USER,ENTRY_DATE,MPID , MEMBER_ID , MEMBER_DESC, YES_FLAG, MINIMUM_VALUE, MEASURED_VALUE, EXACT_VALUE, INSERT_TYPE));
+                    }
+                }
+            }
+        }
+
+        if(presentInfo.isEmpty()){
+
+        }
+    }
+
 
     private void GetReadableqstData(SoapObject questions) {
         SoapObject so1, so2, so3;
@@ -183,6 +305,7 @@ public class FillDataActivity extends AppCompatActivity {
             }
         }
         if(qlist!=null){
+            fill=true;
             list=(ListView)findViewById(R.id.list);
             list.setOnTouchListener(new ListView.OnTouchListener() {
                 @Override
@@ -211,6 +334,7 @@ public class FillDataActivity extends AppCompatActivity {
 
             CustomAdapter adapter=new CustomAdapter(FillDataActivity.this);
             list.setAdapter(adapter);
+
         }
 
     }
@@ -275,6 +399,79 @@ public class FillDataActivity extends AppCompatActivity {
             });
 
            Check(rb1, rb2, position);
+
+            return convertView;
+        }
+
+        public void Check(RadioButton rb1, RadioButton rb2, int pos){
+
+            if(answersLists.get(pos).answers.equals("1")){
+                rb1.setChecked(true);
+                rb2.setChecked(false); }
+            else if(answersLists.get(pos).answers.equals("0")){
+                rb2.setChecked(true);
+                rb1.setChecked(false); }
+            else{
+                rb1.setChecked(false);
+                rb2.setChecked(false); }
+
+        }
+
+    }
+
+    public class CustomAdapter2 extends BaseAdapter {
+
+        Context mContext;
+
+        public CustomAdapter2(Context context) {
+            this.mContext = context;
+        }
+        @Override
+        public int getCount() {
+            return presentInfo.size();
+        }
+
+        @Override
+        public PresentInfo getItem(int i) {
+            return presentInfo.get(i);
+        }
+
+        @Override
+        public long getItemId(int i) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+
+            LayoutInflater inflater = (FillDataActivity.this).getLayoutInflater();
+            convertView = inflater.inflate(R.layout.idanswerlist, parent, false);
+
+            TextView qName = (TextView) convertView.findViewById(R.id.qst1);
+            RadioGroup rg = (RadioGroup) convertView.findViewById(R.id.g1);
+            RadioButton rb1 = (RadioButton) convertView.findViewById(R.id.yes);
+            RadioButton rb2 = (RadioButton) convertView.findViewById(R.id.no);
+
+//            qName.setText(presentInfo.get(position).getSYS_DESC());
+
+            rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(RadioGroup group, int checkedId) {
+
+                    switch (checkedId){
+
+                        case R.id.yes :
+                            answersLists.set(position, new AnswersList(qlist.get(position).getSYS_MINOR(), "1"));
+                            break;
+                        case R.id.no :
+                            answersLists.set(position, new AnswersList(qlist.get(position).getSYS_MINOR(), "0"));
+                            break;
+                    }
+
+                }
+            });
+
+            Check(rb1, rb2, position);
 
             return convertView;
         }
