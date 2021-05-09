@@ -166,7 +166,6 @@ public class FillDataActivity extends AppCompatActivity {
         @Override
         protected void onProgressUpdate(Void... values) {
         }
-
     }
 
     private class FillAsyncCall2 extends AsyncTask<String, Void, Void> {
