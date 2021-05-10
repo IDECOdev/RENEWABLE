@@ -86,8 +86,14 @@ public class FillDataActivity extends AppCompatActivity {
 
         sendbtn = findViewById(R.id.sendbtn);
 
+//        try {
+//            GenericAsyncCall ds = new GenericAsyncCall();
+//            ds.execute();
+//
+//        }catch (Exception e){}
+
         try {
-            GenericAsyncCall ds = new GenericAsyncCall();
+            PresentAsyncCall ds = new PresentAsyncCall();
             ds.execute();
 
         }catch (Exception e){}
@@ -172,6 +178,144 @@ public class FillDataActivity extends AppCompatActivity {
         @Override
         protected void onProgressUpdate(Void... values) {
         }
+    }
+
+    private class GenericAsyncCall2 extends AsyncTask<String, Void, Void> {
+        ProgressDialog dialog;
+
+        SoapObject questions;
+        SoapObject present;
+
+        public GenericAsyncCall2() {
+            dialog = new ProgressDialog(FillDataActivity.this);
+        }
+
+        @SuppressLint("WrongThread")
+        @Override
+        protected Void doInBackground(String... params) {
+            //Invoke webservice
+            try{
+                KSoapClass service = new KSoapClass();
+
+                String data = ":,:2";
+                KeyFactory kf = KeyFactory.getInstance("RSA");
+                PKCS8EncodedKeySpec keySpecPKCS8 = new PKCS8EncodedKeySpec(android.util.Base64.decode(service.privateKey, android.util.Base64.DEFAULT));
+                PrivateKey privKey = kf.generatePrivate(keySpecPKCS8);
+                X509EncodedKeySpec keySpecX509 = new X509EncodedKeySpec(android.util.Base64.decode(service.publicKey, android.util.Base64.DEFAULT));
+                RSAPublicKey pubKey = (RSAPublicKey) kf.generatePublic(keySpecX509);
+                RSA.setKey(pubKey, privKey);
+                byte[] encodeData = RSA.encrypt(RSA.getPublicKey2(RSA.GetMap()), data);
+                String base64Encoded = android.util.Base64.encodeToString(encodeData, android.util.Base64.DEFAULT);
+
+                questions=service.GetINSPRenTemplate(base64Encoded);
+
+//
+            }
+            catch (Exception exception)
+            {
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            dialog.dismiss();
+            if(questions!=null && questions.getPropertyCount() > 0){
+                GetReadableqstData(questions);
+            }
+
+        }
+
+        @Override
+        protected void onPreExecute() {
+            dialog.setMessage("الرجاء الانتظار...");
+            dialog.setCancelable(false);
+            dialog.show();
+        }
+        @Override
+        protected void onProgressUpdate(Void... values) {
+        }
+    }
+
+    private class PresentAsyncCall extends AsyncTask<String, Void, Void> {
+        ProgressDialog dialog;
+
+        SoapObject questions;
+        SoapObject present;
+
+        public PresentAsyncCall() {
+            dialog = new ProgressDialog(FillDataActivity.this);
+        }
+
+
+        @Override
+        protected Void doInBackground(String... params) {
+            //Invoke webservice
+            try{
+                KSoapClass service1 = new KSoapClass();
+
+                String data1 = ": and B.MPID ="+ MPID+",:1";
+                KeyFactory kf1 = KeyFactory.getInstance("RSA");
+                PKCS8EncodedKeySpec keySpecPKCS81 = new PKCS8EncodedKeySpec(android.util.Base64.decode(service1.privateKey, android.util.Base64.DEFAULT));
+                PrivateKey privKey1 = kf1.generatePrivate(keySpecPKCS81);
+                X509EncodedKeySpec keySpecX5091 = new X509EncodedKeySpec(android.util.Base64.decode(service1.publicKey, android.util.Base64.DEFAULT));
+                RSAPublicKey pubKey1 = (RSAPublicKey) kf1.generatePublic(keySpecX5091);
+                RSA.setKey(pubKey1, privKey1);
+                byte[] encodeData1 = RSA.encrypt(RSA.getPublicKey2(RSA.GetMap()), data1);
+                String base64Encoded1 = android.util.Base64.encodeToString(encodeData1, android.util.Base64.DEFAULT);
+
+                present=service1.GetINSPRenTemplate(base64Encoded1);
+
+            }
+            catch (Exception exception)
+            {
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            dialog.dismiss();
+
+            if(result==null){
+                GenericAsyncCall2 genericAsyncCall = new GenericAsyncCall2();
+                genericAsyncCall.execute();
+            }else{
+                GetReadableqstData1(present);
+            }
+
+//                SoapObject so1, so2, so3;
+//                if (present != null && present.getPropertyCount() > 0){
+//                    so1 = (SoapObject) present.getProperty(1);
+//                    if (so1 != null && so1.getPropertyCount() > 0){
+//                        if(!so1.toString().equals("anyType{}")){
+//                            GetReadableqstData1(present);
+//
+//                        }else{
+//                            GenericAsyncCall2 genericAsyncCall = new GenericAsyncCall2();
+//                            genericAsyncCall.execute();
+//                        }
+//
+//                    }
+//                }else{
+//                    GenericAsyncCall2 genericAsyncCall = new GenericAsyncCall2();
+//                    genericAsyncCall.execute();
+//                }
+//
+//
+
+        }
+
+        @Override
+        protected void onPreExecute() {
+            dialog.setMessage("الرجاء الانتظار...");
+            dialog.setCancelable(false);
+            dialog.show();
+        }
+        @Override
+        protected void onProgressUpdate(Void... values) {
+        }
+
     }
 
     private class FillAsyncCall2 extends AsyncTask<String, Void, Void> {
@@ -322,6 +466,57 @@ public class FillDataActivity extends AppCompatActivity {
             }
         }
 
+
+        if(presentInfo.isEmpty()){
+            answersLists.clear();
+            for(int i =0; i<presentInfo.size();i++){
+                if(presentInfo.get(i).INSERT_TYPE.equals("1")){
+                    answersLists.add(new AnswersList(presentInfo.get(i).getMEMBER_ID(), presentInfo.get(i).YES_FLAG));
+                }
+            }
+            list=(ListView)findViewById(R.id.list);
+            list.setOnTouchListener(new ListView.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    int action = event.getAction();
+                    switch (action) {
+                        case MotionEvent.ACTION_DOWN:
+                            // Disallow ScrollView to intercept touch events.
+                            v.getParent().requestDisallowInterceptTouchEvent(true);
+                            break;
+
+                        case MotionEvent.ACTION_UP:
+                            // Allow ScrollView to intercept touch events.
+                            v.getParent().requestDisallowInterceptTouchEvent(false);
+                            break;
+                    }
+
+                    // Handle ListView touch events.
+                    v.onTouchEvent(event);
+                    return true;
+                }
+            });
+            CustomAdapter2 adapter=new CustomAdapter2(FillDataActivity.this);
+            list.setAdapter(adapter);
+
+            for(int i =0; i<presentInfo.size();i++){
+                if(presentInfo.get(i).INSERT_TYPE.equals("2")){
+
+                    if(presentInfo.get(i).getMEMBER_ID().equals("1")){
+                        downvalue_discon.setText(presentInfo.get(i).MINIMUM_VALUE);
+                        actualvalue_discon.setText(presentInfo.get(i).EXACT_VALUE);
+                        catchedvalue_discon.setText(presentInfo.get(i).MEASURED_VALUE); }
+
+                    if(presentInfo.get(i).getMEMBER_ID().equals("2")){
+                        downvalue_re.setText(presentInfo.get(i).MINIMUM_VALUE);
+                        actualvalue_re.setText(presentInfo.get(i).EXACT_VALUE);
+                        catchedvalue_re.setText(presentInfo.get(i).MEASURED_VALUE); }
+
+                }
+            }
+
+        }
+
 //        if(presentInfo.isEmpty() || presentInfo!=null){
 //            list=(ListView)findViewById(R.id.list);
 //            list.setOnTouchListener(new ListView.OnTouchListener() {
@@ -374,7 +569,7 @@ public class FillDataActivity extends AppCompatActivity {
             }
         }
         if(qlist!=null){
-            fill=true;
+
             list=(ListView)findViewById(R.id.list);
             list.setOnTouchListener(new ListView.OnTouchListener() {
                 @Override
@@ -401,14 +596,8 @@ public class FillDataActivity extends AppCompatActivity {
             for(int i=0; i<qlist.size(); i++)
                 answersLists.add(new AnswersList(qlist.get(i).getSYS_MINOR(), ""));
 
-            if(fill){
-                try {
-                    FillAsyncCall2 ds = new FillAsyncCall2();
-                    ds.execute();
-
-                }catch (Exception e){}
-            }
-
+            CustomAdapter adapter=new CustomAdapter(FillDataActivity.this);
+            list.setAdapter(adapter);
 
         }
 
@@ -474,21 +663,21 @@ public class FillDataActivity extends AppCompatActivity {
             });
 
            Check(rb1, rb2, position);
-           int p = sortAnswers(qlist.get(position).MEMBER_ID);
-
-           try{
-
-               if(p!=-1){
-                   if(answersLists.get(p).answers.equals("1")){
-                       rb1.setChecked(true);
-                       rb2.setChecked(false); }
-                   else {
-                       rb2.setChecked(true);
-                       rb1.setChecked(false); }
-               }
-
-           }
-           catch (Exception e){}
+//           int p = sortAnswers(qlist.get(position).MEMBER_ID);
+//
+//           try{
+//
+//               if(p!=-1){
+//                   if(answersLists.get(p).answers.equals("1")){
+//                       rb1.setChecked(true);
+//                       rb2.setChecked(false); }
+//                   else {
+//                       rb2.setChecked(true);
+//                       rb1.setChecked(false); }
+//               }
+//
+//           }
+//           catch (Exception e){}
            return convertView; }
 
         public void Check(RadioButton rb1, RadioButton rb2, int pos){
@@ -526,12 +715,12 @@ public class FillDataActivity extends AppCompatActivity {
         }
         @Override
         public int getCount() {
-            return presentInfo.size();
+            return answersLists.size();
         }
 
         @Override
-        public PresentInfo getItem(int i) {
-            return presentInfo.get(i);
+        public AnswersList getItem(int i) {
+            return answersLists.get(i);
         }
 
         @Override
