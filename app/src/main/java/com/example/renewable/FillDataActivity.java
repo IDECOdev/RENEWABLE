@@ -148,13 +148,7 @@ public class FillDataActivity extends AppCompatActivity {
             if(questions!=null && questions.getPropertyCount() > 0){
                 GetReadableqstData(questions);
             }
-            if(fill){
-                try {
-                    FillAsyncCall2 ds = new FillAsyncCall2();
-                    ds.execute();
 
-                }catch (Exception e){}
-            }
         }
 
         @Override
@@ -211,6 +205,31 @@ public class FillDataActivity extends AppCompatActivity {
             if(present!=null && present.getPropertyCount() > 0){
                 GetReadableqstData1(present);
             }
+            if(!presentInfo.isEmpty()){
+                for(int i=0; i<answersLists.size(); i++)
+                    addandsort(i);
+//                    answersLists.add(new AnswersList(presentInfo.get(i).getMEMBER_ID(), presentInfo.get(i).YES_FLAG));
+
+                CustomAdapter adapter=new CustomAdapter(FillDataActivity.this);
+                list.setAdapter(adapter);
+
+                for(int i =0; i<presentInfo.size();i++){
+                    if(presentInfo.get(i).INSERT_TYPE.equals("2")){
+
+                        if(presentInfo.get(i).getMEMBER_ID().equals("1")){
+                            downvalue_discon.setText(presentInfo.get(i).MINIMUM_VALUE);
+                            actualvalue_discon.setText(presentInfo.get(i).EXACT_VALUE);
+                            catchedvalue_discon.setText(presentInfo.get(i).MEASURED_VALUE); }
+
+                        if(presentInfo.get(i).getMEMBER_ID().equals("2")){
+                            downvalue_re.setText(presentInfo.get(i).MINIMUM_VALUE);
+                            actualvalue_re.setText(presentInfo.get(i).EXACT_VALUE);
+                            catchedvalue_re.setText(presentInfo.get(i).MEASURED_VALUE); }
+
+                    }
+                }
+
+            }
         }
 
         @Override
@@ -225,9 +244,24 @@ public class FillDataActivity extends AppCompatActivity {
 
     }
 
+    private void addandsort(int p) {
+
+        for(int i = 0; i<presentInfo.size(); i++) {
+            if(presentInfo.get(i).INSERT_TYPE.equals("1")){
+                if(presentInfo.get(i).MEMBER_ID.equals(answersLists.get(p).id)){
+                    AnswersList obj = new AnswersList(presentInfo.get(i).MEMBER_ID, presentInfo.get(i).YES_FLAG);
+                    answersLists.set(p, obj);
+                    break;
+                }
+            }
+
+        }
+    }
+
     private void GetReadableqstData1(SoapObject present) {
         SoapObject so1, so2, so3;
 
+        presentInfo = new ArrayList<>();
         if (present != null && present.getPropertyCount() > 0){
             so1 = (SoapObject) present.getProperty(1);
             if (so1 != null && so1.getPropertyCount() > 0){
@@ -276,9 +310,33 @@ public class FillDataActivity extends AppCompatActivity {
             }
         }
 
-        if(presentInfo.isEmpty()){
-
-        }
+//        if(presentInfo.isEmpty() || presentInfo!=null){
+//            list=(ListView)findViewById(R.id.list);
+//            list.setOnTouchListener(new ListView.OnTouchListener() {
+//                @Override
+//                public boolean onTouch(View v, MotionEvent event) {
+//                    int action = event.getAction();
+//                    switch (action) {
+//                        case MotionEvent.ACTION_DOWN:
+//                            // Disallow ScrollView to intercept touch events.
+//                            v.getParent().requestDisallowInterceptTouchEvent(true);
+//                            break;
+//
+//                        case MotionEvent.ACTION_UP:
+//                            // Allow ScrollView to intercept touch events.
+//                            v.getParent().requestDisallowInterceptTouchEvent(false);
+//                            break;
+//                    }
+//
+//                    // Handle ListView touch events.
+//                    v.onTouchEvent(event);
+//                    return true;
+//                }
+//            });
+//
+//
+//
+//        }
     }
 
 
@@ -331,8 +389,14 @@ public class FillDataActivity extends AppCompatActivity {
             for(int i=0; i<qlist.size(); i++)
                 answersLists.add(new AnswersList(qlist.get(i).getSYS_MINOR(), ""));
 
-            CustomAdapter adapter=new CustomAdapter(FillDataActivity.this);
-            list.setAdapter(adapter);
+            if(fill){
+                try {
+                    FillAsyncCall2 ds = new FillAsyncCall2();
+                    ds.execute();
+
+                }catch (Exception e){}
+            }
+
 
         }
 
@@ -387,10 +451,10 @@ public class FillDataActivity extends AppCompatActivity {
                     switch (checkedId){
 
                         case R.id.yes :
-                            answersLists.set(position, new AnswersList(qlist.get(position).getSYS_MINOR(), "1"));
+                            answersLists.set(position, new AnswersList(presentInfo.get(position).getMEMBER_ID(), "1"));
                             break;
                         case R.id.no :
-                            answersLists.set(position, new AnswersList(qlist.get(position).getSYS_MINOR(), "0"));
+                            answersLists.set(position, new AnswersList(presentInfo.get(position).getMEMBER_ID(), "0"));
                             break;
                     }
 
@@ -398,9 +462,22 @@ public class FillDataActivity extends AppCompatActivity {
             });
 
            Check(rb1, rb2, position);
+           int p = sortAnswers(qlist.get(position).MEMBER_ID);
 
-            return convertView;
-        }
+           try{
+
+               if(p!=-1){
+                   if(answersLists.get(p).answers.equals("1")){
+                       rb1.setChecked(true);
+                       rb2.setChecked(false); }
+                   else {
+                       rb2.setChecked(true);
+                       rb1.setChecked(false); }
+               }
+
+           }
+           catch (Exception e){}
+           return convertView; }
 
         public void Check(RadioButton rb1, RadioButton rb2, int pos){
 
@@ -416,6 +493,16 @@ public class FillDataActivity extends AppCompatActivity {
 
         }
 
+    }
+
+    private int sortAnswers(String member_id) {
+
+        for(int i = 0; i<answersLists.size();i++){
+            if(answersLists.get(i).id.equals(member_id)){
+                return i;
+            }
+        }
+     return -1;
     }
 
     public class CustomAdapter2 extends BaseAdapter {
@@ -451,7 +538,7 @@ public class FillDataActivity extends AppCompatActivity {
             RadioButton rb1 = (RadioButton) convertView.findViewById(R.id.yes);
             RadioButton rb2 = (RadioButton) convertView.findViewById(R.id.no);
 
-//            qName.setText(presentInfo.get(position).getSYS_DESC());
+            qName.setText(presentInfo.get(position).MEMBER_DESC);
 
             rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                 @Override
@@ -505,30 +592,31 @@ public class FillDataActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(String... params) {
 
-            ArrayList<String> fin = new ArrayList<>();
-            ArrayList<String> fin2 = new ArrayList<>();
 
-            fin.clear();
-            fin2.clear();
+                ArrayList<String> fin = new ArrayList<>();
+                ArrayList<String> fin2 = new ArrayList<>();
 
-            for(int i=0; i<answersLists.size(); i++)
-                fin.add(answersLists.get(i).id+","+answersLists.get(i).answers);
-            JSONArray jsArray1 = new JSONArray(fin);
+                fin.clear();
+                fin2.clear();
 
-            for(int i=0; i<answersList2.size(); i++)
-                fin2.add(answersList2.get(i).downvalue+","+answersList2.get(i).actualvalue+","+answersList2.get(i).catchedvalue);
-            JSONArray jsArray2 = new JSONArray(fin2);
+                for(int i=0; i<answersLists.size(); i++)
+                    fin.add(answersLists.get(i).id+","+answersLists.get(i).answers);
+                JSONArray jsArray1 = new JSONArray(fin);
 
-            Q1 = new JSONObject();
+                for(int i=0; i<answersList2.size(); i++)
+                    fin2.add(answersList2.get(i).downvalue+","+answersList2.get(i).actualvalue+","+answersList2.get(i).catchedvalue);
+                JSONArray jsArray2 = new JSONArray(fin2);
 
-            try {
-                Q1.put("MPID",MPID);
-                Q1.put("jsArray1", jsArray1);
-                Q1.put("jsArray2", jsArray2);
-                Q1.put("ENtryUser",getSharedPreferences("Info", MODE_PRIVATE).getString("EMP_NO", ""));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+                Q1 = new JSONObject();
+
+                try {
+                    Q1.put("MPID",MPID);
+                    Q1.put("jsArray1", jsArray1);
+                    Q1.put("jsArray2", jsArray2);
+                    Q1.put("ENtryUser",getSharedPreferences("Info", MODE_PRIVATE).getString("EMP_NO", ""));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 KSoapClass soap = new KSoapClass();
 //
                 String data = Q1.toString();
@@ -547,6 +635,8 @@ public class FillDataActivity extends AppCompatActivity {
                     insert = soap.InsertINSPTemplate(base64Encoded);
 
                 } catch (Exception e) {}
+
+
 
             return null;
         }
