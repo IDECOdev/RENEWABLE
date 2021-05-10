@@ -429,7 +429,8 @@ public class InspectionIncquireActivity extends AppCompatActivity {
                 public void onClick(View v) {
                         Intent intent = new Intent(InspectionIncquireActivity.this, InquirActivity.class);
                         intent.putExtra("inboxDetail", info.get(listPosition));
-                        startActivity(intent);
+                        intent.putExtra("MPID", "");
+                         startActivity(intent);
 
                 }
             });

@@ -81,6 +81,7 @@ public class InquirActivity extends AppCompatActivity {
     TextView instext;
     RelativeLayout insLay;
     InsPresInfo presInfo;
+    String Mpid = "";
 
     @Override
     public void onBackPressed() {
@@ -125,9 +126,21 @@ public class InquirActivity extends AppCompatActivity {
         processNoteDate = findViewById(R.id.processNoteDate);
         EngNoteDate = findViewById(R.id.EngNoteDate);
 
-        Intent i = getIntent();
-        inquirInfo = (InquirInfo) i.getSerializableExtra("inboxDetail");
 
+
+        if(getIntent().getStringExtra("MPID").equals("")){
+            Intent i = getIntent();
+            inquirInfo = (InquirInfo) i.getSerializableExtra("inboxDetail");
+            Mpid = inquirInfo.getMAIN_PID();
+        }else{
+            Intent i = getIntent();
+            inquirInfo = (InquirInfo) i.getSerializableExtra("inboxDetail");
+            Mpid = getIntent().getStringExtra("MPID");
+        }
+
+
+        PresntDataAsyncCall presntDataAsyncCall=new PresntDataAsyncCall();
+        presntDataAsyncCall.execute();
 
         sendbtn.setEnabled(true);
         sendbtn. setBackground(getDrawable(R.drawable.shape4));
@@ -146,8 +159,6 @@ public class InquirActivity extends AppCompatActivity {
         insLay.setVisibility(View.VISIBLE);
         instext.setVisibility(View.VISIBLE);
 
-        PresntDataAsyncCall presntDataAsyncCall=new PresntDataAsyncCall();
-        presntDataAsyncCall.execute();
 
         inspDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -171,7 +182,7 @@ public class InquirActivity extends AppCompatActivity {
         fillbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(InquirActivity.this, FillDataActivity.class).putExtra("MPID", inquirInfo.getMAIN_PID()));
+                startActivity(new Intent(InquirActivity.this, FillDataActivity.class).putExtra("MPID", Mpid).putExtra("inboxDetail", inquirInfo));
 
             }
         });
@@ -218,7 +229,7 @@ public class InquirActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(String... params) {
             try{
-                  String data1 = "iMPID:"+inquirInfo.getMAIN_PID()+",DataType:0";
+                  String data1 = "iMPID:"+Mpid+",DataType:0";
                 try {
                     KeyFactory kf = KeyFactory.getInstance("RSA");
                     KSoapClass soap = new KSoapClass();
@@ -399,6 +410,7 @@ public class InquirActivity extends AppCompatActivity {
     private class WorkFlowByAdminAsyncCall extends AsyncTask<String, Void, Void> {
         boolean flag = false;
         boolean updateRen1 = false,updateRen2 = false;
+        SoapPrimitive closeApp;
         public WorkFlowByAdminAsyncCall() {
             pd = new ProgressDialog(InquirActivity.this);
 
@@ -431,7 +443,7 @@ public class InquirActivity extends AppCompatActivity {
 
                 if (updateRen1) {
 
-                    String data2 = "mPID:" + inquirInfo.getMAIN_PID() + ",:0,: ,:0,:0,:0,:0,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,:0,:0,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,dtpInspDate:" + inspDate.getText().toString()
+                    String data2 = "mPID:" + Mpid + ",:0,: ,:0,:0,:0,:0,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,:0,:0,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,dtpInspDate:" + inspDate.getText().toString()
                             + ",: ,: ,: ,: ,: ,: ,:9,: ";
 
                     try {
@@ -449,9 +461,12 @@ public class InquirActivity extends AppCompatActivity {
                     } catch (Exception e) {}
 
                     if (updateRen2) {
-                        flag = soap.WorkFlowAdvanceByAdmin(getEncodedString3(soap,120, 1005249, Integer.parseInt(inquirInfo.getMAIN_PID()), "Root/RenewableInsp",
+                        flag = soap.WorkFlowAdvanceByAdmin(getEncodedString3(soap,120, 1005249, Integer.parseInt(Mpid), "Root/RenewableInsp",
                                 "1", " ", " ", " ", " ", " ", " ", " ", " ", " ",
                                 " ",  " ", " ", " ", " "));
+                    }
+                    if(flag){
+                        closeApp = soap.INSERT_RENEWABLE_APP_CLOSE(":"+Mpid+",:120,:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID", ""));
                     }
                 }
 
@@ -464,53 +479,93 @@ public class InquirActivity extends AppCompatActivity {
             pd.dismiss();
             try{
                 if(flag){
-                    pd.dismiss();
-                    final AlertDialog.Builder builder = new AlertDialog.Builder(InquirActivity.this);
-                    LayoutInflater inflater = InquirActivity.this.getLayoutInflater();
-                    builder.setView(inflater.inflate(R.layout.dialog_vacstate, null));
-                    final AlertDialog dialog1 = builder.create();
-                    ((FrameLayout) dialog1.getWindow().getDecorView().findViewById(android.R.id.content)).setForeground(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-                    WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-                    lp.copyFrom(dialog1.getWindow().getAttributes());
-                    lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
-                    lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-                    dialog1.show();
-                    dialog1.getWindow().setAttributes(lp);
-                    final Button exit=dialog1.findViewById(R.id.btn2);
-                    final CircleImageView im=dialog1.findViewById(R.id.im);
-                    final TextView textView3=dialog1.findViewById(R.id.textView3);
-                    textView3.setText("تمت عملية الحفظ و الارسال بنجاح");
+                    if(Integer.parseInt(String.valueOf(closeApp))<0){
+                        pd.dismiss();
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(InquirActivity.this);
+                        LayoutInflater inflater = InquirActivity.this.getLayoutInflater();
+                        builder.setView(inflater.inflate(R.layout.dialog_vacstate, null));
+                        final AlertDialog dialog1 = builder.create();
+                        ((FrameLayout) dialog1.getWindow().getDecorView().findViewById(android.R.id.content)).setForeground(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                        lp.copyFrom(dialog1.getWindow().getAttributes());
+                        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+                        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                        dialog1.show();
+                        dialog1.getWindow().setAttributes(lp);
+                        final Button exit=dialog1.findViewById(R.id.btn2);
+                        final CircleImageView im=dialog1.findViewById(R.id.im);
+                        final TextView textView3=dialog1.findViewById(R.id.textView3);
+                        textView3.setText("تمت عملية الحفظ و الارسال بنجاح مع خطأ في الادخال الى جدول الاغلاق من التطبيق");
 
-                    exit.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            dialog1.dismiss();
-//                            if(!cusmNum_et.getText().toString().equals("")){
-//                                cusmNum_et.setText("");
-//                            }
-//                            if(!processNum_et.getText().toString().equals("")){
-//                                processNum_et.setText("");
-//                            }
-                            cusmName.setText("");
-                            cusm_No.setText("");
-                            city.setText("");
-                            address_name.setText("");
-                            lacation.setText("");
+                        exit.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog1.dismiss();
+//
+                                cusmName.setText("");
+                                cusm_No.setText("");
+                                city.setText("");
+                                address_name.setText("");
+                                lacation.setText("");
 
-                            sendbtn.setEnabled(false);
-                            sendbtn. setBackground(getDrawable(R.drawable.shape3));
-                            sendbtn.setTextColor(getResources().getColor(R.color.grey));
+                                sendbtn.setEnabled(false);
+                                sendbtn. setBackground(getDrawable(R.drawable.shape3));
+                                sendbtn.setTextColor(getResources().getColor(R.color.grey));
 
-                            finishbtn.setEnabled(false);
-                            finishbtn. setBackground(getDrawable(R.drawable.shape3));
-                            finishbtn.setTextColor(getResources().getColor(R.color.grey));
+                                finishbtn.setEnabled(false);
+                                finishbtn. setBackground(getDrawable(R.drawable.shape3));
+                                finishbtn.setTextColor(getResources().getColor(R.color.grey));
 
-                            fillbtn.setEnabled(false);
-                            fillbtn. setBackground(getDrawable(R.drawable.shape3));
-                            fillbtn.setTextColor(getResources().getColor(R.color.grey));
+                                fillbtn.setEnabled(false);
+                                fillbtn. setBackground(getDrawable(R.drawable.shape3));
+                                fillbtn.setTextColor(getResources().getColor(R.color.grey));
 
-                        }
-                    });
+                            }
+                        });
+                    }else{
+                        pd.dismiss();
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(InquirActivity.this);
+                        LayoutInflater inflater = InquirActivity.this.getLayoutInflater();
+                        builder.setView(inflater.inflate(R.layout.dialog_vacstate, null));
+                        final AlertDialog dialog1 = builder.create();
+                        ((FrameLayout) dialog1.getWindow().getDecorView().findViewById(android.R.id.content)).setForeground(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                        lp.copyFrom(dialog1.getWindow().getAttributes());
+                        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+                        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                        dialog1.show();
+                        dialog1.getWindow().setAttributes(lp);
+                        final Button exit=dialog1.findViewById(R.id.btn2);
+                        final CircleImageView im=dialog1.findViewById(R.id.im);
+                        final TextView textView3=dialog1.findViewById(R.id.textView3);
+                        textView3.setText("تمت عملية الحفظ و الارسال بنجاح");
+
+                        exit.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog1.dismiss();
+                                cusmName.setText("");
+                                cusm_No.setText("");
+                                city.setText("");
+                                address_name.setText("");
+                                lacation.setText("");
+
+                                sendbtn.setEnabled(false);
+                                sendbtn. setBackground(getDrawable(R.drawable.shape3));
+                                sendbtn.setTextColor(getResources().getColor(R.color.grey));
+
+                                finishbtn.setEnabled(false);
+                                finishbtn. setBackground(getDrawable(R.drawable.shape3));
+                                finishbtn.setTextColor(getResources().getColor(R.color.grey));
+
+                                fillbtn.setEnabled(false);
+                                fillbtn. setBackground(getDrawable(R.drawable.shape3));
+                                fillbtn.setTextColor(getResources().getColor(R.color.grey));
+
+                            }
+                        });
+                    }
+
                 }else {
                     pd.dismiss();
                     final AlertDialog.Builder builder = new AlertDialog.Builder(InquirActivity.this);
@@ -598,6 +653,8 @@ public class InquirActivity extends AppCompatActivity {
     private class InsertFollowUpAsyncCall extends AsyncTask<String, Void, Void> {
         SoapPrimitive flag;
         boolean updateRen1 = false,updateRen2 = false;
+        SoapPrimitive closeApp;
+
         public InsertFollowUpAsyncCall() {
             pd = new ProgressDialog(InquirActivity.this);
 
@@ -629,7 +686,7 @@ public class InquirActivity extends AppCompatActivity {
 
                 if (updateRen1) {
 
-                    String data2 = "mPID:" + inquirInfo.getMAIN_PID() + ",:0,: ,:0,:0,:0,:0,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,:0,:0,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,dtpInspDate:" + inspDate.getText().toString()
+                    String data2 = "mPID:" + Mpid + ",:0,: ,:0,:0,:0,:0,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,:0,:0,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,: ,dtpInspDate:" + inspDate.getText().toString()
                             + ",: ,: ,: ,: ,: ,: ,:9,: ";
                     try {
                         KeyFactory kf = KeyFactory.getInstance("RSA");
@@ -651,7 +708,7 @@ public class InquirActivity extends AppCompatActivity {
                         LocalDateTime now = LocalDateTime.now();
 
                         String data3 = "uId:" + getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID", "") + ",strUserName:" + getSharedPreferences("Info", Context.MODE_PRIVATE).getString("UserName", "")
-                                + ",mPID:" + inquirInfo.getMAIN_PID() + ",txtFollowUps:تم الكشف على نظام الطاقة المتجددة بتاريخ " + dtf.format(now) + " ووجدت هناك ملاحظات ولم يتم استكمال اجراءات التشغيل";
+                                + ",mPID:" + Mpid + ",txtFollowUps:تم الكشف على نظام الطاقة المتجددة بتاريخ " + dtf.format(now) + " ووجدت هناك ملاحظات ولم يتم استكمال اجراءات التشغيل";
 
                         try {
                             KeyFactory kf = KeyFactory.getInstance("RSA");
@@ -665,6 +722,9 @@ public class InquirActivity extends AppCompatActivity {
                             byte[] encodeData = RSA.encrypt(RSA.getPublicKey2(RSA.GetMap()), data3);
                             String base64Encoded = Base64.getEncoder().encodeToString(encodeData);
                             flag = soap.InsertFollowUp(base64Encoded);
+                            if(String.valueOf(flag).equals("true")){
+                                closeApp = soap.INSERT_RENEWABLE_APP_CLOSE(":"+Mpid+",:120,:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID", ""));
+                            }
                         } catch (Exception e) {
                         }
                     }
@@ -679,29 +739,74 @@ public class InquirActivity extends AppCompatActivity {
             pd.dismiss();
             try{
                 if(flag.toString().equals("true")){
-                    pd.dismiss();
-                    final AlertDialog.Builder builder = new AlertDialog.Builder(InquirActivity.this);
-                    LayoutInflater inflater = InquirActivity.this.getLayoutInflater();
-                    builder.setView(inflater.inflate(R.layout.dialog_vacstate, null));
-                    final AlertDialog dialog1 = builder.create();
-                    ((FrameLayout) dialog1.getWindow().getDecorView().findViewById(android.R.id.content)).setForeground(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-                    WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-                    lp.copyFrom(dialog1.getWindow().getAttributes());
-                    lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
-                    lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-                    dialog1.show();
-                    dialog1.getWindow().setAttributes(lp);
-                    final Button exit=dialog1.findViewById(R.id.btn2);
-                    final CircleImageView im=dialog1.findViewById(R.id.im);
-                    final TextView textView3=dialog1.findViewById(R.id.textView3);
-                    textView3.setText("تمت اضافة المتابعة بنجاح");
+                     if(Integer.parseInt(String.valueOf(closeApp))<0){
+                        pd.dismiss();
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(InquirActivity.this);
+                        LayoutInflater inflater = InquirActivity.this.getLayoutInflater();
+                        builder.setView(inflater.inflate(R.layout.dialog_vacstate, null));
+                        final AlertDialog dialog1 = builder.create();
+                        ((FrameLayout) dialog1.getWindow().getDecorView().findViewById(android.R.id.content)).setForeground(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                        lp.copyFrom(dialog1.getWindow().getAttributes());
+                        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+                        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                        dialog1.show();
+                        dialog1.getWindow().setAttributes(lp);
+                        final Button exit=dialog1.findViewById(R.id.btn2);
+                        final CircleImageView im=dialog1.findViewById(R.id.im);
+                        final TextView textView3=dialog1.findViewById(R.id.textView3);
+                        textView3.setText("تمت اضافة المتابعة بنجاح مع خطأ في الادخال الى جدول الاغلاق من التطبيق");
 
-                    exit.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            dialog1.dismiss();
-                        }
-                    });
+                        exit.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog1.dismiss();
+//
+                                cusmName.setText("");
+                                cusm_No.setText("");
+                                city.setText("");
+                                address_name.setText("");
+                                lacation.setText("");
+
+                                sendbtn.setEnabled(false);
+                                sendbtn. setBackground(getDrawable(R.drawable.shape3));
+                                sendbtn.setTextColor(getResources().getColor(R.color.grey));
+
+                                finishbtn.setEnabled(false);
+                                finishbtn. setBackground(getDrawable(R.drawable.shape3));
+                                finishbtn.setTextColor(getResources().getColor(R.color.grey));
+
+                                fillbtn.setEnabled(false);
+                                fillbtn. setBackground(getDrawable(R.drawable.shape3));
+                                fillbtn.setTextColor(getResources().getColor(R.color.grey));
+
+                            }
+                        });
+                    }else{
+                         pd.dismiss();
+                         final AlertDialog.Builder builder = new AlertDialog.Builder(InquirActivity.this);
+                         LayoutInflater inflater = InquirActivity.this.getLayoutInflater();
+                         builder.setView(inflater.inflate(R.layout.dialog_vacstate, null));
+                         final AlertDialog dialog1 = builder.create();
+                         ((FrameLayout) dialog1.getWindow().getDecorView().findViewById(android.R.id.content)).setForeground(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                         WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                         lp.copyFrom(dialog1.getWindow().getAttributes());
+                         lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+                         lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                         dialog1.show();
+                         dialog1.getWindow().setAttributes(lp);
+                         final Button exit=dialog1.findViewById(R.id.btn2);
+                         final CircleImageView im=dialog1.findViewById(R.id.im);
+                         final TextView textView3=dialog1.findViewById(R.id.textView3);
+                         textView3.setText("تمت اضافة المتابعة بنجاح");
+
+                         exit.setOnClickListener(new View.OnClickListener() {
+                             @Override
+                             public void onClick(View v) {
+                                 dialog1.dismiss();
+                             }
+                         });
+                     }
                 }else {
                     pd.dismiss();
                     final AlertDialog.Builder builder = new AlertDialog.Builder(InquirActivity.this);

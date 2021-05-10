@@ -492,6 +492,7 @@ public class FacilityConnectionActivity extends AppCompatActivity {
     private class WorkFlowByAdminAsyncCall extends AsyncTask<String, Void, Void> {
         boolean flag = false;
         boolean updateRen1 = false,updateRen2 = false;
+
         public WorkFlowByAdminAsyncCall() {
             pd = new ProgressDialog(FacilityConnectionActivity.this);
 
@@ -547,6 +548,7 @@ public class FacilityConnectionActivity extends AppCompatActivity {
                 }
 
 
+
             } catch (Exception e) {}
 
             return null;
@@ -580,6 +582,7 @@ public class FacilityConnectionActivity extends AppCompatActivity {
 
     private class SaveImageAsyncCall extends AsyncTask<String, Void, Void> {
         boolean flag1 = false;
+        SoapPrimitive closeApp;
         public SaveImageAsyncCall() {
             pd = new ProgressDialog(FacilityConnectionActivity.this);
 
@@ -591,7 +594,9 @@ public class FacilityConnectionActivity extends AppCompatActivity {
 
                 KSoapClass soap = new KSoapClass();
                 flag1 = soap.Insert_Renewable_Images(imageFileName1, imageFileName2, imageBitmap, imageBitmap2);
-
+                if(String.valueOf(flag1).equals("true")){
+                    closeApp = soap.INSERT_RENEWABLE_APP_CLOSE(":"+inquirInfo.getMAIN_PID()+",:84,:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID", ""));
+                }
                 } catch (Exception e) {}
 
             return null;
@@ -603,40 +608,78 @@ public class FacilityConnectionActivity extends AppCompatActivity {
             try{
 
                 if(flag1){
-                    pd.dismiss();
-                    final AlertDialog.Builder builder = new AlertDialog.Builder(FacilityConnectionActivity.this);
-                    LayoutInflater inflater = FacilityConnectionActivity.this.getLayoutInflater();
-                    builder.setView(inflater.inflate(R.layout.dialog_vacstate, null));
-                    final AlertDialog dialog1 = builder.create();
-                    ((FrameLayout) dialog1.getWindow().getDecorView().findViewById(android.R.id.content)).setForeground(new ColorDrawable(Color.TRANSPARENT));
-                    WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-                    lp.copyFrom(dialog1.getWindow().getAttributes());
-                    lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
-                    lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-                    dialog1.show();
-                    dialog1.getWindow().setAttributes(lp);
-                    final Button exit=dialog1.findViewById(R.id.btn2);
-                    final CircleImageView im=dialog1.findViewById(R.id.im);
-                    final TextView textView3=dialog1.findViewById(R.id.textView3);
-                    textView3.setText("تمت عملية الحفظ و الارسال بنجاح");
+                    if(Integer.parseInt(String.valueOf(closeApp))<0){
+                        pd.dismiss();
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(FacilityConnectionActivity.this);
+                        LayoutInflater inflater = FacilityConnectionActivity.this.getLayoutInflater();
+                        builder.setView(inflater.inflate(R.layout.dialog_vacstate, null));
+                        final AlertDialog dialog1 = builder.create();
+                        ((FrameLayout) dialog1.getWindow().getDecorView().findViewById(android.R.id.content)).setForeground(new ColorDrawable(Color.TRANSPARENT));
+                        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                        lp.copyFrom(dialog1.getWindow().getAttributes());
+                        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+                        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                        dialog1.show();
+                        dialog1.getWindow().setAttributes(lp);
+                        final Button exit=dialog1.findViewById(R.id.btn2);
+                        final CircleImageView im=dialog1.findViewById(R.id.im);
+                        final TextView textView3=dialog1.findViewById(R.id.textView3);
+                        textView3.setText("تمت عملية الحفظ و الارسال بنجاح مع خطأ في الادخال الى جدول الاغلاق من التطبيق");
 
-                    exit.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            dialog1.dismiss();
+                        exit.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog1.dismiss();
 
-                            cusmName.setText("");
-                            cusm_No.setText("");
-                            city.setText("");
-                            address_name.setText("");
-                            lacation.setText("");
+                                cusmName.setText("");
+                                cusm_No.setText("");
+                                city.setText("");
+                                address_name.setText("");
+                                lacation.setText("");
 
-                            sendbtn.setEnabled(false);
-                            sendbtn. setBackground(getDrawable(R.drawable.shape3));
-                            sendbtn.setTextColor(getResources().getColor(R.color.grey));
+                                sendbtn.setEnabled(false);
+                                sendbtn. setBackground(getDrawable(R.drawable.shape3));
+                                sendbtn.setTextColor(getResources().getColor(R.color.grey));
 
-                        }
-                    });
+                            }
+                        });
+                    }else{
+                        pd.dismiss();
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(FacilityConnectionActivity.this);
+                        LayoutInflater inflater = FacilityConnectionActivity.this.getLayoutInflater();
+                        builder.setView(inflater.inflate(R.layout.dialog_vacstate, null));
+                        final AlertDialog dialog1 = builder.create();
+                        ((FrameLayout) dialog1.getWindow().getDecorView().findViewById(android.R.id.content)).setForeground(new ColorDrawable(Color.TRANSPARENT));
+                        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                        lp.copyFrom(dialog1.getWindow().getAttributes());
+                        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+                        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                        dialog1.show();
+                        dialog1.getWindow().setAttributes(lp);
+                        final Button exit=dialog1.findViewById(R.id.btn2);
+                        final CircleImageView im=dialog1.findViewById(R.id.im);
+                        final TextView textView3=dialog1.findViewById(R.id.textView3);
+                        textView3.setText("تمت عملية الحفظ و الارسال بنجاح");
+
+                        exit.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog1.dismiss();
+
+                                cusmName.setText("");
+                                cusm_No.setText("");
+                                city.setText("");
+                                address_name.setText("");
+                                lacation.setText("");
+
+                                sendbtn.setEnabled(false);
+                                sendbtn. setBackground(getDrawable(R.drawable.shape3));
+                                sendbtn.setTextColor(getResources().getColor(R.color.grey));
+
+                            }
+                        });
+                    }
+
                 }else {
                     pd.dismiss();
                     final AlertDialog.Builder builder = new AlertDialog.Builder(FacilityConnectionActivity.this);

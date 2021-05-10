@@ -1,11 +1,14 @@
 package com.example.renewable;
 
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,11 +16,13 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -38,6 +43,8 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Base64;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class FillDataActivity extends AppCompatActivity {
     ArrayList<String> dataByMember;
     String MPID = "";
@@ -53,6 +60,7 @@ public class FillDataActivity extends AppCompatActivity {
     ArrayList<AnswersList2> answersList2;
     ProgressDialog pd;
     boolean fill =false;
+    InquirInfo inquirInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +68,10 @@ public class FillDataActivity extends AppCompatActivity {
         setContentView(R.layout.activity_fill_data);
 
         MPID = getIntent().getStringExtra("MPID");
+
+        Intent i = getIntent();
+        inquirInfo = (InquirInfo) i.getSerializableExtra("inboxDetail");
+
         qlist = new ArrayList<>();
         downvalue_discon = findViewById(R.id.downvalue_discon);
         actualvalue_discon = findViewById(R.id.actualvalue_discon);
@@ -578,8 +590,6 @@ public class FillDataActivity extends AppCompatActivity {
 
     }
 
-
-
     private class SaveFilledDataAsyncCall extends AsyncTask<String, Void, Void> {
         boolean flag = false;
         SoapPrimitive insert;
@@ -645,9 +655,69 @@ public class FillDataActivity extends AppCompatActivity {
         protected void onPostExecute(Void result) {
             pd.dismiss();
             try{
-                if(flag) {
+                if(String.valueOf(insert).equals("true")) {
                     pd.dismiss();
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(FillDataActivity.this);
+                    LayoutInflater inflater = FillDataActivity.this.getLayoutInflater();
+                    builder.setView(inflater.inflate(R.layout.dialog_vacstate, null));
+                    final AlertDialog dialog = builder.create();
+                    ((FrameLayout) dialog.getWindow().getDecorView().findViewById(android.R.id.content)).setForeground(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                    WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                    lp.copyFrom(dialog.getWindow().getAttributes());
+                    lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+                    lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                    dialog.show();
+                    dialog.getWindow().setAttributes(lp);
+                    final Button exit=dialog.findViewById(R.id.btn2);
+                    final CircleImageView im=dialog.findViewById(R.id.im);
+                    final TextView textView3=dialog.findViewById(R.id.textView3);
+                    textView3.setText("تمت عملية الحفظ للنموذج");
 
+                    im.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                            startActivity(new Intent(FillDataActivity.this, InquirActivity.class).putExtra("MPID", MPID).putExtra("inboxDetail", inquirInfo));
+                            finish();
+                        }
+                    });
+                    exit.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                            startActivity(new Intent(FillDataActivity.this, InquirActivity.class).putExtra("MPID", MPID).putExtra("inboxDetail", inquirInfo));
+                            finish();
+                        }
+                    });
+                }else {
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(FillDataActivity.this);
+                    LayoutInflater inflater = FillDataActivity.this.getLayoutInflater();
+                    builder.setView(inflater.inflate(R.layout.dialog_vacstate, null));
+                    final AlertDialog dialog = builder.create();
+                    ((FrameLayout) dialog.getWindow().getDecorView().findViewById(android.R.id.content)).setForeground(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                    WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                    lp.copyFrom(dialog.getWindow().getAttributes());
+                    lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+                    lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                    dialog.show();
+                    dialog.getWindow().setAttributes(lp);
+                    final Button exit=dialog.findViewById(R.id.btn2);
+                    final CircleImageView im=dialog.findViewById(R.id.im);
+                    final TextView textView3=dialog.findViewById(R.id.textView3);
+                    textView3.setText("لقد حدث خطأ اثناء عملية الحفظ");
+
+                    im.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                        }
+                    });
+                    exit.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                        }
+                    });
                 }
             }catch(Exception e){}
 
