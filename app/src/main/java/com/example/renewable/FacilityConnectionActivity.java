@@ -606,7 +606,6 @@ public class FacilityConnectionActivity extends AppCompatActivity {
         protected void onPostExecute(Void result) {
             pd.dismiss();
             try{
-
                 if(flag1){
                     if(Integer.parseInt(String.valueOf(closeApp))<0){
                         pd.dismiss();
