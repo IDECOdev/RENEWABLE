@@ -640,6 +640,8 @@ public class FacilityConnectionActivity extends AppCompatActivity {
                                 sendbtn. setBackground(getDrawable(R.drawable.shape3));
                                 sendbtn.setTextColor(getResources().getColor(R.color.grey));
 
+                                startActivity(new Intent(FacilityConnectionActivity.this, ConnectionIncquireActivity.class));
+
                             }
                         });
                     }else{
@@ -675,6 +677,7 @@ public class FacilityConnectionActivity extends AppCompatActivity {
                                 sendbtn. setBackground(getDrawable(R.drawable.shape3));
                                 sendbtn.setTextColor(getResources().getColor(R.color.grey));
 
+                                startActivity(new Intent(FacilityConnectionActivity.this, ConnectionIncquireActivity.class));
                             }
                         });
                     }

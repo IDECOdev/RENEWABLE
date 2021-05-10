@@ -520,6 +520,8 @@ public class InquirActivity extends AppCompatActivity {
                                 fillbtn. setBackground(getDrawable(R.drawable.shape3));
                                 fillbtn.setTextColor(getResources().getColor(R.color.grey));
 
+                                startActivity(new Intent(InquirActivity.this, InspectionIncquireActivity.class));
+
                             }
                         });
                     }else{
@@ -561,6 +563,8 @@ public class InquirActivity extends AppCompatActivity {
                                 fillbtn.setEnabled(false);
                                 fillbtn. setBackground(getDrawable(R.drawable.shape3));
                                 fillbtn.setTextColor(getResources().getColor(R.color.grey));
+
+                                startActivity(new Intent(InquirActivity.this, InspectionIncquireActivity.class));
 
                             }
                         });
