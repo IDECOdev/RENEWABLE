@@ -57,6 +57,7 @@ public class FillDataActivity extends AppCompatActivity {
     ArrayList<Questions> qlist;
     ArrayList<PresentInfo> presentInfo;
     ArrayList<AnswersList> answersLists;
+    ArrayList<AnswersListdesc> answersListdescs;
     ArrayList<AnswersList2> answersList2;
     ProgressDialog pd;
     boolean fill =false;
@@ -82,7 +83,11 @@ public class FillDataActivity extends AppCompatActivity {
 
         dataByMember = new ArrayList<>();
         answersLists = new ArrayList<>();
+        answersLists.clear();
         answersList2 = new ArrayList<>();
+        answersList2.clear();
+        answersListdescs = new ArrayList<>();
+        answersListdescs.clear();
 
         sendbtn = findViewById(R.id.sendbtn);
 
@@ -220,7 +225,7 @@ public class FillDataActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void result) {
             dialog.dismiss();
-            if(questions!=null && questions.getPropertyCount() > 0){
+            if(questions!=null && questions.getPropertyCount() > 0 && result==null){
                 GetReadableqstData(questions);
             }
 
@@ -254,7 +259,7 @@ public class FillDataActivity extends AppCompatActivity {
             try{
                 KSoapClass service1 = new KSoapClass();
 
-                String data1 = ": and B.MPID ="+ MPID+",:1";
+                String data1 = ":and B.MPID ="+ MPID+",:1";
                 KeyFactory kf1 = KeyFactory.getInstance("RSA");
                 PKCS8EncodedKeySpec keySpecPKCS81 = new PKCS8EncodedKeySpec(android.util.Base64.decode(service1.privateKey, android.util.Base64.DEFAULT));
                 PrivateKey privKey1 = kf1.generatePrivate(keySpecPKCS81);
@@ -277,7 +282,7 @@ public class FillDataActivity extends AppCompatActivity {
         protected void onPostExecute(Void result) {
             dialog.dismiss();
 
-            if(result==null){
+            if(result==null && present==null && present.getPropertyCount() < 0){
                 GenericAsyncCall2 genericAsyncCall = new GenericAsyncCall2();
                 genericAsyncCall.execute();
             }else{
@@ -418,6 +423,7 @@ public class FillDataActivity extends AppCompatActivity {
         SoapObject so1, so2, so3;
 
         presentInfo = new ArrayList<>();
+        presentInfo.clear();
         if (present != null && present.getPropertyCount() > 0){
             so1 = (SoapObject) present.getProperty(1);
             if (so1 != null && so1.getPropertyCount() > 0){
@@ -467,11 +473,12 @@ public class FillDataActivity extends AppCompatActivity {
         }
 
 
-        if(presentInfo.isEmpty()){
+        if(!presentInfo.isEmpty()){
             answersLists.clear();
             for(int i =0; i<presentInfo.size();i++){
-                if(presentInfo.get(i).INSERT_TYPE.equals("1")){
+                if(presentInfo.get(i).getINSERT_TYPE().equals("1")){
                     answersLists.add(new AnswersList(presentInfo.get(i).getMEMBER_ID(), presentInfo.get(i).YES_FLAG));
+                    answersListdescs.add(new AnswersListdesc(presentInfo.get(i).getMEMBER_ID(), presentInfo.get(i).YES_FLAG, presentInfo.get(i).getMEMBER_DESC()));
                 }
             }
             list=(ListView)findViewById(R.id.list);
@@ -515,6 +522,9 @@ public class FillDataActivity extends AppCompatActivity {
                 }
             }
 
+        }else{
+            GenericAsyncCall2 genericAsyncCall = new GenericAsyncCall2();
+            genericAsyncCall.execute();
         }
 
 //        if(presentInfo.isEmpty() || presentInfo!=null){
@@ -652,32 +662,19 @@ public class FillDataActivity extends AppCompatActivity {
                     switch (checkedId){
 
                         case R.id.yes :
-                            answersLists.set(position, new AnswersList(presentInfo.get(position).getMEMBER_ID(), "1"));
+                            answersLists.set(position, new AnswersList(qlist.get(position).getSYS_MINOR(), "1"));
                             break;
                         case R.id.no :
-                            answersLists.set(position, new AnswersList(presentInfo.get(position).getMEMBER_ID(), "0"));
+                            answersLists.set(position, new AnswersList(qlist.get(position).getSYS_MINOR(), "0"));
                             break;
                     }
 
                 }
             });
 
-           Check(rb1, rb2, position);
-//           int p = sortAnswers(qlist.get(position).MEMBER_ID);
+//           Check(rb1, rb2, position);
 //
-//           try{
-//
-//               if(p!=-1){
-//                   if(answersLists.get(p).answers.equals("1")){
-//                       rb1.setChecked(true);
-//                       rb2.setChecked(false); }
-//                   else {
-//                       rb2.setChecked(true);
-//                       rb1.setChecked(false); }
-//               }
-//
-//           }
-//           catch (Exception e){}
+
            return convertView; }
 
         public void Check(RadioButton rb1, RadioButton rb2, int pos){
@@ -739,7 +736,11 @@ public class FillDataActivity extends AppCompatActivity {
             RadioButton rb1 = (RadioButton) convertView.findViewById(R.id.yes);
             RadioButton rb2 = (RadioButton) convertView.findViewById(R.id.no);
 
-            qName.setText(presentInfo.get(position).MEMBER_DESC);
+            for(int i = 0 ; i<answersListdescs.size() ; i++){
+                if(answersListdescs.get(i).id.equals(answersLists.get(position).getId())){
+                    qName.setText(answersListdescs.get(i).getDesc());
+                }
+            }
 
             rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                 @Override
@@ -748,10 +749,10 @@ public class FillDataActivity extends AppCompatActivity {
                     switch (checkedId){
 
                         case R.id.yes :
-                            answersLists.set(position, new AnswersList(qlist.get(position).getSYS_MINOR(), "1"));
+                            answersLists.set(position, new AnswersList(answersLists.get(position).getId(), "1"));
                             break;
                         case R.id.no :
-                            answersLists.set(position, new AnswersList(qlist.get(position).getSYS_MINOR(), "0"));
+                            answersLists.set(position, new AnswersList(answersLists.get(position).getId(), "0"));
                             break;
                     }
 
