@@ -298,6 +298,7 @@ public class InspectionIncquireActivity extends AppCompatActivity {
             cusmNum_et.setEnabled(true);
             processNum_et.setEnabled(true);
         } else{
+            info.clear();
             if (soapObject1 != null && soapObject1.getPropertyCount() > 0){
                 so1 = (SoapObject) soapObject1.getProperty(1);
                 if (so1 != null && so1.getPropertyCount() > 0){

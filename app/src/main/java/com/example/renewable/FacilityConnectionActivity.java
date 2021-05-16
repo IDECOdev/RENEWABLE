@@ -303,26 +303,25 @@ public class FacilityConnectionActivity extends AppCompatActivity {
                 }
             }
         }
-
+        CusmNo = inquirInfo.getCa_cusm_num();
+        CustomermNum="";
+        CustomermNum+= String.format(Locale.ENGLISH, "%03d", Integer.parseInt(inquirInfo.getCITY_ID()));
+        CustomermNum+= "0"+String.format(Locale.ENGLISH, "%06d", Integer.parseInt(inquirInfo.getCa_cusm_num()));
+        cusmName.setText(inquirInfo.getCA_CUSM_NAME());
+        cusm_No.setText(CustomermNum);
+        city.setText(inquirInfo.getCITY_ID());
+        address_name.setText(inquirInfo.getCTYM_NAME());
+        if(!inquirInfo.getCA_X_COORDINATE().equals("") && !inquirInfo.getCA_Y_COORDINATE().equals("")){
+            lacation.setText(inquirInfo.getCA_X_COORDINATE() + "," + inquirInfo.getCA_Y_COORDINATE());
+        }else{
+            lacation.setText("لم يتم تحديد احداثيات الموقع");
+        }
         if(presInfo!=null){
-            CusmNo = presInfo.getCa_cusm_num();
-            CustomermNum="";
-            CustomermNum+= String.format(Locale.ENGLISH, "%03d", Integer.parseInt(presInfo.getCITY_ID()));
-            CustomermNum+= "0"+String.format(Locale.ENGLISH, "%06d", Integer.parseInt(presInfo.getCa_cusm_num()));
-            cusmName.setText(presInfo.getCA_CUSM_NAME());
-            cusm_No.setText(CustomermNum);
-            city.setText(presInfo.getCITY_ID());
-            address_name.setText(presInfo.getCTYM_NAME());
-            if(!inquirInfo.getCA_X_COORDINATE().equals("") && !inquirInfo.getCA_Y_COORDINATE().equals("")){
-                lacation.setText(inquirInfo.getCA_X_COORDINATE() + "," + inquirInfo.getCA_Y_COORDINATE());
-            }else{
-                lacation.setText("لم يتم تحديد احداثيات الموقع");
-            }
 
             connectionDate.setText(presInfo.getSYSTEM_CONN_DATEX());
             issuedRead.setText(presInfo.getREN_M_PREAD_OP());
             continuedRead.setText(presInfo.getREN_M_LREAD_OP());
-            EngNoteDate.setText(presInfo.getNOTES());
+
         }
 
     }
@@ -503,7 +502,7 @@ public class FacilityConnectionActivity extends AppCompatActivity {
             try {
                 KSoapClass soap = new KSoapClass();
 
-                String data1 = "Id:" +inquirInfo.getID()+",: ,engNote:" + EngNoteDate.getText().toString() +",:0,txtREN_M_PREAD_OP:"+issuedRead.getText().toString()+",txtREN_M_LREAD_OP:"+continuedRead.getText().toString()+",:0,:0,:0,:0,: ,: ,:0,uId:" + getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID", "")
+                String data1 = "Id:" +inquirInfo.getID()+",: ,engNote: ,:0,txtREN_M_PREAD_OP:"+issuedRead.getText().toString()+",txtREN_M_LREAD_OP:"+continuedRead.getText().toString()+",:0,:0,:0,:0,: ,: ,:0,uId:" + getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID", "")
                         + ",strUserName:" + getSharedPreferences("Info", Context.MODE_PRIVATE).getString("UserName", "")
                         + ",:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,:0,: ,: ,: ,: ,: ,dtpSYSTEM_CONN_DATE:"+connectionDate.getText().toString()+",:0,:2";
 
@@ -595,11 +594,26 @@ public class FacilityConnectionActivity extends AppCompatActivity {
                 KSoapClass soap = new KSoapClass();
                 flag1 = soap.Insert_Renewable_Images(imageFileName1, imageFileName2, imageBitmap, imageBitmap2);
                 if(String.valueOf(flag1).equals("true")){
-                    closeApp = soap.INSERT_RENEWABLE_APP_CLOSE(":"+inquirInfo.getMAIN_PID()+",:84,:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID", ""));
-                }
-                } catch (Exception e) {}
 
+                    String data3 =":"+inquirInfo.getMAIN_PID().toString()+",:84,:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID", "");
+                    try {
+                        KeyFactory kf = KeyFactory.getInstance("RSA");
+                        PKCS8EncodedKeySpec keySpecPKCS8 = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(soap.privateKey));
+                        PrivateKey privKey = kf.generatePrivate(keySpecPKCS8);
+                        X509EncodedKeySpec keySpecX509 = new X509EncodedKeySpec(Base64.getDecoder().decode(soap.publicKey));
+                        RSAPublicKey pubKey = (RSAPublicKey) kf.generatePublic(keySpecX509);
+
+                        RSA.setKey(pubKey, privKey);
+
+                        byte[] encodeData = RSA.encrypt(RSA.getPublicKey2(RSA.GetMap()), data3);
+                        String base64Encoded = Base64.getEncoder().encodeToString(encodeData);
+                        closeApp = soap.INSERT_RENEWABLE_APP_CLOSE(base64Encoded);
+
+                } catch (Exception e) {}
+                }
+            }catch (Exception e){}
             return null;
+
         }
 
         @Override

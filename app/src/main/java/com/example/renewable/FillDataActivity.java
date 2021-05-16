@@ -62,6 +62,7 @@ public class FillDataActivity extends AppCompatActivity {
     ProgressDialog pd;
     boolean fill =false;
     InquirInfo inquirInfo;
+    String dates = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +70,7 @@ public class FillDataActivity extends AppCompatActivity {
         setContentView(R.layout.activity_fill_data);
 
         MPID = getIntent().getStringExtra("MPID");
+        dates =  getIntent().getStringExtra("dates");
 
         Intent i = getIntent();
         inquirInfo = (InquirInfo) i.getSerializableExtra("inboxDetail");
@@ -90,12 +92,6 @@ public class FillDataActivity extends AppCompatActivity {
         answersListdescs.clear();
 
         sendbtn = findViewById(R.id.sendbtn);
-
-//        try {
-//            GenericAsyncCall ds = new GenericAsyncCall();
-//            ds.execute();
-//
-//        }catch (Exception e){}
 
         try {
             PresentAsyncCall ds = new PresentAsyncCall();
@@ -128,63 +124,6 @@ public class FillDataActivity extends AppCompatActivity {
 
     }
 
-    private class GenericAsyncCall extends AsyncTask<String, Void, Void> {
-        ProgressDialog dialog;
-
-        SoapObject questions;
-        SoapObject present;
-
-        public GenericAsyncCall() {
-            dialog = new ProgressDialog(FillDataActivity.this);
-        }
-
-        @SuppressLint("WrongThread")
-        @Override
-        protected Void doInBackground(String... params) {
-            //Invoke webservice
-            try{
-                KSoapClass service = new KSoapClass();
-
-                String data = ":,:2";
-                KeyFactory kf = KeyFactory.getInstance("RSA");
-                PKCS8EncodedKeySpec keySpecPKCS8 = new PKCS8EncodedKeySpec(android.util.Base64.decode(service.privateKey, android.util.Base64.DEFAULT));
-                PrivateKey privKey = kf.generatePrivate(keySpecPKCS8);
-                X509EncodedKeySpec keySpecX509 = new X509EncodedKeySpec(android.util.Base64.decode(service.publicKey, android.util.Base64.DEFAULT));
-                RSAPublicKey pubKey = (RSAPublicKey) kf.generatePublic(keySpecX509);
-                RSA.setKey(pubKey, privKey);
-                byte[] encodeData = RSA.encrypt(RSA.getPublicKey2(RSA.GetMap()), data);
-                String base64Encoded = android.util.Base64.encodeToString(encodeData, android.util.Base64.DEFAULT);
-
-                questions=service.GetINSPRenTemplate(base64Encoded);
-
-//
-            }
-            catch (Exception exception)
-            {
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            dialog.dismiss();
-            if(questions!=null && questions.getPropertyCount() > 0){
-                GetReadableqstData(questions);
-            }
-
-        }
-
-        @Override
-        protected void onPreExecute() {
-            dialog.setMessage("الرجاء الانتظار...");
-            dialog.setCancelable(false);
-            dialog.show();
-        }
-        @Override
-        protected void onProgressUpdate(Void... values) {
-        }
-    }
-
     private class GenericAsyncCall2 extends AsyncTask<String, Void, Void> {
         ProgressDialog dialog;
 
@@ -214,7 +153,6 @@ public class FillDataActivity extends AppCompatActivity {
 
                 questions=service.GetINSPRenTemplate(base64Encoded);
 
-//
             }
             catch (Exception exception)
             {
@@ -289,26 +227,6 @@ public class FillDataActivity extends AppCompatActivity {
                 GetReadableqstData1(present);
             }
 
-//                SoapObject so1, so2, so3;
-//                if (present != null && present.getPropertyCount() > 0){
-//                    so1 = (SoapObject) present.getProperty(1);
-//                    if (so1 != null && so1.getPropertyCount() > 0){
-//                        if(!so1.toString().equals("anyType{}")){
-//                            GetReadableqstData1(present);
-//
-//                        }else{
-//                            GenericAsyncCall2 genericAsyncCall = new GenericAsyncCall2();
-//                            genericAsyncCall.execute();
-//                        }
-//
-//                    }
-//                }else{
-//                    GenericAsyncCall2 genericAsyncCall = new GenericAsyncCall2();
-//                    genericAsyncCall.execute();
-//                }
-//
-//
-
         }
 
         @Override
@@ -321,102 +239,6 @@ public class FillDataActivity extends AppCompatActivity {
         protected void onProgressUpdate(Void... values) {
         }
 
-    }
-
-    private class FillAsyncCall2 extends AsyncTask<String, Void, Void> {
-        ProgressDialog dialog;
-
-        SoapObject questions;
-        SoapObject present;
-
-        public FillAsyncCall2() {
-            dialog = new ProgressDialog(FillDataActivity.this);
-        }
-
-
-        @Override
-        protected Void doInBackground(String... params) {
-            //Invoke webservice
-            try{
-                KSoapClass service1 = new KSoapClass();
-
-                String data1 = ": and B.MPID ="+ MPID+",:1";
-                KeyFactory kf1 = KeyFactory.getInstance("RSA");
-                PKCS8EncodedKeySpec keySpecPKCS81 = new PKCS8EncodedKeySpec(android.util.Base64.decode(service1.privateKey, android.util.Base64.DEFAULT));
-                PrivateKey privKey1 = kf1.generatePrivate(keySpecPKCS81);
-                X509EncodedKeySpec keySpecX5091 = new X509EncodedKeySpec(android.util.Base64.decode(service1.publicKey, android.util.Base64.DEFAULT));
-                RSAPublicKey pubKey1 = (RSAPublicKey) kf1.generatePublic(keySpecX5091);
-                RSA.setKey(pubKey1, privKey1);
-                byte[] encodeData1 = RSA.encrypt(RSA.getPublicKey2(RSA.GetMap()), data1);
-                String base64Encoded1 = android.util.Base64.encodeToString(encodeData1, android.util.Base64.DEFAULT);
-
-                present=service1.GetINSPRenTemplate(base64Encoded1);
-
-            }
-            catch (Exception exception)
-            {
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            dialog.dismiss();
-
-            if(present!=null && present.getPropertyCount() > 0){
-                GetReadableqstData1(present);
-            }
-            if(!presentInfo.isEmpty()){
-                for(int i=0; i<answersLists.size(); i++)
-                    addandsort(i);
-//                    answersLists.add(new AnswersList(presentInfo.get(i).getMEMBER_ID(), presentInfo.get(i).YES_FLAG));
-
-                CustomAdapter adapter=new CustomAdapter(FillDataActivity.this);
-                list.setAdapter(adapter);
-
-                for(int i =0; i<presentInfo.size();i++){
-                    if(presentInfo.get(i).INSERT_TYPE.equals("2")){
-
-                        if(presentInfo.get(i).getMEMBER_ID().equals("1")){
-                            downvalue_discon.setText(presentInfo.get(i).MINIMUM_VALUE);
-                            actualvalue_discon.setText(presentInfo.get(i).EXACT_VALUE);
-                            catchedvalue_discon.setText(presentInfo.get(i).MEASURED_VALUE); }
-
-                        if(presentInfo.get(i).getMEMBER_ID().equals("2")){
-                            downvalue_re.setText(presentInfo.get(i).MINIMUM_VALUE);
-                            actualvalue_re.setText(presentInfo.get(i).EXACT_VALUE);
-                            catchedvalue_re.setText(presentInfo.get(i).MEASURED_VALUE); }
-
-                    }
-                }
-
-            }
-        }
-
-        @Override
-        protected void onPreExecute() {
-            dialog.setMessage("الرجاء الانتظار...");
-            dialog.setCancelable(false);
-            dialog.show();
-        }
-        @Override
-        protected void onProgressUpdate(Void... values) {
-        }
-
-    }
-
-    private void addandsort(int p) {
-
-        for(int i = 0; i<presentInfo.size(); i++) {
-            if(presentInfo.get(i).INSERT_TYPE.equals("1")){
-                if(presentInfo.get(i).MEMBER_ID.equals(answersLists.get(p).id)){
-                    AnswersList obj = new AnswersList(presentInfo.get(i).MEMBER_ID, presentInfo.get(i).YES_FLAG);
-                    answersLists.set(p, obj);
-                    break;
-                }
-            }
-
-        }
     }
 
     private void GetReadableqstData1(SoapObject present) {
@@ -511,13 +333,13 @@ public class FillDataActivity extends AppCompatActivity {
 
                     if(presentInfo.get(i).getMEMBER_ID().equals("1")){
                         downvalue_discon.setText(presentInfo.get(i).MINIMUM_VALUE);
-                        actualvalue_discon.setText(presentInfo.get(i).EXACT_VALUE);
-                        catchedvalue_discon.setText(presentInfo.get(i).MEASURED_VALUE); }
+                        actualvalue_discon.setText(presentInfo.get(i).MEASURED_VALUE);
+                        catchedvalue_discon.setText(presentInfo.get(i).EXACT_VALUE); }
 
                     if(presentInfo.get(i).getMEMBER_ID().equals("2")){
                         downvalue_re.setText(presentInfo.get(i).MINIMUM_VALUE);
-                        actualvalue_re.setText(presentInfo.get(i).EXACT_VALUE);
-                        catchedvalue_re.setText(presentInfo.get(i).MEASURED_VALUE); }
+                        actualvalue_re.setText(presentInfo.get(i).MEASURED_VALUE);
+                        catchedvalue_re.setText(presentInfo.get(i).EXACT_VALUE); }
 
                 }
             }
@@ -527,35 +349,7 @@ public class FillDataActivity extends AppCompatActivity {
             genericAsyncCall.execute();
         }
 
-//        if(presentInfo.isEmpty() || presentInfo!=null){
-//            list=(ListView)findViewById(R.id.list);
-//            list.setOnTouchListener(new ListView.OnTouchListener() {
-//                @Override
-//                public boolean onTouch(View v, MotionEvent event) {
-//                    int action = event.getAction();
-//                    switch (action) {
-//                        case MotionEvent.ACTION_DOWN:
-//                            // Disallow ScrollView to intercept touch events.
-//                            v.getParent().requestDisallowInterceptTouchEvent(true);
-//                            break;
-//
-//                        case MotionEvent.ACTION_UP:
-//                            // Allow ScrollView to intercept touch events.
-//                            v.getParent().requestDisallowInterceptTouchEvent(false);
-//                            break;
-//                    }
-//
-//                    // Handle ListView touch events.
-//                    v.onTouchEvent(event);
-//                    return true;
-//                }
-//            });
-//
-//
-//
-//        }
     }
-
 
     private void GetReadableqstData(SoapObject questions) {
         SoapObject so1, so2, so3;
@@ -611,13 +405,6 @@ public class FillDataActivity extends AppCompatActivity {
 
         }
 
-    }
-
-    public static class ViewHolder {
-        public static TextView qName;
-        public static RadioGroup rg;
-        public static RadioButton yes;
-        public static RadioButton no;
     }
 
     public class CustomAdapter extends BaseAdapter {
@@ -691,16 +478,6 @@ public class FillDataActivity extends AppCompatActivity {
 
         }
 
-    }
-
-    private int sortAnswers(String member_id) {
-
-        for(int i = 0; i<answersLists.size();i++){
-            if(answersLists.get(i).id.equals(member_id)){
-                return i;
-            }
-        }
-     return -1;
     }
 
     public class CustomAdapter2 extends BaseAdapter {
@@ -867,7 +644,7 @@ public class FillDataActivity extends AppCompatActivity {
                         @Override
                         public void onClick(View v) {
                             dialog.dismiss();
-                            startActivity(new Intent(FillDataActivity.this, InquirActivity.class).putExtra("MPID", MPID).putExtra("inboxDetail", inquirInfo));
+                            startActivity(new Intent(FillDataActivity.this, InquirActivity.class).putExtra("MPID", MPID).putExtra("inboxDetail", inquirInfo).putExtra("dates",dates));
                             finish();
                         }
                     });
@@ -875,7 +652,7 @@ public class FillDataActivity extends AppCompatActivity {
                         @Override
                         public void onClick(View v) {
                             dialog.dismiss();
-                            startActivity(new Intent(FillDataActivity.this, InquirActivity.class).putExtra("MPID", MPID).putExtra("inboxDetail", inquirInfo));
+                            startActivity(new Intent(FillDataActivity.this, InquirActivity.class).putExtra("MPID", MPID).putExtra("inboxDetail", inquirInfo).putExtra("dates",dates));
                             finish();
                         }
                     });

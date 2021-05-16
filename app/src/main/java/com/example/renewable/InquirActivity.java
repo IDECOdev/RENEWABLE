@@ -82,6 +82,7 @@ public class InquirActivity extends AppCompatActivity {
     RelativeLayout insLay;
     InsPresInfo presInfo;
     String Mpid = "";
+    String dates="";
 
     @Override
     public void onBackPressed() {
@@ -98,7 +99,6 @@ public class InquirActivity extends AppCompatActivity {
 
         insLay = findViewById(R.id.inspdata_lay);
         instext = findViewById(R.id.instext);
-
 
         sendbtn = findViewById(R.id.sendbtn);
         sendbtn.setEnabled(false);
@@ -138,6 +138,10 @@ public class InquirActivity extends AppCompatActivity {
             Mpid = getIntent().getStringExtra("MPID");
         }
 
+
+        if(!getIntent().getStringExtra("dates").equals("")){
+
+        }
 
         PresntDataAsyncCall presntDataAsyncCall=new PresntDataAsyncCall();
         presntDataAsyncCall.execute();
@@ -182,7 +186,21 @@ public class InquirActivity extends AppCompatActivity {
         fillbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(InquirActivity.this, FillDataActivity.class).putExtra("MPID", Mpid).putExtra("inboxDetail", inquirInfo));
+
+                inspDate.setText(presInfo.getINSP_ESTABLISH_DATEX());
+                noteDate.setText(presInfo.getPROVIDE_NOTES_DATEX());
+                processNoteDate.setText(presInfo.getPROCESS_NOTES_DATEX());
+                if(!inspDate.getText().toString().equals("")){
+                    dates = inspDate.getText().toString()+",";
+                }
+                if(!noteDate.getText().toString().equals("")){
+                    dates += noteDate.getText().toString()+",";
+                }
+                if(!processNoteDate.getText().toString().equals("")){
+                    dates += noteDate.getText().toString();
+                }
+
+                startActivity(new Intent(InquirActivity.this, FillDataActivity.class).putExtra("MPID", Mpid).putExtra("inboxDetail", inquirInfo).putExtra("dates",dates));
 
             }
         });
@@ -371,7 +389,7 @@ public class InquirActivity extends AppCompatActivity {
                                 PROCESS_NOTES_DATEX = so3.getPropertyAsString("PROCESS_NOTES_DATEX");
                             }catch (Exception e){}
                             try{
-                                Eng_Notes = so3.getPropertyAsString("Eng_Notes");
+                                Eng_Notes = so3.getPropertyAsString("ENG_NOTES");
                             }catch (Exception e){}
 
                             presInfo = new InsPresInfo(ID,MAIN_PID,CA_CUSM_NAME,CITY_ID,CTYM_NAME,ca_cusm_num, PROVIDE_NOTES_DATEX, PROCESS_NOTES_DATEX, INSP_ESTABLISH_DATEX, Eng_Notes);
@@ -383,21 +401,33 @@ public class InquirActivity extends AppCompatActivity {
                 }
             }
         }
-
+        CusmNo = inquirInfo.getCa_cusm_num();
+        CustomermNum="";
+        CustomermNum+= String.format(Locale.ENGLISH, "%03d", Integer.parseInt(inquirInfo.getCITY_ID()));
+        CustomermNum+= "0"+String.format(Locale.ENGLISH, "%06d", Integer.parseInt(inquirInfo.getCa_cusm_num()));
+        cusmName.setText(inquirInfo.getCA_CUSM_NAME());
+        cusm_No.setText(CustomermNum);
+        city.setText(presInfo.getCITY_ID());
+        address_name.setText(presInfo.getCTYM_NAME());
+        if(!inquirInfo.getCA_X_COORDINATE().equals("") && !inquirInfo.getCA_Y_COORDINATE().equals("")){
+            lacation.setText(inquirInfo.getCA_X_COORDINATE() + "," + inquirInfo.getCA_Y_COORDINATE());
+        }else{
+            lacation.setText("لم يتم تحديد احداثيات الموقع");
+        }
         if(presInfo!=null){
-            CusmNo = presInfo.getCa_cusm_num();
-            CustomermNum="";
-            CustomermNum+= String.format(Locale.ENGLISH, "%03d", Integer.parseInt(presInfo.getCITY_ID()));
-            CustomermNum+= "0"+String.format(Locale.ENGLISH, "%06d", Integer.parseInt(presInfo.getCa_cusm_num()));
-            cusmName.setText(presInfo.getCA_CUSM_NAME());
-            cusm_No.setText(CustomermNum);
-            city.setText(presInfo.getCITY_ID());
-            address_name.setText(presInfo.getCTYM_NAME());
-            if(!inquirInfo.getCA_X_COORDINATE().equals("") && !inquirInfo.getCA_Y_COORDINATE().equals("")){
-                lacation.setText(inquirInfo.getCA_X_COORDINATE() + "," + inquirInfo.getCA_Y_COORDINATE());
-            }else{
-                lacation.setText("لم يتم تحديد احداثيات الموقع");
-            }
+//            CusmNo = presInfo.getCa_cusm_num();
+//            CustomermNum="";
+//            CustomermNum+= String.format(Locale.ENGLISH, "%03d", Integer.parseInt(presInfo.getCITY_ID()));
+//            CustomermNum+= "0"+String.format(Locale.ENGLISH, "%06d", Integer.parseInt(presInfo.getCa_cusm_num()));
+//            cusmName.setText(presInfo.getCA_CUSM_NAME());
+//            cusm_No.setText(CustomermNum);
+//            city.setText(presInfo.getCITY_ID());
+//            address_name.setText(presInfo.getCTYM_NAME());
+//            if(!inquirInfo.getCA_X_COORDINATE().equals("") && !inquirInfo.getCA_Y_COORDINATE().equals("")){
+//                lacation.setText(inquirInfo.getCA_X_COORDINATE() + "," + inquirInfo.getCA_Y_COORDINATE());
+//            }else{
+//                lacation.setText("لم يتم تحديد احداثيات الموقع");
+//            }
 
             inspDate.setText(presInfo.getINSP_ESTABLISH_DATEX());
             noteDate.setText(presInfo.getPROVIDE_NOTES_DATEX());
@@ -466,7 +496,22 @@ public class InquirActivity extends AppCompatActivity {
                                 " ",  " ", " ", " ", " "));
                     }
                     if(flag){
-                        closeApp = soap.INSERT_RENEWABLE_APP_CLOSE(":"+Mpid+",:120,:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID", ""));
+                        String data3 = ":"+Mpid+",:120,:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID", "");
+                        try {
+                            KeyFactory kf = KeyFactory.getInstance("RSA");
+                            PKCS8EncodedKeySpec keySpecPKCS8 = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(soap.privateKey));
+                            PrivateKey privKey = kf.generatePrivate(keySpecPKCS8);
+                            X509EncodedKeySpec keySpecX509 = new X509EncodedKeySpec(Base64.getDecoder().decode(soap.publicKey));
+                            RSAPublicKey pubKey = (RSAPublicKey) kf.generatePublic(keySpecX509);
+
+                            RSA.setKey(pubKey, privKey);
+
+                            byte[] encodeData = RSA.encrypt(RSA.getPublicKey2(RSA.GetMap()), data3);
+                            String base64Encoded = Base64.getEncoder().encodeToString(encodeData);
+                            closeApp = soap.INSERT_RENEWABLE_APP_CLOSE(base64Encoded);
+                        } catch (Exception e) {
+                        }
+
                     }
                 }
 
@@ -521,6 +566,7 @@ public class InquirActivity extends AppCompatActivity {
                                 fillbtn.setTextColor(getResources().getColor(R.color.grey));
 
                                 startActivity(new Intent(InquirActivity.this, InspectionIncquireActivity.class));
+                                finish();
 
                             }
                         });
@@ -565,6 +611,7 @@ public class InquirActivity extends AppCompatActivity {
                                 fillbtn.setTextColor(getResources().getColor(R.color.grey));
 
                                 startActivity(new Intent(InquirActivity.this, InspectionIncquireActivity.class));
+                                finish();
 
                             }
                         });
@@ -743,50 +790,7 @@ public class InquirActivity extends AppCompatActivity {
             pd.dismiss();
             try{
                 if(flag.toString().equals("true")){
-                     if(Integer.parseInt(String.valueOf(closeApp))<0){
-                        pd.dismiss();
-                        final AlertDialog.Builder builder = new AlertDialog.Builder(InquirActivity.this);
-                        LayoutInflater inflater = InquirActivity.this.getLayoutInflater();
-                        builder.setView(inflater.inflate(R.layout.dialog_vacstate, null));
-                        final AlertDialog dialog1 = builder.create();
-                        ((FrameLayout) dialog1.getWindow().getDecorView().findViewById(android.R.id.content)).setForeground(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-                        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-                        lp.copyFrom(dialog1.getWindow().getAttributes());
-                        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
-                        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-                        dialog1.show();
-                        dialog1.getWindow().setAttributes(lp);
-                        final Button exit=dialog1.findViewById(R.id.btn2);
-                        final CircleImageView im=dialog1.findViewById(R.id.im);
-                        final TextView textView3=dialog1.findViewById(R.id.textView3);
-                        textView3.setText("تمت اضافة المتابعة بنجاح مع خطأ في الادخال الى جدول الاغلاق من التطبيق");
 
-                        exit.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                dialog1.dismiss();
-//
-                                cusmName.setText("");
-                                cusm_No.setText("");
-                                city.setText("");
-                                address_name.setText("");
-                                lacation.setText("");
-
-                                sendbtn.setEnabled(false);
-                                sendbtn. setBackground(getDrawable(R.drawable.shape3));
-                                sendbtn.setTextColor(getResources().getColor(R.color.grey));
-
-                                finishbtn.setEnabled(false);
-                                finishbtn. setBackground(getDrawable(R.drawable.shape3));
-                                finishbtn.setTextColor(getResources().getColor(R.color.grey));
-
-                                fillbtn.setEnabled(false);
-                                fillbtn. setBackground(getDrawable(R.drawable.shape3));
-                                fillbtn.setTextColor(getResources().getColor(R.color.grey));
-
-                            }
-                        });
-                    }else{
                          pd.dismiss();
                          final AlertDialog.Builder builder = new AlertDialog.Builder(InquirActivity.this);
                          LayoutInflater inflater = InquirActivity.this.getLayoutInflater();
@@ -810,7 +814,7 @@ public class InquirActivity extends AppCompatActivity {
                                  dialog1.dismiss();
                              }
                          });
-                     }
+
                 }else {
                     pd.dismiss();
                     final AlertDialog.Builder builder = new AlertDialog.Builder(InquirActivity.this);

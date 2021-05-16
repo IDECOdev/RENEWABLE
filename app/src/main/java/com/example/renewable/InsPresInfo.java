@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class InsPresInfo implements Serializable {
 
-   private String  ID="",  MAIN_PID="", CA_CUSM_NAME="", CITY_ID="",CTYM_NAME="", ca_cusm_num="", PROVIDE_NOTES_DATEX="", PROCESS_NOTES_DATEX="", INSP_ESTABLISH_DATEX="", Eng_Notes;
+   private String  ID="",  MAIN_PID="", CA_CUSM_NAME="", CITY_ID="",CTYM_NAME="", ca_cusm_num="", PROVIDE_NOTES_DATEX="", PROCESS_NOTES_DATEX="", INSP_ESTABLISH_DATEX="", Eng_Notes="";
 
     public String getID() {
         return ID;
