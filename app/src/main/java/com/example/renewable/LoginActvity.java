@@ -370,7 +370,6 @@ public class LoginActvity extends AppCompatActivity {
                             }
                         }).show();
 
-
         }
 }
 }

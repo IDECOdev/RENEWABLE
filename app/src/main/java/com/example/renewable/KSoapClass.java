@@ -12,8 +12,10 @@ import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapPrimitive;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
+import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 public class KSoapClass {
 
@@ -67,6 +69,33 @@ public class KSoapClass {
             return response; }
         catch (Exception e) {
             return null; }
+    }
+
+    public SoapObject GET_APPRAISAL_DATE_SQL (String data){
+        String NameSpace = "http://tempuri.org/";
+        String MethodName = "GET_APPRAISAL_DATE_SQL";
+        String SoapAction = "http://tempuri.org/IBillingWcfsrv/GET_APPRAISAL_DATE_SQL";
+
+        SoapObject request = new SoapObject(NameSpace, MethodName);
+
+        request.addProperty("data", data);
+
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.dotNet = true;
+        envelope.setOutputSoapObject(request);
+        HttpTransportSE androidHttpTransport = new HttpTransportSE(Url);
+        SoapObject response=null;
+        androidHttpTransport.debug = true;
+        try {
+            androidHttpTransport.call(SoapAction, envelope);
+            response = (SoapObject) envelope.getResponse();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (XmlPullParserException e) {
+            e.printStackTrace();
+        }
+        return response;
     }
 
     public SoapObject GetMeterInfo(String data){

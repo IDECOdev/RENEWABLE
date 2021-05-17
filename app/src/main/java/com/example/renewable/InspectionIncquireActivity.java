@@ -14,6 +14,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -131,10 +132,19 @@ public class InspectionIncquireActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 cusmNum_et.setTextColor(Color.parseColor("#009900"));
+                if(cusmNum_et.getText().equals("")){
+                    CustomerCashAsyncCall customerCashAsyncCall = new CustomerCashAsyncCall();
+                    customerCashAsyncCall.execute();
+                }
             }
             @Override
             public void afterTextChanged(Editable editable) {
+                if(!cusmNum_et.getText().equals("")){
 
+                }else{
+                    CustomerCashAsyncCall customerCashAsyncCall = new CustomerCashAsyncCall();
+                    customerCashAsyncCall.execute();
+                }
             }
         });
 
@@ -145,6 +155,12 @@ public class InspectionIncquireActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 processNum_et.setTextColor(Color.parseColor("#009900"));
+                if(!processNum_et.getText().equals("")){
+
+                }else {
+                    CustomerCashAsyncCall customerCashAsyncCall = new CustomerCashAsyncCall();
+                    customerCashAsyncCall.execute();
+                }
             }
             @Override
             public void afterTextChanged(Editable editable) {
@@ -174,9 +190,10 @@ public class InspectionIncquireActivity extends AppCompatActivity {
     }
 
     public void InquirCusmNum(View view) {
-        if(cusmNum_et.getText().toString().equals(""))
+        if(cusmNum_et.getText().toString().equals("") && cusmNum_et.getText().toString().length()!=10)
         {
             Toast.makeText(InspectionIncquireActivity.this, "يرجى إدخال رقم الاشتراك", Toast.LENGTH_LONG).show();
+            return;
         }else{
             CustomerCashAsyncCall customerCashAsyncCall = new CustomerCashAsyncCall();
             customerCashAsyncCall.execute();
@@ -197,7 +214,7 @@ public class InspectionIncquireActivity extends AppCompatActivity {
         }
         @Override
         protected Void doInBackground(String... params) {
-            if(!cusmNum_et.getText().toString().equals("")){
+            if(!cusmNum_et.getText().toString().equals("") && cusmNum_et.getText().toString().length()==10){
                 int cn = Integer.parseInt(cusmNum_et.getText().toString().substring(4));
                 int cc =  Integer.parseInt(cusmNum_et.getText().toString().substring(0,3));
 
@@ -211,27 +228,6 @@ public class InspectionIncquireActivity extends AppCompatActivity {
 
             if (!processNum_et.getText().toString().equals("")){
                 strWhereOracle += " and a.MAIN_PID =" + processNum_et.getText().toString();
-//                String data1 = "iMPID:"+processNum_et.getText().toString()+",DataType:0";
-//                try {
-//                    KeyFactory kf = KeyFactory.getInstance("RSA");
-//                    KSoapClass soap = new KSoapClass();
-//
-//                    PKCS8EncodedKeySpec keySpecPKCS8 = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(soap.privateKey));
-//                    PrivateKey privKey = kf.generatePrivate(keySpecPKCS8);
-//                    X509EncodedKeySpec keySpecX509 = new X509EncodedKeySpec(Base64.getDecoder().decode(soap.publicKey));
-//                    RSAPublicKey pubKey = (RSAPublicKey) kf.generatePublic(keySpecX509);
-//
-//                    RSA.setKey(pubKey, privKey);
-//
-//                    byte[] encodeData = RSA.encrypt(RSA.getPublicKey2(RSA.GetMap()), data1);
-//                    String base64Encoded = Base64.getEncoder().encodeToString(encodeData);
-//                    soapObject1 = soap.GetTransRenewable(base64Encoded);
-//                } catch (Exception e) {
-//                }
-//
-//                if(soapObject1!=null){
-//                    GetReadableData(soapObject1);}
-//
             }
 
         String data = "strWhereOracle:"+strWhereOracle+",strWhereSql: ,taskId:120,datatype:5";
@@ -431,6 +427,7 @@ public class InspectionIncquireActivity extends AppCompatActivity {
                         Intent intent = new Intent(InspectionIncquireActivity.this, InquirActivity.class);
                         intent.putExtra("inboxDetail", info.get(listPosition));
                         intent.putExtra("MPID", "");
+                        intent.putExtra("dates","");
                          startActivity(intent);
 
                 }

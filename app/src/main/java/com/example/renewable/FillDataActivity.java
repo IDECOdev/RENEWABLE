@@ -645,7 +645,7 @@ public class FillDataActivity extends AppCompatActivity {
                         public void onClick(View v) {
                             dialog.dismiss();
                             startActivity(new Intent(FillDataActivity.this, InquirActivity.class).putExtra("MPID", MPID).putExtra("inboxDetail", inquirInfo).putExtra("dates",dates));
-                            finish();
+//                            finish();
                         }
                     });
                     exit.setOnClickListener(new View.OnClickListener() {
@@ -653,7 +653,7 @@ public class FillDataActivity extends AppCompatActivity {
                         public void onClick(View v) {
                             dialog.dismiss();
                             startActivity(new Intent(FillDataActivity.this, InquirActivity.class).putExtra("MPID", MPID).putExtra("inboxDetail", inquirInfo).putExtra("dates",dates));
-                            finish();
+//                            finish();
                         }
                     });
                 }else {

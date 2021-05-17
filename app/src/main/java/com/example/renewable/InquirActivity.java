@@ -83,6 +83,7 @@ public class InquirActivity extends AppCompatActivity {
     InsPresInfo presInfo;
     String Mpid = "";
     String dates="";
+    ArrayList<String> datesArr;
 
     @Override
     public void onBackPressed() {
@@ -126,7 +127,7 @@ public class InquirActivity extends AppCompatActivity {
         processNoteDate = findViewById(R.id.processNoteDate);
         EngNoteDate = findViewById(R.id.EngNoteDate);
 
-
+        datesArr = new ArrayList<>();
 
         if(getIntent().getStringExtra("MPID").equals("")){
             Intent i = getIntent();
@@ -138,13 +139,10 @@ public class InquirActivity extends AppCompatActivity {
             Mpid = getIntent().getStringExtra("MPID");
         }
 
-
-        if(!getIntent().getStringExtra("dates").equals("")){
-
-        }
-
         PresntDataAsyncCall presntDataAsyncCall=new PresntDataAsyncCall();
         presntDataAsyncCall.execute();
+
+        dates =  getIntent().getStringExtra("dates");
 
         sendbtn.setEnabled(true);
         sendbtn. setBackground(getDrawable(R.drawable.shape4));
@@ -187,19 +185,21 @@ public class InquirActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                inspDate.setText(presInfo.getINSP_ESTABLISH_DATEX());
-                noteDate.setText(presInfo.getPROVIDE_NOTES_DATEX());
-                processNoteDate.setText(presInfo.getPROCESS_NOTES_DATEX());
+//                inspDate.setText(presInfo.getINSP_ESTABLISH_DATEX());
+//                noteDate.setText(presInfo.getPROVIDE_NOTES_DATEX());
+//                processNoteDate.setText(presInfo.getPROCESS_NOTES_DATEX());
                 if(!inspDate.getText().toString().equals("")){
-                    dates = inspDate.getText().toString()+",";
+                    dates = "i"+inspDate.getText().toString()+",";
                 }
                 if(!noteDate.getText().toString().equals("")){
-                    dates += noteDate.getText().toString()+",";
+                    dates += "n"+noteDate.getText().toString()+",";
                 }
                 if(!processNoteDate.getText().toString().equals("")){
-                    dates += noteDate.getText().toString();
+                    dates += "p"+processNoteDate.getText().toString()+",";
                 }
-
+                if(!EngNoteDate.getText().toString().equals("")){
+                    dates += "e"+EngNoteDate.getText().toString();
+                }
                 startActivity(new Intent(InquirActivity.this, FillDataActivity.class).putExtra("MPID", Mpid).putExtra("inboxDetail", inquirInfo).putExtra("dates",dates));
 
             }
@@ -415,24 +415,28 @@ public class InquirActivity extends AppCompatActivity {
             lacation.setText("لم يتم تحديد احداثيات الموقع");
         }
         if(presInfo!=null){
-//            CusmNo = presInfo.getCa_cusm_num();
-//            CustomermNum="";
-//            CustomermNum+= String.format(Locale.ENGLISH, "%03d", Integer.parseInt(presInfo.getCITY_ID()));
-//            CustomermNum+= "0"+String.format(Locale.ENGLISH, "%06d", Integer.parseInt(presInfo.getCa_cusm_num()));
-//            cusmName.setText(presInfo.getCA_CUSM_NAME());
-//            cusm_No.setText(CustomermNum);
-//            city.setText(presInfo.getCITY_ID());
-//            address_name.setText(presInfo.getCTYM_NAME());
-//            if(!inquirInfo.getCA_X_COORDINATE().equals("") && !inquirInfo.getCA_Y_COORDINATE().equals("")){
-//                lacation.setText(inquirInfo.getCA_X_COORDINATE() + "," + inquirInfo.getCA_Y_COORDINATE());
-//            }else{
-//                lacation.setText("لم يتم تحديد احداثيات الموقع");
-//            }
-
             inspDate.setText(presInfo.getINSP_ESTABLISH_DATEX());
             noteDate.setText(presInfo.getPROVIDE_NOTES_DATEX());
             processNoteDate.setText(presInfo.getPROCESS_NOTES_DATEX());
             EngNoteDate.setText(presInfo.getEng_Notes());
+        }
+
+        if(!dates.equals("")){
+            String arr[] = dates.split(",");
+            for (int i = 0; i<arr.length; i++){
+                if(arr[i].contains("i")){
+                    inspDate.setText(arr[i].substring(1));
+                }
+                if(arr[i].contains("n")){
+                    noteDate.setText(arr[i].substring(1));
+                }
+                if(arr[i].contains("p")){
+                    processNoteDate.setText(arr[i].substring(1));
+                }
+                if(arr[i].contains("e")){
+                    EngNoteDate.setText(arr[i].substring(1));
+                }
+            }
         }
 
     }
@@ -496,7 +500,13 @@ public class InquirActivity extends AppCompatActivity {
                                 " ",  " ", " ", " ", " "));
                     }
                     if(flag){
-                        String data3 = ":"+Mpid+",:120,:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID", "");
+                        String data3;
+                        if(getSharedPreferences("Info", Context.MODE_PRIVATE).getString("respId", "").equals("")){
+                            data3 = ":"+Mpid+",:120,:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("EMP_NO", "")+",:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("NAME", "");
+                        }else {
+                            data3 =":"+Mpid+",:120,:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("respId", "")+",:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("NAME", "");
+                        }
+
                         try {
                             KeyFactory kf = KeyFactory.getInstance("RSA");
                             PKCS8EncodedKeySpec keySpecPKCS8 = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(soap.privateKey));
@@ -773,9 +783,9 @@ public class InquirActivity extends AppCompatActivity {
                             byte[] encodeData = RSA.encrypt(RSA.getPublicKey2(RSA.GetMap()), data3);
                             String base64Encoded = Base64.getEncoder().encodeToString(encodeData);
                             flag = soap.InsertFollowUp(base64Encoded);
-                            if(String.valueOf(flag).equals("true")){
-                                closeApp = soap.INSERT_RENEWABLE_APP_CLOSE(":"+Mpid+",:120,:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID", ""));
-                            }
+//                            if(String.valueOf(flag).equals("true")){
+//                                closeApp = soap.INSERT_RENEWABLE_APP_CLOSE(":"+Mpid+",:120,:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID", ""));
+//                            }
                         } catch (Exception e) {
                         }
                     }

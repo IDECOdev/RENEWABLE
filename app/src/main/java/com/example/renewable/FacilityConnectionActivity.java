@@ -594,8 +594,13 @@ public class FacilityConnectionActivity extends AppCompatActivity {
                 KSoapClass soap = new KSoapClass();
                 flag1 = soap.Insert_Renewable_Images(imageFileName1, imageFileName2, imageBitmap, imageBitmap2);
                 if(String.valueOf(flag1).equals("true")){
+                    String data3;
+                    if(getSharedPreferences("Info", Context.MODE_PRIVATE).getString("respId", "").equals("")){
+                        data3 =":"+inquirInfo.getMAIN_PID()+",:84,:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("EMP_NO", "")+",:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("NAME", "");
 
-                    String data3 =":"+inquirInfo.getMAIN_PID().toString()+",:84,:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("ID", "");
+                    }else {
+                         data3 =":"+inquirInfo.getMAIN_PID()+",:84,:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("respId", "")+",:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("NAME", "");
+                    }
                     try {
                         KeyFactory kf = KeyFactory.getInstance("RSA");
                         PKCS8EncodedKeySpec keySpecPKCS8 = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(soap.privateKey));
