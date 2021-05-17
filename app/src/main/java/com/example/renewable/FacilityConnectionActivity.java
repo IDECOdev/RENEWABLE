@@ -172,6 +172,15 @@ public class FacilityConnectionActivity extends AppCompatActivity {
                     continuedRead.setText("0");
                 }
 
+                if(imageBitmap != null){
+                    Toast.makeText(FacilityConnectionActivity.this, "تأكد من التقاط الصورة الاولى", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if(imageBitmap2 != null){
+                    Toast.makeText(FacilityConnectionActivity.this, "تأكد من التقاط الصورة الثانية", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 WorkFlowByAdminAsyncCall workFlowByAdminAsyncCall = new WorkFlowByAdminAsyncCall();
                 workFlowByAdminAsyncCall.execute();
 
@@ -592,7 +601,7 @@ public class FacilityConnectionActivity extends AppCompatActivity {
             try {
 
                 KSoapClass soap = new KSoapClass();
-                flag1 = soap.Insert_Renewable_Images(imageFileName1, imageFileName2, imageBitmap, imageBitmap2);
+                flag1 = soap.Insert_Renewable_Images(Integer.parseInt(inquirInfo.getMAIN_PID()),imageFileName1, imageFileName2, imageBitmap, imageBitmap2);
                 if(String.valueOf(flag1).equals("true")){
                     String data3;
                     if(getSharedPreferences("Info", Context.MODE_PRIVATE).getString("respId", "").equals("")){
