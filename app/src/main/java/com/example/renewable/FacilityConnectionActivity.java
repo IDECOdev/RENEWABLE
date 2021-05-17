@@ -124,8 +124,8 @@ public class FacilityConnectionActivity extends AppCompatActivity {
 
         sendbtn = findViewById(R.id.sendbtn);
         sendbtn.setEnabled(true);
-        sendbtn. setBackground(getDrawable(R.drawable.shape3));
-//        sendbtn.setTextColor(getResources().getColor(R.color.grey));
+        sendbtn.setBackground(getDrawable(R.drawable.shape4));
+        sendbtn.setTextColor(getResources().getColor(R.color.white));
 
         cusmName = findViewById(R.id.cusmName);
         cusm_No = findViewById(R.id.cusm_No);
@@ -648,18 +648,19 @@ public class FacilityConnectionActivity extends AppCompatActivity {
                             @Override
                             public void onClick(View v) {
                                 dialog1.dismiss();
-
-                                cusmName.setText("");
-                                cusm_No.setText("");
-                                city.setText("");
-                                address_name.setText("");
-                                lacation.setText("");
-
-                                sendbtn.setEnabled(false);
-                                sendbtn. setBackground(getDrawable(R.drawable.shape3));
-                                sendbtn.setTextColor(getResources().getColor(R.color.grey));
+//
+//                                cusmName.setText("");
+//                                cusm_No.setText("");
+//                                city.setText("");
+//                                address_name.setText("");
+//                                lacation.setText("");
+//
+//                                sendbtn.setEnabled(false);
+//                                sendbtn. setBackground(getDrawable(R.drawable.shape3));
+//                                sendbtn.setTextColor(getResources().getColor(R.color.grey));
 
                                 startActivity(new Intent(FacilityConnectionActivity.this, ConnectionIncquireActivity.class));
+                                finish();
 
                             }
                         });
@@ -686,17 +687,18 @@ public class FacilityConnectionActivity extends AppCompatActivity {
                             public void onClick(View v) {
                                 dialog1.dismiss();
 
-                                cusmName.setText("");
-                                cusm_No.setText("");
-                                city.setText("");
-                                address_name.setText("");
-                                lacation.setText("");
-
-                                sendbtn.setEnabled(false);
-                                sendbtn. setBackground(getDrawable(R.drawable.shape3));
-                                sendbtn.setTextColor(getResources().getColor(R.color.grey));
+//                                cusmName.setText("");
+//                                cusm_No.setText("");
+//                                city.setText("");
+//                                address_name.setText("");
+//                                lacation.setText("");
+//
+//                                sendbtn.setEnabled(false);
+//                                sendbtn. setBackground(getDrawable(R.drawable.shape3));
+//                                sendbtn.setTextColor(getResources().getColor(R.color.grey));
 
                                 startActivity(new Intent(FacilityConnectionActivity.this, ConnectionIncquireActivity.class));
+                                finish();
                             }
                         });
                     }

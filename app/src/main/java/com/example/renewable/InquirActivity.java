@@ -155,7 +155,7 @@ public class InquirActivity extends AppCompatActivity {
 
         fillbtn = findViewById(R.id.fillbtn);
         fillbtn.setEnabled(true);
-        fillbtn. setBackground(getDrawable(R.drawable.shape4));
+        fillbtn.setBackground(getDrawable(R.drawable.shape4));
         fillbtn.setTextColor(getResources().getColor(R.color.white));
 
         insLay.setVisibility(View.VISIBLE);
