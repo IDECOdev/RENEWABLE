@@ -557,23 +557,23 @@ public class InquirActivity extends AppCompatActivity {
                             public void onClick(View v) {
                                 dialog1.dismiss();
 //
-                                cusmName.setText("");
-                                cusm_No.setText("");
-                                city.setText("");
-                                address_name.setText("");
-                                lacation.setText("");
-
-                                sendbtn.setEnabled(false);
-                                sendbtn. setBackground(getDrawable(R.drawable.shape3));
-                                sendbtn.setTextColor(getResources().getColor(R.color.grey));
-
-                                finishbtn.setEnabled(false);
-                                finishbtn. setBackground(getDrawable(R.drawable.shape3));
-                                finishbtn.setTextColor(getResources().getColor(R.color.grey));
-
-                                fillbtn.setEnabled(false);
-                                fillbtn. setBackground(getDrawable(R.drawable.shape3));
-                                fillbtn.setTextColor(getResources().getColor(R.color.grey));
+//                                cusmName.setText("");
+//                                cusm_No.setText("");
+//                                city.setText("");
+//                                address_name.setText("");
+//                                lacation.setText("");
+//
+//                                sendbtn.setEnabled(false);
+//                                sendbtn. setBackground(getDrawable(R.drawable.shape3));
+//                                sendbtn.setTextColor(getResources().getColor(R.color.grey));
+//
+//                                finishbtn.setEnabled(false);
+//                                finishbtn. setBackground(getDrawable(R.drawable.shape3));
+//                                finishbtn.setTextColor(getResources().getColor(R.color.grey));
+//
+//                                fillbtn.setEnabled(false);
+//                                fillbtn. setBackground(getDrawable(R.drawable.shape3));
+//                                fillbtn.setTextColor(getResources().getColor(R.color.grey));
 
                                 startActivity(new Intent(InquirActivity.this, InspectionIncquireActivity.class));
                                 finish();
@@ -602,23 +602,23 @@ public class InquirActivity extends AppCompatActivity {
                             @Override
                             public void onClick(View v) {
                                 dialog1.dismiss();
-                                cusmName.setText("");
-                                cusm_No.setText("");
-                                city.setText("");
-                                address_name.setText("");
-                                lacation.setText("");
-
-                                sendbtn.setEnabled(false);
-                                sendbtn. setBackground(getDrawable(R.drawable.shape3));
-                                sendbtn.setTextColor(getResources().getColor(R.color.grey));
-
-                                finishbtn.setEnabled(false);
-                                finishbtn. setBackground(getDrawable(R.drawable.shape3));
-                                finishbtn.setTextColor(getResources().getColor(R.color.grey));
-
-                                fillbtn.setEnabled(false);
-                                fillbtn. setBackground(getDrawable(R.drawable.shape3));
-                                fillbtn.setTextColor(getResources().getColor(R.color.grey));
+//                                cusmName.setText("");
+//                                cusm_No.setText("");
+//                                city.setText("");
+//                                address_name.setText("");
+//                                lacation.setText("");
+//
+//                                sendbtn.setEnabled(false);
+//                                sendbtn. setBackground(getDrawable(R.drawable.shape3));
+//                                sendbtn.setTextColor(getResources().getColor(R.color.grey));
+//
+//                                finishbtn.setEnabled(false);
+//                                finishbtn. setBackground(getDrawable(R.drawable.shape3));
+//                                finishbtn.setTextColor(getResources().getColor(R.color.grey));
+//
+//                                fillbtn.setEnabled(false);
+//                                fillbtn. setBackground(getDrawable(R.drawable.shape3));
+//                                fillbtn.setTextColor(getResources().getColor(R.color.grey));
 
                                 startActivity(new Intent(InquirActivity.this, InspectionIncquireActivity.class));
                                 finish();
