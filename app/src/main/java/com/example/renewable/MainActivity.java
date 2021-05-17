@@ -228,6 +228,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Void result) {
+            dialog.dismiss();
             if(resp!=null && resp.getPropertyCount()>0){
                 GetReadableResp(resp);
             }

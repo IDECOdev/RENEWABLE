@@ -132,16 +132,11 @@ public class InspectionIncquireActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 cusmNum_et.setTextColor(Color.parseColor("#009900"));
-                if(cusmNum_et.getText().equals("")){
-                    CustomerCashAsyncCall customerCashAsyncCall = new CustomerCashAsyncCall();
-                    customerCashAsyncCall.execute();
-                }
+
             }
             @Override
             public void afterTextChanged(Editable editable) {
-                if(!cusmNum_et.getText().equals("")){
-
-                }else{
+                if(cusmNum_et.getText().length()==0){
                     CustomerCashAsyncCall customerCashAsyncCall = new CustomerCashAsyncCall();
                     customerCashAsyncCall.execute();
                 }
@@ -155,16 +150,14 @@ public class InspectionIncquireActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 processNum_et.setTextColor(Color.parseColor("#009900"));
-                if(!processNum_et.getText().equals("")){
 
-                }else {
-                    CustomerCashAsyncCall customerCashAsyncCall = new CustomerCashAsyncCall();
-                    customerCashAsyncCall.execute();
-                }
             }
             @Override
             public void afterTextChanged(Editable editable) {
-
+                if(processNum_et.getText().length()==0){
+                    CustomerCashAsyncCall customerCashAsyncCall = new CustomerCashAsyncCall();
+                    customerCashAsyncCall.execute();
+                }
             }
         });
 
@@ -343,7 +336,7 @@ public class InspectionIncquireActivity extends AppCompatActivity {
         if(info.isEmpty()){
             data.setVisibility(View.VISIBLE);
         }else {
-
+            data.setVisibility(View.INVISIBLE);
             expandableListAdapter = new CustomExpandableListAdapter(InspectionIncquireActivity.this);
             expandableListView.setAdapter(expandableListAdapter);
         }

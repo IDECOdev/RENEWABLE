@@ -131,10 +131,14 @@ public class ConnectionIncquireActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 cusmNum_et.setTextColor(Color.parseColor("#009900"));
+
             }
             @Override
             public void afterTextChanged(Editable editable) {
-
+                if(cusmNum_et.getText().length()==0){
+                    CustomerCashAsyncCall customerCashAsyncCall = new CustomerCashAsyncCall();
+                    customerCashAsyncCall.execute();
+                }
             }
         });
 
@@ -145,12 +149,17 @@ public class ConnectionIncquireActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 processNum_et.setTextColor(Color.parseColor("#009900"));
+
             }
             @Override
             public void afterTextChanged(Editable editable) {
-
+                if(processNum_et.getText().length()==0){
+                    CustomerCashAsyncCall customerCashAsyncCall = new CustomerCashAsyncCall();
+                    customerCashAsyncCall.execute();
+                }
             }
         });
+
 
         CircleImageView bar = findViewById(R.id.copy1);
 
@@ -319,7 +328,7 @@ public class ConnectionIncquireActivity extends AppCompatActivity {
         if(info.isEmpty()){
             data.setVisibility(View.VISIBLE);
         }else {
-
+            data.setVisibility(View.INVISIBLE);
             expandableListAdapter = new CustomExpandableListAdapter(ConnectionIncquireActivity.this);
             expandableListView.setAdapter(expandableListAdapter);
         }
