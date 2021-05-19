@@ -306,7 +306,7 @@ public class KSoapClass {
 
     }
 
-    public boolean Insert_Renewable_Images(int Mpid, String imageFileName1, String imageFileName2, Bitmap bitmap1, Bitmap bitmap2){
+    public boolean Insert_Renewable_Images(int Mpid, Bitmap bitmap1, String FileNameReal1, Bitmap bitmap2, String FileNameReal2, int iUserId, String iUserName){
 
 
         String NameSpace = "http://tempuri.org/";
@@ -336,11 +336,13 @@ public class KSoapClass {
             encoded2="";
         }
 
-        request.addProperty("name1", Mpid);
+        request.addProperty("Mpid", Mpid);
         request.addProperty("sFile1", encoded);
-        request.addProperty("FileName1", imageFileName1);
+        request.addProperty("FileNameReal1", FileNameReal1);
         request.addProperty("sFile2", encoded2);
-        request.addProperty("FileName2", imageFileName2);
+        request.addProperty("FileNameReal2", FileNameReal2);
+        request.addProperty("iUserId", iUserId);
+        request.addProperty("iUserName", iUserName);
 
 
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);

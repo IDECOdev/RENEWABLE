@@ -188,7 +188,6 @@ public class MainActivity extends AppCompatActivity {
 
     private class EmployeesPositionAsyncCall extends AsyncTask<String, Void, Void> {
 
-        ProgressDialog dialog;
 
         SoapObject empPositionres;
         SoapObject empPositionres2;
@@ -199,7 +198,6 @@ public class MainActivity extends AppCompatActivity {
         String TID;
         public EmployeesPositionAsyncCall() {
 
-            dialog = new ProgressDialog(MainActivity.this);
         }
         @Override
         protected Void doInBackground(String... params) {
@@ -228,7 +226,6 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Void result) {
-            dialog.dismiss();
             if(resp!=null && resp.getPropertyCount()>0){
                 GetReadableResp(resp);
             }
@@ -241,9 +238,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPreExecute() {
-            dialog.setMessage("الرجاء الانتظار...");
-            dialog.setCancelable(false);
-            dialog.show();
+
         }
 
         @Override

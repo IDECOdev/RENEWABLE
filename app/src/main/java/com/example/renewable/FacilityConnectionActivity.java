@@ -141,6 +141,16 @@ public class FacilityConnectionActivity extends AppCompatActivity {
         PresntDataAsyncCall presntDataAsyncCall=new PresntDataAsyncCall();
         presntDataAsyncCall.execute();
 
+
+
+        issuedReadimage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                TakeImage1();
+            }
+        });
+
         continuedReadimage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -148,15 +158,6 @@ public class FacilityConnectionActivity extends AppCompatActivity {
             }
         });
 
-        issuedReadimage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-//                intent.setType("image/*");
-//                startActivityForResult(intent,ImageBack);
-                TakeImage1();
-            }
-        });
         sendbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -172,20 +173,17 @@ public class FacilityConnectionActivity extends AppCompatActivity {
                     continuedRead.setText("0");
                 }
 
-                if(imageBitmap != null){
+                if(imageBitmap2 == null){
                     Toast.makeText(FacilityConnectionActivity.this, "تأكد من التقاط الصورة الاولى", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if(imageBitmap2 != null){
+                if(imageBitmap == null){
                     Toast.makeText(FacilityConnectionActivity.this, "تأكد من التقاط الصورة الثانية", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 WorkFlowByAdminAsyncCall workFlowByAdminAsyncCall = new WorkFlowByAdminAsyncCall();
                 workFlowByAdminAsyncCall.execute();
-
-//                SaveImageAsyncCall saveImageAsyncCall = new SaveImageAsyncCall();
-//                saveImageAsyncCall.execute();
 
             }
         });
@@ -447,11 +445,7 @@ public class FacilityConnectionActivity extends AppCompatActivity {
                 try {
                     Date PickedDate = new SimpleDateFormat("dd/MM/yyyy", Locale.US).parse(dateFormatter.format(newDate.getTime()));
                     String da = new SimpleDateFormat("dd/MM/yyyy", Locale.US).format(PickedDate);
-//                    Fyear = String.valueOf(year);
-//                    Fmonth = String.valueOf(monthOfYear);
-//                    Fday = String.valueOf(dayOfMonth);
                     Date.setText(da);
-//                    insDate.setTextColor(Color.parseColor("#009900"));
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -499,6 +493,8 @@ public class FacilityConnectionActivity extends AppCompatActivity {
 
     private class WorkFlowByAdminAsyncCall extends AsyncTask<String, Void, Void> {
         boolean flag = false;
+        boolean flag1 = false;
+        SoapPrimitive closeApp;
         boolean updateRen1 = false,updateRen2 = false;
 
         public WorkFlowByAdminAsyncCall() {
@@ -550,65 +546,20 @@ public class FacilityConnectionActivity extends AppCompatActivity {
                  }
 
                 if(updateRen2){
+                    flag1 = soap.Insert_Renewable_Images(Integer.parseInt(inquirInfo.getMAIN_PID()), imageBitmap2,"أرشفة الطاقة المتجددة/القراءة المصدرة", imageBitmap, "أرشفة الطاقة المتجددة/القراءة المستجرة", Integer.parseInt(getSharedPreferences("Info", Context.MODE_PRIVATE).getString("respId", "")), getSharedPreferences("Info", Context.MODE_PRIVATE).getString("NAME", ""));
+                }
+                if(String.valueOf(flag1).equals("true")){
                     flag = soap.WorkFlowAdvanceByAdmin(getEncodedString3(soap,84, 1005249, Integer.parseInt(inquirInfo.getMAIN_PID()), "Root/ RenewableData",
                             "1", "","","","","","","","","",
                             "","","","",""));
                 }
-
-
-
-            } catch (Exception e) {}
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            pd.dismiss();
-            try{
                 if(flag) {
-                    pd.dismiss();
-                    SaveImageAsyncCall saveImageAsyncCall = new SaveImageAsyncCall();
-                    saveImageAsyncCall.execute();
-                }
-                }catch(Exception e){}
-
-        }
-
-        @Override
-        protected void onPreExecute() {
-
-            pd.setMessage("يرجى الأنتظار...");
-            pd.setCancelable(false);
-            pd.show();
-        }
-
-        @Override
-        protected void onProgressUpdate(Void... values) {}
-
-    }
-
-    private class SaveImageAsyncCall extends AsyncTask<String, Void, Void> {
-        boolean flag1 = false;
-        SoapPrimitive closeApp;
-        public SaveImageAsyncCall() {
-            pd = new ProgressDialog(FacilityConnectionActivity.this);
-
-        }
-        @RequiresApi(api = Build.VERSION_CODES.O)
-        @Override
-        protected Void doInBackground(String... params) {
-            try {
-
-                KSoapClass soap = new KSoapClass();
-                flag1 = soap.Insert_Renewable_Images(Integer.parseInt(inquirInfo.getMAIN_PID()),imageFileName1, imageFileName2, imageBitmap, imageBitmap2);
-                if(String.valueOf(flag1).equals("true")){
                     String data3;
                     if(getSharedPreferences("Info", Context.MODE_PRIVATE).getString("respId", "").equals("")){
                         data3 =":"+inquirInfo.getMAIN_PID()+",:84,:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("EMP_NO", "")+",:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("NAME", "");
 
                     }else {
-                         data3 =":"+inquirInfo.getMAIN_PID()+",:84,:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("respId", "")+",:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("NAME", "");
+                        data3 =":"+inquirInfo.getMAIN_PID()+",:84,:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("respId", "")+",:"+getSharedPreferences("Info", Context.MODE_PRIVATE).getString("NAME", "");
                     }
                     try {
                         KeyFactory kf = KeyFactory.getInstance("RSA");
@@ -623,20 +574,23 @@ public class FacilityConnectionActivity extends AppCompatActivity {
                         String base64Encoded = Base64.getEncoder().encodeToString(encodeData);
                         closeApp = soap.INSERT_RENEWABLE_APP_CLOSE(base64Encoded);
 
-                } catch (Exception e) {}
-                }
-            }catch (Exception e){}
-            return null;
+                    } catch (Exception e) {}
 
+                }
+
+
+            } catch (Exception e) {}
+
+            return null;
         }
 
         @Override
         protected void onPostExecute(Void result) {
             pd.dismiss();
             try{
-                if(flag1){
+                if(flag){
                     if(Integer.parseInt(String.valueOf(closeApp))<0){
-                        pd.dismiss();
+
                         final AlertDialog.Builder builder = new AlertDialog.Builder(FacilityConnectionActivity.this);
                         LayoutInflater inflater = FacilityConnectionActivity.this.getLayoutInflater();
                         builder.setView(inflater.inflate(R.layout.dialog_vacstate, null));
@@ -657,16 +611,6 @@ public class FacilityConnectionActivity extends AppCompatActivity {
                             @Override
                             public void onClick(View v) {
                                 dialog1.dismiss();
-//
-//                                cusmName.setText("");
-//                                cusm_No.setText("");
-//                                city.setText("");
-//                                address_name.setText("");
-//                                lacation.setText("");
-//
-//                                sendbtn.setEnabled(false);
-//                                sendbtn. setBackground(getDrawable(R.drawable.shape3));
-//                                sendbtn.setTextColor(getResources().getColor(R.color.grey));
 
                                 startActivity(new Intent(FacilityConnectionActivity.this, ConnectionIncquireActivity.class));
                                 finish();
@@ -674,7 +618,7 @@ public class FacilityConnectionActivity extends AppCompatActivity {
                             }
                         });
                     }else{
-                        pd.dismiss();
+
                         final AlertDialog.Builder builder = new AlertDialog.Builder(FacilityConnectionActivity.this);
                         LayoutInflater inflater = FacilityConnectionActivity.this.getLayoutInflater();
                         builder.setView(inflater.inflate(R.layout.dialog_vacstate, null));
@@ -696,16 +640,6 @@ public class FacilityConnectionActivity extends AppCompatActivity {
                             public void onClick(View v) {
                                 dialog1.dismiss();
 
-//                                cusmName.setText("");
-//                                cusm_No.setText("");
-//                                city.setText("");
-//                                address_name.setText("");
-//                                lacation.setText("");
-//
-//                                sendbtn.setEnabled(false);
-//                                sendbtn. setBackground(getDrawable(R.drawable.shape3));
-//                                sendbtn.setTextColor(getResources().getColor(R.color.grey));
-
                                 startActivity(new Intent(FacilityConnectionActivity.this, ConnectionIncquireActivity.class));
                                 finish();
                             }
@@ -713,7 +647,7 @@ public class FacilityConnectionActivity extends AppCompatActivity {
                     }
 
                 }else {
-                    pd.dismiss();
+
                     final AlertDialog.Builder builder = new AlertDialog.Builder(FacilityConnectionActivity.this);
                     LayoutInflater inflater = FacilityConnectionActivity.this.getLayoutInflater();
                     builder.setView(inflater.inflate(R.layout.dialog_vacstate, null));
@@ -753,6 +687,7 @@ public class FacilityConnectionActivity extends AppCompatActivity {
         protected void onProgressUpdate(Void... values) {}
 
     }
+
 
     private String getEncodedString3(KSoapClass service, int TID, int ModelID, int PID,
                                      String XML1, String XMLData1, String XML2, String XMLData2,
