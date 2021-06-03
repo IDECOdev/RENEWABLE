@@ -42,7 +42,7 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
         editor.putString("Finger", "1");
 
         editor.commit();
-        context.startActivity(new Intent(context,InquirActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+        context.startActivity(new Intent(context, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
 
     }
 }
